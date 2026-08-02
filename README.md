@@ -5,6 +5,11 @@ même moteur de rendu (HTML/CSS/JS vanilla, offline-first), mais contenu
 piloté par une base Supabase au lieu d'un fichier `donnees.js` statique —
 pour pouvoir lancer un nouveau voyage sans toucher au code.
 
+Différence de fond avec Italie2026 : il n'y a pas d'interface de saisie.
+Le contenu de chaque voyage (journées, quiz, badges, direction visuelle) est
+rédigé par Claude en conversation avec l'organisateur, puis publié en base
+par un script. Voir « Créer un nouveau voyage » ci-dessous.
+
 ## Architecture
 
 ```
@@ -12,13 +17,25 @@ app/        → le moteur de rendu (gabarit, styles, filtres, frise, chasse
               au trésor, quiz), porté depuis index.html d'Italie2026.
               Charge son contenu via l'API Supabase au lieu d'un objet
               JOURS/BADGES en dur, avec un service worker qui met en cache
-              la réponse + les assets pour l'usage hors-connexion.
-admin/      → interface CRUD pour créer/éditer un voyage : journées, fil
-              horodaté, observations, quiz, badges. Authentifiée (Supabase
-              Auth), pas d'accès public.
+              la réponse + les assets pour l'usage hors-connexion (à écrire).
+              Un thème CSS + un fichier d'illustrations par voyage sont
+              chargés dynamiquement selon le slug (à écrire).
+admin/      → un seul écran réel : la correction du quiz à distance (voir
+              plus bas). Pas de CRUD, pas de formulaires de saisie de
+              contenu — ça se fait en conversation avec Claude, pas ici.
+voyages/    → un fichier JSON par voyage (ex. salo2026.json), sauvegarde
+              lisible du contenu publié en base. Resynchronisé après
+              chaque édition ciblée pour ne jamais devenir périmé.
+outils/
+  publier-voyage.js   → lit voyages/<slug>.json, crée toutes les lignes
+                        en base (voyage, journées, observations, quiz,
+                        badges) dans le bon ordre de dépendances.
+  exporter-voyage.js  → relit un voyage depuis la base et réécrit son
+                        JSON, pour resynchroniser après une édition ciblée.
 supabase/
-  migrations/ → schéma SQL (voyages, journees, observations, quiz_questions,
-                badges, badge_conditions, progression).
+  migrations/ → schéma SQL : voyages, journees, observations,
+                quiz_questions, badges, badge_conditions, membres_famille,
+                progression.
 ```
 
 ## Principes hérités d'Italie2026
@@ -33,20 +50,68 @@ supabase/
 
 ## Multi-voyage
 
-Chaque ligne de `voyages` a un `slug` (ex. `salo2026`). L'app publique se
-charge avec ce slug dans l'URL et récupère tout son contenu (journées,
-observations, quiz, badges) filtré par `voyage_id`. Créer un nouveau voyage
-= créer une ligne + son contenu via l'admin, sans déploiement de code.
+Chaque ligne de `voyages` a un `slug` (ex. `salo2026`), utilisé dans l'URL
+publique (`?voyage=salo2026`). `app/` reste un seul et même fichier pour
+tous les voyages : il charge le contenu, le thème et les illustrations du
+voyage demandé au moment du chargement, rien n'est codé en dur par voyage
+dans le moteur de rendu.
+
+## Créer un nouveau voyage
+
+1. **Conversation** : l'organisateur décrit le voyage (dates, destinations,
+   contraintes familiales, rythme voulu) à Claude, qui rédige le contenu
+   (journées, fil horodaté, observations, quiz, badges) en respectant les
+   mêmes règles qu'Italie2026 — jamais de donnée inventée.
+2. **Direction visuelle** : Claude propose une palette, des polices et des
+   illustrations ancrées sur le pays/la culture du voyage (comme la
+   direction Officina Bodoniana pour l'Italie), à valider en conversation.
+3. **Sauvegarde** : le contenu est écrit dans `voyages/<slug>.json`,
+   versionné avec le reste du repo.
+4. **Publication** : `outils/publier-voyage.js` pousse ce JSON en base.
+5. **Édition ultérieure** : les changements ponctuels ("l'horaire du 6 août
+   passe à 15h") se font directement en base, puis
+   `outils/exporter-voyage.js` resynchronise le JSON pour qu'il reste le
+   miroir exact du contenu publié.
+
+## Accès et authentification
+
+- **Contenu public** (`visibilite = 'amis'`, valeur par défaut) : visible
+  par tout le monde sans connexion, comme un site classique.
+- **Contenu famille** (`visibilite = 'famille'`) : réservé aux comptes
+  email invités par l'organisateur (table `membres_famille`), via Supabase
+  Auth (mot de passe ou bouton Google). Personne ne peut créer de compte
+  de son propre chef — seul l'organisateur invite.
+- La distinction est appliquée par les policies RLS en base (pas seulement
+  cachée à l'écran), puisque de vrais comptes existent pour la famille.
+
+## Quiz et correction à distance
+
+Le quiz est réservé aux comptes famille connectés (pas de mode invité par
+prénom). Chaque réponse est envoyée à la table `progression`, liée au
+compte de son auteur. Le mécanisme de chiffrement de la bonne réponse
+(`reponse_chiffree`, XOR + mot de passe, jamais stocké) est repris tel quel
+d'Italie2026 — il sert à empêcher un enfant de lire la réponse dans le
+code, pas à sécuriser la transmission.
+
+Un membre famille peut ouvrir un écran de correction (dans `admin/`,
+seule vraie page de cet dossier) : il entre le mot de passe du quiz,
+déchiffre côté client les réponses de tous les membres du voyage, calcule
+les scores, puis appelle la fonction SQL `corriger_quiz(...)` qui écrit le
+résultat dans `progression` (et seulement le résultat — jamais les réponses
+brutes des autres, par construction de la fonction). Chaque appareil voit
+sa correction dès son prochain chargement.
 
 ## État actuel
 
-Scaffold initial : schéma Supabase posé, structure de dossiers en place.
-Reste à faire (voir suite de la conversation / tâches de suivi) :
+Schéma Supabase posé et appliqué (`0001_init.sql`, `0002_champs_manquants.sql`,
+`0003_acces_famille_et_quiz.sql`). Moteur de rendu porté vers `app/` avec
+fetch Supabase (`demarrerCarnet`). Reste à faire :
 
-1. Créer le projet Supabase et appliquer `supabase/migrations/0001_init.sql`
-2. Porter le moteur de rendu d'`index.html` (Italie2026) vers `app/`, en
-   remplaçant la lecture de `JOURS`/`BADGES` par des appels à l'API Supabase
-3. Écrire le service worker (cache-first sur le contenu du voyage actif)
-4. Construire l'admin (auth + formulaires CRUD)
-5. Script de migration : convertir `donnees.js` (Italie2026) en insertions
-   SQL, pour vérifier le modèle sur des données réelles
+1. Écrire `outils/publier-voyage.js` et migrer le contenu réel d'Italie2026
+   (`donnees.js` → `voyages/salo2026.json` → publication), pour valider le
+   modèle sur des données réelles
+2. Écrire `outils/exporter-voyage.js`
+3. Écran de correction du quiz dans `admin/`
+4. Authentification famille (comptes + `membres_famille`) côté `app/`
+5. Thème + illustrations chargés dynamiquement par slug
+6. Service worker (cache-first sur le contenu du voyage actif)
