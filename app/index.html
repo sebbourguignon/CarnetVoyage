@@ -1755,25 +1755,43 @@ body.mode-public .tabbar a[data-tab="urgences"]{display:none}
    tel quel le corps de l'ancienne IIFE, en recevant JOURS/BADGES/CARNET
    en paramètres plutôt qu'en globales.
    ========================================================================== */
-function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
+function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES){
   "use strict";
 
-  /* --- accès famille : verrou d'affichage, pas de protection des données
-     (donnees.js reste téléchargeable en clair, c'est assumé) ------------
-     Par défaut le carnet s'affiche en mode public (allégé : deux onglets,
-     sans quiz ni chasse au trésor). Un mot de passe saisi une fois
-     déverrouille le mode famille, mémorisé en localStorage sur cet
-     appareil (mécanique de déverrouillage : voir plus bas). Le jeton
-     ci-dessous est remplacé par le build (voir build.sh) par l'empreinte
-     SHA-256 du mot de passe famille — distinct de celui du quiz (djb2 +
-     XOR, voir plus bas), jamais fusionné avec lui. */
-  var HASH_ACCES_FAMILLE = "__HASH_ACCES_FAMILLE__";
-  var STOCKAGE_ACCES_FAMILLE = slugVoyage + "-carnet-acces-famille-v1";
-  function modeFamilleActif(){
-    try{ return window.localStorage.getItem(STOCKAGE_ACCES_FAMILLE) === "1"; }
-    catch(e){ return false; }
-  }
-  var modeFamille = modeFamilleActif();
+  /* --- constantes de filtres : propriété du moteur de rendu, pas du
+     contenu d'un voyage (mêmes libellés quel que soit le voyage), donc
+     définies ici plutôt qu'en base — contrairement à JOURS/BADGES/CARNET/
+     URGENCES qui varient par voyage. Reprises telles quelles de l'ancien
+     donnees.js (Italie2026), qui les définissait à tort au même niveau que
+     le contenu alors qu'elles n'en dépendent pas. */
+  var FILTRES = [
+    { cle: "all",        libelle: "Tout" },
+    { cle: "ville",      libelle: "Villes & monuments" },
+    { cle: "nature",     libelle: "Nature & paysages" },
+    { cle: "lac",        libelle: "Lac & repos" },
+    { cle: "route",      libelle: "Route" },
+    { cle: "star",       libelle: "Temps forts" }
+  ];
+  var FILTRES_CHASSE = [
+    { cle: "all",       libelle: "Tout" },
+    { cle: "atrouver",  libelle: "À trouver" },
+    { cle: "niveau3",   libelle: "Niveau 3" }
+  ];
+
+  /* --- accès famille : vraie authentification Supabase Auth, pas un
+     mot de passe local ---------------------------------------------------
+     Le contenu marqué visibilite="famille" (journées, observations,
+     quiz_questions) est filtré par les policies RLS côté Supabase : une
+     personne non connectée, ou connectée mais absente de la table
+     membres_famille pour ce voyage, ne reçoit tout simplement pas ces
+     lignes dans la réponse — ce n'est donc pas ce fichier qui décide quoi
+     cacher. `sessionFamille` (passé par chargerEtDemarrer, calculé via
+     supabaseClient.auth.getSession()) ne sert qu'à piloter l'affichage :
+     bascule des deux onglets famille (quiz, chasse) et de l'icône du
+     verrou. supabase-js conserve la session dans son propre localStorage
+     (mécanisme du SDK, indépendant de STOCKAGE_ACCES_FAMILLE de l'ancienne
+     version) : un rechargement de page la retrouve sans nouvelle saisie. */
+  var modeFamille = !!sessionFamille;
   document.body.classList.toggle("mode-public", !modeFamille);
 
   /* --- {{chien}} → pastille -------------------------------------------- */
@@ -3986,45 +4004,28 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
     return { jour: premier, exact: false, avant: true };
   }
 
-  /* --- accès famille : vérification du mot de passe ---------------------
-     Comparaison par un vrai SHA-256 (window.crypto.subtle), pas par le
-     hachage djb2 du quiz — deux mots de passe, deux mécaniques, jamais
-     mélangées. file:// est un contexte sécurisé au sens de la spec, donc
-     crypto.subtle y est disponible (contrairement à navigator.clipboard,
-     voir copierTexte plus bas, qui exige davantage) : pas de repli ici. */
-  function hachageSHA256(texte){
-    var octets = new TextEncoder().encode(texte);
-    return window.crypto.subtle.digest("SHA-256", octets).then(function(tampon){
-      return Array.prototype.map.call(new Uint8Array(tampon), function(o){
-        return o.toString(16).padStart(2, "0");
-      }).join("");
-    });
-  }
-  function motDePasseFamilleValide(motDePasse){
-    if(!motDePasse || !window.crypto || !window.crypto.subtle) return Promise.resolve(false);
-    return hachageSHA256(motDePasse).then(function(empreinte){
-      return empreinte === HASH_ACCES_FAMILLE;
-    });
-  }
-  /* le mode est recalculé au chargement (voir modeFamilleActif en tête de
-     fichier) : plutôt que de retisser l'état "public/famille" à travers
-     tout ce qui a déjà été construit (barre d'onglets, quiz, chasse...),
-     on recharge la page une fois l'indicateur posé ou retiré. */
-  function activerModeFamille(){
-    try{ window.localStorage.setItem(STOCKAGE_ACCES_FAMILLE, "1"); }catch(e){}
-    location.reload();
-  }
+  /* --- accès famille : connexion / déconnexion Supabase Auth ------------
+     Plus de mot de passe local ni de hachage maison : signInWithPassword
+     authentifie le compte auprès de Supabase, qui joint désormais un
+     jeton à chaque requête suivante — c'est ce jeton, vérifié par les
+     policies RLS, qui fait ou non apparaître le contenu visibilite=
+     "famille" dans les prochaines réponses. On ne recalcule pas l'état
+     "public/famille" en place à travers tout ce qui a déjà été construit
+     (barre d'onglets, quiz, chasse...) : comme pour l'ancien mécanisme,
+     un succès de connexion ou une déconnexion recharge la page — supabase-
+     js a déjà persisté (ou effacé) la session dans son propre localStorage
+     avant le rechargement, chargerEtDemarrer() la retrouvera donc telle
+     quelle au prochain chargement. */
   function desactiverModeFamille(){
-    try{ window.localStorage.removeItem(STOCKAGE_ACCES_FAMILLE); }catch(e){}
-    location.reload();
+    supabaseClient.auth.signOut().then(function(){ location.reload(); });
   }
-  /* --- accès famille : dialogue de déverrouillage ----------------------
-     Même construction que demanderMotDePasseQuiz (voir plus haut) : un
-     <input type="password"> bâti à la volée, jamais présent dans le DOM
-     au repos, retiré juste après la saisie. Différence volontaire avec
-     le quiz : l'erreur s'affiche dans le dialogue lui-même, pas via
-     window.alert. `declencheur` est le bouton qui a ouvert la boîte : le
-     focus lui revient à la fermeture (sauf succès, qui recharge la page). */
+  /* --- accès famille : dialogue de connexion ----------------------------
+     Même facture visuelle que l'ancien dialogue de mot de passe (classes
+     .famille-pw-*), avec un champ e-mail en plus. L'erreur s'affiche dans
+     le dialogue lui-même (message de Supabase, ou un texte générique si
+     absent), jamais via window.alert ni de redirection. `declencheur` est
+     le bouton qui a ouvert la boîte : le focus lui revient à la fermeture
+     (sauf succès, qui recharge la page). */
   function ouvrirDialogueAccesFamille(declencheur){
     var overlay = el("div", "famille-pw-overlay");
     var boite = el("div", "famille-pw-boite");
@@ -4034,7 +4035,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
     overlay.appendChild(boite);
 
     var tete = el("div", "famille-pw-tete");
-    var titre = el("p", "famille-pw-titre", "Mot de passe pour l'accès famille :");
+    var titre = el("p", "famille-pw-titre", "Connexion à l'accès famille :");
     titre.id = "famille-pw-titre";
     tete.appendChild(titre);
     var boutonFermer = document.createElement("button");
@@ -4045,11 +4046,25 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
     tete.appendChild(boutonFermer);
     boite.appendChild(tete);
 
+    var champEmail = el("div", "famille-pw-champ");
+    var inputEmail = document.createElement("input");
+    inputEmail.type = "email";
+    inputEmail.className = "famille-pw-input";
+    inputEmail.placeholder = "E-mail";
+    inputEmail.autocomplete = "username";
+    inputEmail.setAttribute("autocorrect", "off");
+    inputEmail.setAttribute("autocapitalize", "off");
+    inputEmail.spellcheck = false;
+    champEmail.appendChild(inputEmail);
+    boite.appendChild(champEmail);
+
     var champ = el("div", "famille-pw-champ");
+    champ.style.marginTop = "8px";
     var input = document.createElement("input");
     input.type = "password";
     input.className = "famille-pw-input";
-    input.autocomplete = "off";
+    input.placeholder = "Mot de passe";
+    input.autocomplete = "current-password";
     /* capitalisation automatique iOS : ferait échouer la saisie sans
        explication si on ne la coupe pas ici. */
     input.setAttribute("autocorrect", "off");
@@ -4081,7 +4096,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
     var boutonValider = document.createElement("button");
     boutonValider.type = "button";
     boutonValider.className = "famille-pw-valider";
-    boutonValider.textContent = "Valider";
+    boutonValider.textContent = "Se connecter";
     actions.appendChild(boutonValider);
     boite.appendChild(actions);
 
@@ -4092,20 +4107,27 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
       if(declencheur) declencheur.focus();
     }
     function valider(){
-      var valeur = input.value;
+      var email = inputEmail.value.trim();
+      var motDePasse = input.value;
+      if(!email || !motDePasse){
+        erreur.textContent = "E-mail et mot de passe sont requis.";
+        erreur.hidden = false;
+        return;
+      }
       boutonValider.disabled = true;
-      motDePasseFamilleValide(valeur).then(function(ok){
-        if(ok){
+      supabaseClient.auth.signInWithPassword({ email: email, password: motDePasse })
+        .then(function(res){
+          if(res.error){
+            boutonValider.disabled = false;
+            erreur.textContent = res.error.message || "Connexion impossible.";
+            erreur.hidden = false;
+            input.value = "";
+            input.focus();
+            return;
+          }
           fermer();
-          activerModeFamille();
-        } else {
-          boutonValider.disabled = false;
-          erreur.textContent = "Mot de passe incorrect.";
-          erreur.hidden = false;
-          input.value = "";
-          input.focus();
-        }
-      });
+          location.reload();
+        });
     }
     function surTouche(ev){
       if(ev.key === "Escape") fermer();
@@ -4115,22 +4137,25 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
     input.addEventListener("keydown", function(ev){
       if(ev.key === "Enter"){ ev.preventDefault(); valider(); }
     });
+    inputEmail.addEventListener("keydown", function(ev){
+      if(ev.key === "Enter"){ ev.preventDefault(); input.focus(); }
+    });
     overlay.addEventListener("click", function(ev){
       if(ev.target === overlay) fermer();
     });
     document.addEventListener("keydown", surTouche);
 
     document.body.appendChild(overlay);
-    input.focus();
+    inputEmail.focus();
   }
   /* --- point d'entrée / sortie du mode famille : bouton verrou posé sur
      l'illustration d'accueil (voir construireHeroAccueil). Un appui en
-     mode public ouvre le dialogue de mot de passe ; un appui en mode
-     famille propose, avec confirmation, de revenir à la vue simplifiée —
-     jamais direct, pour éviter une sortie accidentelle. */
+     mode public ouvre le dialogue de connexion ; un appui en mode famille
+     propose, avec confirmation, de se déconnecter — jamais direct, pour
+     éviter une sortie accidentelle. */
   function surAppuiVerrouFamille(bouton){
     if(modeFamille){
-      if(window.confirm("Revenir à la vue simplifiée du carnet ? Le mot de passe sera de nouveau nécessaire pour rouvrir l'accès famille.")){
+      if(window.confirm("Se déconnecter de l'accès famille ? Il faudra se reconnecter pour retrouver ce contenu.")){
         desactiverModeFamille();
       }
     } else {
@@ -4141,7 +4166,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
     var bouton = document.createElement("button");
     bouton.type = "button";
     bouton.className = "accueil-hero-verrou";
-    bouton.setAttribute("aria-label", modeFamille ? "Revenir à la vue simplifiée" : "Accès famille");
+    bouton.setAttribute("aria-label", modeFamille ? "Se déconnecter de l'accès famille" : "Accès famille");
     bouton.innerHTML = modeFamille ? ICONES.cadenasOuvert : ICONES.cadenas;
     bouton.addEventListener("click", function(){ surAppuiVerrouFamille(bouton); });
     return bouton;
@@ -5215,15 +5240,25 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
       intensite: ligne.intensite,
       star: !!ligne.star,
       eclipse: !!ligne.eclipse,
+      anniversaire: !!ligne.anniversaire,
       titre: ligne.titre,
       accroche: ligne.accroche,
       fil: ligne.fil || [],
+      pratique: ligne.pratique || null,
+      carte: ligne.carte || [],
+      illustration: ligne.illustration || [],
+      manger: ligne.manger || null,
       /* `regarder` (ancien donnees.js) = table observations, triée par
-         ordre. Le champ `ou` et `niveau` sont conservés à l'identique. */
+         ordre. Le champ `ou`, `niveau` et `quoi` sont conservés à l'identique. */
       regarder: (ligne.observations || [])
         .slice()
         .sort(function(a, b){ return a.ordre - b.ordre; })
-        .map(function(o){ return { ou: o.ou, niveau: o.niveau }; }),
+        .map(function(o){ return { ou: o.ou, niveau: o.niveau, quoi: o.quoi }; }),
+      /* `lieux` (ancien donnees.js) = table lieux, triée par ordre. */
+      lieux: (ligne.lieux || [])
+        .slice()
+        .sort(function(a, b){ return a.ordre - b.ordre; })
+        .map(function(l){ return { nom: l.nom, quoi: l.quoi, pratique: l.pratique, requete: l.requete }; }),
       optionsTitre: ligne.options_titre,
       options: ligne.options || [],
       planB: ligne.plan_b,
@@ -5264,7 +5299,17 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
     return badge;
   }
 
-  supabase
+  /* Session famille : lue avant toute requête de contenu, pour que le
+     jeton d'authentification (s'il existe déjà, restauré par supabase-js
+     depuis son propre localStorage) soit bien joint aux requêtes qui
+     suivent — c'est lui qui fait apparaître le contenu visibilite=
+     "famille" dans les réponses, via les policies RLS. `sessionFamille`
+     ne sert qu'à l'affichage (voir demarrerCarnet) : la vraie restriction
+     est appliquée par Supabase, pas par ce fichier. */
+  supabase.auth.getSession().then(function(resSession){
+    var sessionFamille = !!(resSession.data && resSession.data.session);
+
+    supabase
     .from("voyages")
     .select("*")
     .eq("slug", slug)
@@ -5279,7 +5324,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
 
       return supabase
         .from("journees")
-        .select("*, observations(*), quiz_questions(*)")
+        .select("*, observations(*), quiz_questions(*), lieux(*)")
         .eq("voyage_id", voyage.id)
         .order("ordre", { ascending: true })
         .then(function(resJournees){
@@ -5320,14 +5365,20 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage){
                 aVerifier: voyage.a_verifier
               };
 
+              /* zoneChargement retiré seulement après un démarrage réussi :
+                 si demarrerCarnet() lève une exception, elle doit encore
+                 pouvoir s'afficher dedans via le .catch() plus bas — pas
+                 sur un noeud déjà détaché du DOM. */
+              demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille, voyage.urgences || {});
               zoneChargement.remove();
-              demarrerCarnet(JOURS, BADGES, CARNET, slug);
             });
         });
     })
     .catch(function(err){
+      console.error("Erreur de chargement du carnet :", err);
       afficherErreur("Impossible de charger le carnet (" + slug + ") : " + (err && err.message ? err.message : err));
     });
+  });
 
   // TODO service worker (étape séparée) — pas de mode hors-ligne dans cette passe.
 })();

@@ -7,7 +7,114 @@
     "date_debut": "2026-07-31",
     "date_fin": "2026-08-23",
     "frise_legende": "Le rythme des trois semaines — hauteur = intensité de la journée",
-    "a_verifier": "À vérifier avant départ : jour de fermeture du Labirinto della Masone · billets Musei Ferrari · accès en soirée à la Rocca di Lonato · état de la Strada della Forra · lunettes ISO 12312-2"
+    "a_verifier": "À vérifier avant départ : jour de fermeture du Labirinto della Masone · billets Musei Ferrari · accès en soirée à la Rocca di Lonato · état de la Strada della Forra · lunettes ISO 12312-2",
+    "urgences": {
+      "memo": [
+        "En Italie, demander un « pronto soccorso veterinario ».",
+        "« 24h/24 » signifie parfois « d'astreinte » : toujours téléphoner avant de prendre la voiture.",
+        "Majoration de nuit et de jour férié : normale et légale. Payer par carte, garder la facture.",
+        "Le 15 août, même les structures 24h tournent en effectif réduit.",
+        "Pharmacie de garde : la « farmacia di turno » est affichée sur la porte de chaque pharmacie.",
+        "Pas d'assurance voyage : en cas d'hospitalisation, la CEAM couvre les soins publics en Italie."
+      ],
+      "numeros": [
+        {
+          "tel": "112",
+          "note": "Fonctionne en Italie comme en France, depuis n'importe quel mobile.",
+          "label": "Urgences — tous pays d'Europe"
+        },
+        {
+          "tel": "118",
+          "label": "Secours médical (Italie)"
+        },
+        {
+          "tel": "115",
+          "label": "Pompiers (Italie)"
+        }
+      ],
+      "documents": [
+        "Passeport européen du chien + vaccination antirabique en cours de validité",
+        "Cartes européennes d'assurance maladie (CEAM) — une par personne",
+        "Attestation d'assurance auto et constat amiable européen",
+        "Permis de conduire et pièces d'identité",
+        "Lunettes d'éclipse ISO 12312-2 — cinq paires, plus un filtre solaire pour l'appareil photo"
+      ],
+      "consulaire": [
+        {
+          "tel": "+390238594017",
+          "note": "1h45 de Salò. Pour papiers perdus, pas pour une urgence du soir.",
+          "label": "Consulat général de France à Milan",
+          "adresse": "Via Privata Cesare Mangili 1, 20121 Milano MI",
+          "horaires": "Lun-jeu 9h-12h et 14h-16h · ven 9h-12h · fermé week-end"
+        },
+        {
+          "tel": "+33153591110",
+          "note": "Urgences graves de Français à l'étranger, quand le consulat est fermé.",
+          "label": "Centre de crise — Quai d'Orsay",
+          "horaires": "24h/24, 7j/7"
+        }
+      ],
+      "veterinaires": [
+        {
+          "nom": "Clinica Veterinaria S. Antonio (Dr. Smadelli)",
+          "tel": "+390365522523",
+          "web": "https://www.clinicasantantonio.it/",
+          "note": "Le seul recours nocturne à Salò même. Habitué aux vacanciers étrangers.",
+          "role": "Urgence 24h/24 — à Salò",
+          "adresse": "Via Eugenio Montale 2, 25087 Salò BS",
+          "horaires": "24h/24, 7j/7"
+        },
+        {
+          "nom": "Ambulatorio Veterinario Dr. Facchetti",
+          "tel": "+390365518401",
+          "web": "https://www.veterinarisalo.it/",
+          "note": "4,8/5. Très bon anglais, reçoit le jour même.",
+          "role": "En journée, lun-ven — à Salò",
+          "adresse": "Piazzale degli Alpini 3, 25087 Salò BS",
+          "horaires": "Lun-ven 9h-12h et 15h-18h · fermé week-end"
+        },
+        {
+          "nom": "Ospedale Veterinario Rosi",
+          "tel": "+393803689675",
+          "note": "~40 min de Salò. 4,7/5 sur 1300 avis.",
+          "role": "Recours lourd 24h/24 — chirurgie, imagerie",
+          "adresse": "Via Brescia 46, 25086 Rezzato BS",
+          "horaires": "24h/24, 7j/7"
+        },
+        {
+          "nom": "Clinica Veterinaria Benaco Blu",
+          "tel": "+390376632843",
+          "role": "Sud du lac 24h/24 — utile le 12 août",
+          "adresse": "Via G. Mazzini 109, 46043 Castiglione delle Stiviere MN",
+          "horaires": "24h/24, 7j/7"
+        },
+        {
+          "nom": "Gardavet",
+          "tel": "+390309901570",
+          "note": "Anglais courant.",
+          "role": "Desenzano, en journée",
+          "adresse": "Viale F. Agello 70/D, 25015 Desenzano del Garda BS",
+          "horaires": "Lun-ven 9h-13h et 15h-19h"
+        }
+      ],
+      "assuranceAuto": {
+        "nom": "L'Olivier Assurance",
+        "client": "NUMERO_RETIRE",
+        "lignes": [
+          {
+            "tel": "+33141859973",
+            "label": "Urgence auto — dépannage",
+            "horaires": "24h/24, 7j/7"
+          },
+          {
+            "tel": "+33184022022",
+            "label": "Déclaration de sinistre",
+            "horaires": "Lun-ven 9h-12h30"
+          }
+        ],
+        "contrat": "NUMERO_RETIRE"
+      }
+    }
   },
   "journees": [
     {
@@ -20,7 +127,6 @@
       "intensite": 3,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Rueil-Malmaison → Lyon",
       "accroche": "Première étape. Le vrai enjeu, c'est l'heure de départ.",
       "fil": [
@@ -45,12 +151,30 @@
           "texte": "Dîner — bouchon lyonnais réservé à l'avance, ou terrasse quais de Saône."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Parc de la Tête d'Or</b> — 105 hectares, gratuit, idéal pour dégourdir tout le monde {{chien}}",
+        "<b>Théâtres romains de Fourvière</b> — juste à côté de la basilique",
+        "<b>Confluence</b> — architecture contemporaine et bord de l'eau",
+        "<b>Mur des Canuts</b> à la Croix-Rousse"
+      ],
+      "plan_b": "Si le départ dérape ou si l'A6 est saturée : on abandonne Fourvière, dîner simple, coucher tôt. La journée de demain est plus importante.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Réserver l'hébergement et le restaurant. Le Vieux Lyon est pavé : prévoir de porter le chien.",
+          "titre": "À anticiper"
+        }
+      ],
+      "chapitre": "La descente",
+      "ordre": 0,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Vieux Lyon est piéton : viser le Parking Saint-Jean, en souterrain sous le quartier, ou Célestins de l'autre côté de la Saône.",
         "ztl": "Lyon applique une ZFE. Vérifiez votre vignette Crit'Air avant de partir — c'est le genre de détail qui gâche une arrivée.",
-        "reserver": "Le bouchon du soir. Un vendredi de fin juillet, sans réservation vous dînerez mal.",
+        "chien": "facile",
+        "parking": "Vieux Lyon est piéton : viser le Parking Saint-Jean, en souterrain sous le quartier, ou Célestins de l'autre côté de la Saône.",
         "emporter": "De quoi tenir dans les bouchons : eau, en-cas, et de l'eau pour le chien.",
-        "chien": "facile"
+        "reserver": "Le bouchon du soir. Un vendredi de fin juillet, sans réservation vous dînerez mal."
       },
       "carte": [
         {
@@ -74,25 +198,28 @@
           "requete": "Musée des Confluences Lyon"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Parc de la Tête d'Or</b> — 105 hectares, gratuit, idéal pour dégourdir tout le monde {{chien}}",
-        "<b>Théâtres romains de Fourvière</b> — juste à côté de la basilique",
-        "<b>Confluence</b> — architecture contemporaine et bord de l'eau",
-        "<b>Mur des Canuts</b> à la Croix-Rousse"
-      ],
-      "plan_b": "Si le départ dérape ou si l'A6 est saturée : on abandonne Fourvière, dîner simple, coucher tôt. La journée de demain est plus importante.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "À anticiper",
-          "texte": "Réserver l'hébergement et le restaurant. Le Vieux Lyon est pavé : prévoir de porter le chien."
-        }
-      ],
-      "chapitre": "La descente",
       "quiz_controle": "1ctus7g",
-      "ordre": 0,
       "visibilite": "amis",
+      "illustration": [
+        "montagnes",
+        "collines",
+        "clocher",
+        "cypres"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Aire d'autoroute ou pique-nique — l'arrêt long coûte cher un vendredi d'A6",
+          "nom": "Sur la route",
+          "note": "Garder l'appétit pour le soir."
+        },
+        "plat": "Quenelle de brochet, salade lyonnaise, cervelle de canut.",
+        "soir": {
+          "ou": "2 rue de Gadagne, Vieux Lyon",
+          "nom": "Notre Maison",
+          "tel": "+33472417848",
+          "note": "Bouchon authentique, 4,7/5. Ouvert le vendredi soir uniquement à partir de 19 h. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "Les traboules du Vieux Lyon",
@@ -198,27 +325,7 @@
           "requete": "Mur des Canuts Lyon",
           "ordre": 5
         }
-      ],
-      "illustration": [
-        "montagnes",
-        "collines",
-        "clocher",
-        "cypres"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Sur la route",
-          "ou": "Aire d'autoroute ou pique-nique — l'arrêt long coûte cher un vendredi d'A6",
-          "note": "Garder l'appétit pour le soir."
-        },
-        "soir": {
-          "nom": "Notre Maison",
-          "ou": "2 rue de Gadagne, Vieux Lyon",
-          "tel": "+33472417848",
-          "note": "Bouchon authentique, 4,7/5. Ouvert le vendredi soir uniquement à partir de 19 h. Réserver."
-        },
-        "plat": "Quenelle de brochet, salade lyonnaise, cervelle de canut."
-      }
+      ]
     },
     {
       "ancre": "d-0801",
@@ -230,7 +337,6 @@
       "intensite": 3,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Lyon → Turin",
       "accroche": "Le tunnel du Fréjus, le Val de Suse, et une première soirée italienne.",
       "fil": [
@@ -259,12 +365,30 @@
           "texte": "Apéritif turinois : le buffet est compris avec le verre, c'est une institution locale."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Sacra di San Michele</b> — abbaye du X<sup>e</sup> accrochée à un piton rocheux, 40 min avant Turin. Le plus beau détour de la journée {{chien}}",
+        "<b>Parco del Valentino &amp; Borgo Medievale</b> — le long du Pô, reconstitution d'un village médiéval piémontais {{chien}}",
+        "<b>Basilica di Superga</b> — tramway à crémaillère, panorama sur toute la chaîne alpine",
+        "<b>Museo Egizio</b> — le deuxième au monde après Le Caire. Chien refusé, à faire en se relayant"
+      ],
+      "plan_b": "Le 1<sup>er</sup> août est le pic du chassé-croisé italien. Si le tunnel bouchonne, on saute Turin centre et on fait la Sacra di San Michele en arrivant — plus court, plus spectaculaire.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Le tunnel du Fréjus coûte cher (~55 € l'aller). <b>ZTL</b> de Turin : moins active le samedi, mais vérifiez avant de vous engager dans le centre.",
+          "titre": "Attention"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 1,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Turin : parking souterrain sous Via Roma / Piazza San Carlo, au pied de tout ce que vous voulez voir.",
         "ztl": "ZTL centrale active en semaine le matin. En principe inactive le samedi, mais vérifiez la signalisation à l'entrée : les amendes arrivent des mois plus tard.",
-        "reserver": "Ascenseur panoramique de la Mole Antonelliana. Le tunnel du Fréjus coûte environ 55 € l'aller — prévoyez la carte.",
+        "chien": "à gérer",
+        "parking": "Turin : parking souterrain sous Via Roma / Piazza San Carlo, au pied de tout ce que vous voulez voir.",
         "emporter": "Une petite laine : le tunnel débouche à 1 300 m, et le Val de Suse est frais même en août.",
-        "chien": "à gérer"
+        "reserver": "Ascenseur panoramique de la Mole Antonelliana. Le tunnel du Fréjus coûte environ 55 € l'aller — prévoyez la carte."
       },
       "carte": [
         {
@@ -292,25 +416,28 @@
           "requete": "Museo Egizio Torino"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Sacra di San Michele</b> — abbaye du X<sup>e</sup> accrochée à un piton rocheux, 40 min avant Turin. Le plus beau détour de la journée {{chien}}",
-        "<b>Parco del Valentino &amp; Borgo Medievale</b> — le long du Pô, reconstitution d'un village médiéval piémontais {{chien}}",
-        "<b>Basilica di Superga</b> — tramway à crémaillère, panorama sur toute la chaîne alpine",
-        "<b>Museo Egizio</b> — le deuxième au monde après Le Caire. Chien refusé, à faire en se relayant"
-      ],
-      "plan_b": "Le 1<sup>er</sup> août est le pic du chassé-croisé italien. Si le tunnel bouchonne, on saute Turin centre et on fait la Sacra di San Michele en arrivant — plus court, plus spectaculaire.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Attention",
-          "texte": "Le tunnel du Fréjus coûte cher (~55 € l'aller). <b>ZTL</b> de Turin : moins active le samedi, mais vérifiez avant de vous engager dans le centre."
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "17iv5ps",
-      "ordre": 1,
       "visibilite": "amis",
+      "illustration": [
+        "montagnes",
+        "route",
+        "clocher"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Piazza Castello 72, Turin",
+          "nom": "crostone.it",
+          "tel": "+390114299365",
+          "note": "Sandwichs piémontais de qualité, 4,7/5, à deux pas de la Mole. Rapide, pratique le jour d'arrivée."
+        },
+        "plat": "Vitello tonnato, agnolotti del plin, et l'apéritif turinois avec son buffet compris.",
+        "soir": {
+          "ou": "Via Bogino 9, dans le Palazzo Graneri della Roccia",
+          "nom": "Ristorante Circolo dei Lettori",
+          "tel": "+393482416367",
+          "note": "Cuisine piémontaise dans un palais historique, 4,6/5. Fermé lundi et dimanche — le samedi est bon. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "Le Val de Suse, à la sortie du tunnel",
@@ -416,27 +543,7 @@
           "requete": "Parco del Valentino Torino",
           "ordre": 5
         }
-      ],
-      "illustration": [
-        "montagnes",
-        "route",
-        "clocher"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "crostone.it",
-          "ou": "Piazza Castello 72, Turin",
-          "tel": "+390114299365",
-          "note": "Sandwichs piémontais de qualité, 4,7/5, à deux pas de la Mole. Rapide, pratique le jour d'arrivée."
-        },
-        "soir": {
-          "nom": "Ristorante Circolo dei Lettori",
-          "ou": "Via Bogino 9, dans le Palazzo Graneri della Roccia",
-          "tel": "+393482416367",
-          "note": "Cuisine piémontaise dans un palais historique, 4,6/5. Fermé lundi et dimanche — le samedi est bon. Réserver."
-        },
-        "plat": "Vitello tonnato, agnolotti del plin, et l'apéritif turinois avec son buffet compris."
-      }
+      ]
     },
     {
       "ancre": "d-0802",
@@ -448,7 +555,6 @@
       "intensite": 2,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Turin → Salò",
       "accroche": "On pose les valises pour deux semaines.",
       "fil": [
@@ -473,11 +579,22 @@
           "texte": "Dîner sur le lungolago."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Duomo de Salò</b> — façade inachevée en briques, intérieur gothique tardif",
+        "<b>Lido di Salò</b> — la plage municipale, au bout de la promenade",
+        "Repérage pratique : pharmacie, boulangerie, station-service, parking"
+      ],
+      "plan_b": "Journée volontairement molle. Si vous arrivez tard, tout ce qui compte c'est les courses et une bonne nuit — le vrai départ, c'est demain.",
+      "notes": [],
+      "chapitre": null,
+      "ordre": 2,
+      "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Repérez en arrivant où vous garer durablement près de l'appartement : à Salò, la place se raréfie vers 18 h.",
-        "reserver": "Rien aujourd'hui. Mais réservez ce soir le restaurant du 15 août : c'est le seul jour du séjour où vous ne trouverez pas de table.",
         "emporter": "Prévoir de quoi tenir jusqu'au lendemain midi — les courses se feront lundi.",
-        "chien": "facile"
+        "reserver": "Rien aujourd'hui. Mais réservez ce soir le restaurant du 15 août : c'est le seul jour du séjour où vous ne trouverez pas de table."
       },
       "carte": [
         {
@@ -505,18 +622,29 @@
           "requete": "Rocca di Padenghe sul Garda"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Duomo de Salò</b> — façade inachevée en briques, intérieur gothique tardif",
-        "<b>Lido di Salò</b> — la plage municipale, au bout de la promenade",
-        "Repérage pratique : pharmacie, boulangerie, station-service, parking"
-      ],
-      "plan_b": "Journée volontairement molle. Si vous arrivez tard, tout ce qui compte c'est les courses et une bonne nuit — le vrai départ, c'est demain.",
-      "notes": [],
-      "chapitre": null,
       "quiz_controle": "9hvbpd",
-      "ordre": 2,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "route",
+        "lac",
+        "voile"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via del Porto 9, Padenghe sul Garda",
+          "nom": "Ristorante Al Porticciolo",
+          "tel": "+390309173372",
+          "note": "4,8/5, tables sur le port de plaisance, poisson du lac. Service 12 h 30 - 14 h 30 tous les jours. Petite salle : appeler en route pour réserver. Repli sans contrainte d'horaire : Garda Restaurant & Pizza à Desenzano, service continu 11 h 30 - 22 h 30, +390305503933."
+        },
+        "plat": "Le lavarello ou le coregone, poissons du lac de Garde.",
+        "soir": {
+          "ou": "Lungolago Zanardelli 64, Salò",
+          "nom": "Lungolago 64",
+          "tel": "+390365290030",
+          "note": "Pizzeria au bord de l'eau, sans façon, ouverte le dimanche. Parfait pour un premier soir sans ambition."
+        }
+      },
       "observations": [
         {
           "ou": "Les collines, en approchant du lac",
@@ -622,28 +750,7 @@
           "requete": "Porto di Padenghe sul Garda",
           "ordre": 5
         }
-      ],
-      "illustration": [
-        "collines",
-        "route",
-        "lac",
-        "voile"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Ristorante Al Porticciolo",
-          "ou": "Via del Porto 9, Padenghe sul Garda",
-          "tel": "+390309173372",
-          "note": "4,8/5, tables sur le port de plaisance, poisson du lac. Service 12 h 30 - 14 h 30 tous les jours. Petite salle : appeler en route pour réserver. Repli sans contrainte d'horaire : Garda Restaurant & Pizza à Desenzano, service continu 11 h 30 - 22 h 30, +390305503933."
-        },
-        "soir": {
-          "nom": "Lungolago 64",
-          "ou": "Lungolago Zanardelli 64, Salò",
-          "tel": "+390365290030",
-          "note": "Pizzeria au bord de l'eau, sans façon, ouverte le dimanche. Parfait pour un premier soir sans ambition."
-        },
-        "plat": "Le lavarello ou le coregone, poissons du lac de Garde."
-      }
+      ]
     },
     {
       "ancre": "d-0803",
@@ -655,7 +762,6 @@
       "intensite": 2,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Le Vittoriale, à dix minutes de chez vous",
       "accroche": "Acclimatation. On commence par le plus étrange monument du lac.",
       "fil": [
@@ -680,11 +786,33 @@
           "texte": "Retour à Salò. Baignade, sieste, marché."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Isola del Garda</b> — visite guidée de la villa vénitienne néogothique et de ses jardins en terrasses, départ en bateau depuis San Felice ou Salò. Sur réservation, ~2 h 30",
+        "<b>MuSa</b>, musée de Salò — l'histoire de la République de Salò, sobre et bien fait",
+        "<b>Villa Alba</b> et son parc, à Gardone"
+      ],
+      "plan_b": "S'il fait déjà 36° : Vittoriale le matin uniquement, puis journée eau. Le jardin Heller se reporte facilement.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Le Carrefour Market ouvre dès 7 h, tous les jours — pas de problème de fermeture le lundi matin. Les surgelés en dernier : la voiture restera au soleil pendant le Vittoriale.",
+          "titre": "Courses"
+        },
+        {
+          "ton": "alerte",
+          "texte": "Admis en laisse dans le parc du Vittoriale, <b>pas dans la maison</b>. Se relayer pour la visite intérieure (45 min). Billets à réserver en ligne, les créneaux partent vite en août.",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": "Quatorze jours autour du lac",
+      "ordre": 3,
+      "anniversaire": false,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Parking payant à l'entrée du Vittoriale, en contrebas. Arrivez tôt : il sature vers 10 h 30 en août.",
-        "reserver": "Billets en ligne, créneaux horaires pour la Prioria. Ils partent vite.",
         "emporter": "Le parc est en pente forte et pavé : chaussures fermées. Sacs de courses réutilisables — les sacs sont payants en Italie. Prévoir de la place dans le coffre.",
-        "chien": "à gérer"
+        "reserver": "Billets en ligne, créneaux horaires pour la Prioria. Ils partent vite."
       },
       "carte": [
         {
@@ -712,29 +840,29 @@
           "requete": "Carrefour Market Salò Via Eugenio Montale"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Isola del Garda</b> — visite guidée de la villa vénitienne néogothique et de ses jardins en terrasses, départ en bateau depuis San Felice ou Salò. Sur réservation, ~2 h 30",
-        "<b>MuSa</b>, musée de Salò — l'histoire de la République de Salò, sobre et bien fait",
-        "<b>Villa Alba</b> et son parc, à Gardone"
-      ],
-      "plan_b": "S'il fait déjà 36° : Vittoriale le matin uniquement, puis journée eau. Le jardin Heller se reporte facilement.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Courses",
-          "texte": "Le Carrefour Market ouvre dès 7 h, tous les jours — pas de problème de fermeture le lundi matin. Les surgelés en dernier : la voiture restera au soleil pendant le Vittoriale."
-        },
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Admis en laisse dans le parc du Vittoriale, <b>pas dans la maison</b>. Se relayer pour la visite intérieure (45 min). Billets à réserver en ligne, les créneaux partent vite en août."
-        }
-      ],
-      "chapitre": "Quatorze jours autour du lac",
       "quiz_controle": "2sdgfq",
-      "ordre": 3,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "cypres",
+        "chateau",
+        "lac"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via Trieste 16, Gardone Riviera",
+          "nom": "Il Fiore di Zucca",
+          "tel": "+393382868788",
+          "note": "4,6/5, terrasse sous les feuillages. ATTENTION : ouvre à 19 h — pour un déjeuner, préférer un bar du lungolago de Gardone."
+        },
+        "plat": "Tagliatelle al ragù, et l'huile d'olive du Garda — l'une des plus septentrionales du monde.",
+        "soir": {
+          "ou": "Corso della Repubblica 34, Gardone Riviera",
+          "nom": "Ristorante La Taverna",
+          "tel": "+393896617889",
+          "note": "4,8/5, la meilleure note du secteur. Tenu par un couple, petite salle : réserver impérativement."
+        }
+      },
       "observations": [
         {
           "ou": "Le navire Puglia",
@@ -847,28 +975,7 @@
           "requete": "Carrefour Market Salò Via Eugenio Montale",
           "ordre": 5
         }
-      ],
-      "illustration": [
-        "collines",
-        "cypres",
-        "chateau",
-        "lac"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Il Fiore di Zucca",
-          "ou": "Via Trieste 16, Gardone Riviera",
-          "tel": "+393382868788",
-          "note": "4,6/5, terrasse sous les feuillages. ATTENTION : ouvre à 19 h — pour un déjeuner, préférer un bar du lungolago de Gardone."
-        },
-        "soir": {
-          "nom": "Ristorante La Taverna",
-          "ou": "Corso della Repubblica 34, Gardone Riviera",
-          "tel": "+393896617889",
-          "note": "4,8/5, la meilleure note du secteur. Tenu par un couple, petite salle : réserver impérativement."
-        },
-        "plat": "Tagliatelle al ragù, et l'huile d'olive du Garda — l'une des plus septentrionales du monde."
-      }
+      ]
     },
     {
       "ancre": "d-0804",
@@ -880,7 +987,6 @@
       "intensite": 4,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Vérone",
       "accroche": "La grande ville la plus proche. On la fait tôt dans le séjour, tant que l'énergie est neuve.",
       "fil": [
@@ -917,12 +1023,30 @@
           "texte": "Dîner à Vérone. Retour vers 21 h 30."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Basilica di San Zeno Maggiore</b> — portes de bronze romanes du XII<sup>e</sup> et triptyque de Mantegna. La plus belle église de Vérone, et la moins fréquentée",
+        "<b>Museo di Castelvecchio</b> — autant pour les collections que pour l'aménagement de <b>Carlo Scarpa</b>, un monument de l'architecture du XX<sup>e</sup>",
+        "<b>Ponte Pietra</b> — le pont romain, à traverser à pied au coucher du soleil",
+        "<b>Duomo</b> et son <i>Assomption</i> du Titien"
+      ],
+      "plan_b": "<b>Canicule</b> : Vérone le matin uniquement, puis remontée dans les <b>collines de la Valpolicella</b> l'après-midi — vignes en terrasses, villas vénitiennes, dégustation d'Amarone. Il y fait 4-5° de moins et le paysage est superbe.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "<b>ZTL très stricte</b> à Vérone, caméras partout. Se garer au <b>Parcheggio Arena / Cittadella</b> ou <b>Centro Porta Palio</b> et tout faire à pied. Le centre est plat et compact. {{chien}}",
+          "titre": "Attention"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 4,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Parcheggio Cittadella (Piazza Cittadella) : 750 places sur plusieurs niveaux, ouvert 24h/24, juste avant Piazza Bra. Cher, et plein dès la fin de matinée en août. Repli à 5 min de plus et moins cher : Parcheggio Arena (SABA), côté Campo Marzo.",
         "ztl": "Stricte. Portiques à caméras sur Piazza Bra, Piazza delle Erbe et tout le pourtour de l'Arena. Les deux parkings sont juste en dehors : ne franchissez aucun portique.",
-        "reserver": "Arena (visite de jour) et Torre dei Lamberti. Le Giardino Giusti se réserve aussi en haute saison.",
+        "chien": "à gérer",
+        "parking": "Parcheggio Cittadella (Piazza Cittadella) : 750 places sur plusieurs niveaux, ouvert 24h/24, juste avant Piazza Bra. Cher, et plein dès la fin de matinée en août. Repli à 5 min de plus et moins cher : Parcheggio Arena (SABA), côté Campo Marzo.",
         "emporter": "Chapeaux — Piazza Bra et l'Arena sont sans une ombre. Le sac du chien pour l'Arena et la tour.",
-        "chien": "à gérer"
+        "reserver": "Arena (visite de jour) et Torre dei Lamberti. Le Giardino Giusti se réserve aussi en haute saison."
       },
       "carte": [
         {
@@ -958,25 +1082,29 @@
           "requete": "Valpolicella colline vigneti"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Basilica di San Zeno Maggiore</b> — portes de bronze romanes du XII<sup>e</sup> et triptyque de Mantegna. La plus belle église de Vérone, et la moins fréquentée",
-        "<b>Museo di Castelvecchio</b> — autant pour les collections que pour l'aménagement de <b>Carlo Scarpa</b>, un monument de l'architecture du XX<sup>e</sup>",
-        "<b>Ponte Pietra</b> — le pont romain, à traverser à pied au coucher du soleil",
-        "<b>Duomo</b> et son <i>Assomption</i> du Titien"
-      ],
-      "plan_b": "<b>Canicule</b> : Vérone le matin uniquement, puis remontée dans les <b>collines de la Valpolicella</b> l'après-midi — vignes en terrasses, villas vénitiennes, dégustation d'Amarone. Il y fait 4-5° de moins et le paysage est superbe.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Attention",
-          "texte": "<b>ZTL très stricte</b> à Vérone, caméras partout. Se garer au <b>Parcheggio Arena / Cittadella</b> ou <b>Centro Porta Palio</b> et tout faire à pied. Le centre est plat et compact. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "13shoel",
-      "ordre": 4,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "clocher",
+        "pont",
+        "chateau"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via Duomo 7, Vérone",
+          "nom": "Osteria Trattoria Al Duomo",
+          "tel": "+390458004505",
+          "note": "4,6/5, cuisine véronaise authentique. Fermé jeudi et dimanche — le mardi est bon. Réserver la veille."
+        },
+        "plat": "Pastissada de caval, bigoli con ragù d'asino, risotto all'Amarone.",
+        "soir": {
+          "ou": "Vicolo Regina d'Ungheria 5, Vérone",
+          "nom": "Trattoria al Pompiere",
+          "tel": "+390458030537",
+          "note": "4,6/5, institution véronaise, charcuteries maison, 300 vins. Fermé le dimanche. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "L'Ala, Piazza Bra",
@@ -1096,28 +1224,7 @@
           "requete": "Castelvecchio Verona",
           "ordre": 5
         }
-      ],
-      "illustration": [
-        "collines",
-        "clocher",
-        "pont",
-        "chateau"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Osteria Trattoria Al Duomo",
-          "ou": "Via Duomo 7, Vérone",
-          "tel": "+390458004505",
-          "note": "4,6/5, cuisine véronaise authentique. Fermé jeudi et dimanche — le mardi est bon. Réserver la veille."
-        },
-        "soir": {
-          "nom": "Trattoria al Pompiere",
-          "ou": "Vicolo Regina d'Ungheria 5, Vérone",
-          "tel": "+390458030537",
-          "note": "4,6/5, institution véronaise, charcuteries maison, 300 vins. Fermé le dimanche. Réserver."
-        },
-        "plat": "Pastissada de caval, bigoli con ragù d'asino, risotto all'Amarone."
-      }
+      ]
     },
     {
       "ancre": "d-0805",
@@ -1129,7 +1236,6 @@
       "intensite": 4,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Le haut lac : Varone, Tenno, Ponale",
       "accroche": "La plus belle journée nature du séjour, et elle est à une heure de chez vous.",
       "fil": [
@@ -1158,11 +1264,29 @@
           "texte": "Riva del Garda : la place Tre Novembre, la Torre Apponale, une glace."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Valle di Ledro</b> — lac alpin et <b>palafittes néolithiques UNESCO</b>, musée sur pilotis. Eau plus fraîche que le Garda",
+        "<b>Bastione di Riva</b> — ascenseur panoramique dans la roche, jusqu'au bastion vénitien qui surplombe la ville",
+        "<b>Castel Drena</b> et les <b>Marmitte dei Giganti</b> — marmites glaciaires",
+        "<b>Torbole</b> — le spot de planche à voile du haut lac, spectacle garanti l'après-midi quand l'Ora se lève"
+      ],
+      "plan_b": "Si le Ponale est trop exposé : baignade au <b>lac de Tenno</b> ou de <b>Ledro</b>, tous deux nettement plus frais que le Garda. Aucune perte.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Journée 100 % compatible, tout est en extérieur. Prévoir beaucoup d'eau et éviter la roche brûlante en milieu de journée. {{chien}}",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 5,
+      "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Cascata del Varone : parking payant à l'entrée. Ponale : se garer à Riva, vers Porto San Nicolò, et partir à pied.",
-        "reserver": "Rien. C'est une journée qui s'improvise.",
         "emporter": "Maillots — Tenno et Ledro sont bien plus frais que le Garda. Un coupe-vent pour la gorge du Varone : il y fait froid et humide en permanence. Chaussures fermées pour le Ponale.",
-        "chien": "facile"
+        "reserver": "Rien. C'est une journée qui s'improvise."
       },
       "carte": [
         {
@@ -1202,25 +1326,29 @@
           "requete": "Torbole sul Garda"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Valle di Ledro</b> — lac alpin et <b>palafittes néolithiques UNESCO</b>, musée sur pilotis. Eau plus fraîche que le Garda",
-        "<b>Bastione di Riva</b> — ascenseur panoramique dans la roche, jusqu'au bastion vénitien qui surplombe la ville",
-        "<b>Castel Drena</b> et les <b>Marmitte dei Giganti</b> — marmites glaciaires",
-        "<b>Torbole</b> — le spot de planche à voile du haut lac, spectacle garanti l'après-midi quand l'Ora se lève"
-      ],
-      "plan_b": "Si le Ponale est trop exposé : baignade au <b>lac de Tenno</b> ou de <b>Ledro</b>, tous deux nettement plus frais que le Garda. Aucune perte.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Journée 100 % compatible, tout est en extérieur. Prévoir beaucoup d'eau et éviter la roche brûlante en milieu de journée. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "1018myw",
-      "ordre": 5,
       "visibilite": "amis",
+      "illustration": [
+        "montagnes",
+        "rocher",
+        "lac",
+        "pin"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via Fiume 28, Riva del Garda",
+          "nom": "Ristorante Pizzeria Leon d'Oro",
+          "tel": "+390464552341",
+          "note": "4,7/5 sur plus de 9 000 avis, ouvert tous les jours en continu de 11 h 30. Nonna Sandra accueille elle-même."
+        },
+        "plat": "Carne salada, canederli, strangolapreti — la cuisine du Trentin, très différente de celle du lac.",
+        "soir": {
+          "ou": "Via dei Disciplini 30, Riva del Garda",
+          "nom": "Osteria degli Artisti",
+          "tel": "+393297411982",
+          "note": "Pâtes fraîches, ambiance moins touristique, ouvert tous les jours."
+        }
+      },
       "observations": [
         {
           "ou": "La gorge de la Cascata del Varone",
@@ -1326,28 +1454,7 @@
           "requete": "Riva del Garda centro storico",
           "ordre": 4
         }
-      ],
-      "illustration": [
-        "montagnes",
-        "rocher",
-        "lac",
-        "pin"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Ristorante Pizzeria Leon d'Oro",
-          "ou": "Via Fiume 28, Riva del Garda",
-          "tel": "+390464552341",
-          "note": "4,7/5 sur plus de 9 000 avis, ouvert tous les jours en continu de 11 h 30. Nonna Sandra accueille elle-même."
-        },
-        "soir": {
-          "nom": "Osteria degli Artisti",
-          "ou": "Via dei Disciplini 30, Riva del Garda",
-          "tel": "+393297411982",
-          "note": "Pâtes fraîches, ambiance moins touristique, ouvert tous les jours."
-        },
-        "plat": "Carne salada, canederli, strangolapreti — la cuisine du Trentin, très différente de celle du lac."
-      }
+      ]
     },
     {
       "ancre": "d-0806",
@@ -1359,7 +1466,6 @@
       "intensite": 4,
       "star": true,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Modène &amp; la Motor Valley",
       "accroche": "La journée que vous ne pouviez pas ne pas faire. Placée un jeudi : Maranello est moins saturé qu'en week-end.",
       "fil": [
@@ -1392,12 +1498,30 @@
           "texte": "Dîner à Modène. Retour vers 22 h 30."
         }
       ],
+      "options_titre": "Alternatives à l'après-midi",
+      "options": [
+        "<b>Museo Enzo Ferrari</b>, à Modène même — la maison natale, ~1 h 15, plus biographique qu'automobile. Zéro détour, et le <b>Musei Ferrari Pass combiné revient à 42 €</b> en juin-août. Mais c'est le moins spectaculaire des deux",
+        "<b>Museo Pagani</b>, San Cesario sul Panaro — confidentiel, artisanal, une poignée de voitures. Créneaux rares, réservation obligatoire",
+        "<b>Rocca di Vignola</b> — château du XV siècle, entrée libre, chapelle à fresques. 30 min, sur la route entre Maranello et Modène",
+        "<b>Casa Museo Pavarotti</b> — sa villa laissée en l'état. Un contrepoint bienvenu après six heures de voitures"
+      ],
+      "plan_b": "Si le rythme dérape ou s'il fait 38° : <b>on saute l'acetaia et Castelvetro</b>. Arrivée à Modène centre vers 15 h 30, journée détendue, retour à Salò pour 20 h 30.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Les deux musées Ferrari acceptent les <b>petits chiens tenus dans les bras ou en sac de transport</b> pendant toute la visite. Maranello a même des niches gardées à l'ombre du jardin, derrière la cafétéria. <b>Réserver Maranello dès maintenant</b> : mi-août est saturé. Mercato Albinelli fermé en fin d'après-midi — ne construisez pas la journée dessus.",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 6,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Maranello : parking du musée, devant l'entrée. Modène : Parcheggio Novi Sad, grande surface juste hors ZTL, 10 min à pied de Piazza Grande.",
         "ztl": "Modène : ZTL sur tout le centre historique. Novi Sad est juste en dehors — n'allez pas plus loin en voiture.",
-        "reserver": "Musée Ferrari Maranello : réservé. Acetaia : réservation obligatoire, à faire à l'avance — beaucoup n'ouvrent que le matin.",
+        "chien": "à gérer",
+        "parking": "Maranello : parking du musée, devant l'entrée. Modène : Parcheggio Novi Sad, grande surface juste hors ZTL, 10 min à pied de Piazza Grande.",
         "emporter": "Le sac de transport du chien — obligatoire à l'intérieur des deux musées Ferrari.",
-        "chien": "à gérer"
+        "reserver": "Musée Ferrari Maranello : réservé. Acetaia : réservation obligatoire, à faire à l'avance — beaucoup n'ouvrent que le matin."
       },
       "carte": [
         {
@@ -1425,25 +1549,28 @@
           "requete": "Casa Museo Luciano Pavarotti Modena"
         }
       ],
-      "options_titre": "Alternatives à l'après-midi",
-      "options": [
-        "<b>Museo Enzo Ferrari</b>, à Modène même — la maison natale, ~1 h 15, plus biographique qu'automobile. Zéro détour, et le <b>Musei Ferrari Pass combiné revient à 42 €</b> en juin-août. Mais c'est le moins spectaculaire des deux",
-        "<b>Museo Pagani</b>, San Cesario sul Panaro — confidentiel, artisanal, une poignée de voitures. Créneaux rares, réservation obligatoire",
-        "<b>Rocca di Vignola</b> — château du XV siècle, entrée libre, chapelle à fresques. 30 min, sur la route entre Maranello et Modène",
-        "<b>Casa Museo Pavarotti</b> — sa villa laissée en l'état. Un contrepoint bienvenu après six heures de voitures"
-      ],
-      "plan_b": "Si le rythme dérape ou s'il fait 38° : <b>on saute l'acetaia et Castelvetro</b>. Arrivée à Modène centre vers 15 h 30, journée détendue, retour à Salò pour 20 h 30.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Les deux musées Ferrari acceptent les <b>petits chiens tenus dans les bras ou en sac de transport</b> pendant toute la visite. Maranello a même des niches gardées à l'ombre du jardin, derrière la cafétéria. <b>Réserver Maranello dès maintenant</b> : mi-août est saturé. Mercato Albinelli fermé en fin d'après-midi — ne construisez pas la journée dessus."
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "208sy1",
-      "ordre": 6,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "route",
+        "clocher"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via XX Settembre 3, Fiorano Modenese",
+          "nom": "Ristorante Montana",
+          "tel": "+390536843910",
+          "note": "4,7/5. Pas de menu écrit le midi : le serveur annonce le jour. Repaire historique des pilotes, Schumacher y était habitué. RÉSERVATION OBLIGATOIRE, ils refusent sans."
+        },
+        "plat": "Tortellini in brodo, gnocco fritto, tigelle, et le balsamique traditionnel vieilli.",
+        "soir": {
+          "ou": "Via Donzi 7, Modène centre",
+          "nom": "Trattoria Il Fantino",
+          "tel": "+39059223646",
+          "note": "4,4/5, à deux pas de Piazza Grande. Fermé le lundi — le jeudi est bon. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "Façade du Duomo, panneaux de Wiligelmo",
@@ -1584,27 +1711,7 @@
           "requete": "Castelvetro di Modena centro",
           "ordre": 8
         }
-      ],
-      "illustration": [
-        "collines",
-        "route",
-        "clocher"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Ristorante Montana",
-          "ou": "Via XX Settembre 3, Fiorano Modenese",
-          "tel": "+390536843910",
-          "note": "4,7/5. Pas de menu écrit le midi : le serveur annonce le jour. Repaire historique des pilotes, Schumacher y était habitué. RÉSERVATION OBLIGATOIRE, ils refusent sans."
-        },
-        "soir": {
-          "nom": "Trattoria Il Fantino",
-          "ou": "Via Donzi 7, Modène centre",
-          "tel": "+39059223646",
-          "note": "4,4/5, à deux pas de Piazza Grande. Fermé le lundi — le jeudi est bon. Réserver."
-        },
-        "plat": "Tortellini in brodo, gnocco fritto, tigelle, et le balsamique traditionnel vieilli."
-      }
+      ]
     },
     {
       "ancre": "d-0807",
@@ -1616,7 +1723,6 @@
       "intensite": 1,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Valtenesi, baignade — et repérage de l'éclipse",
       "accroche": "Journée de récupération après Modène. Avec une mission discrète en fin de soirée.",
       "fil": [
@@ -1641,11 +1747,28 @@
           "texte": "Coucher de soleil. C'est presque le même azimut que le 12 — ce que vous voyez ce soir, c'est ce que vous verrez mercredi prochain."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Rocca di Lonato</b> — deuxième candidat pour l'éclipse : plus haut, forteresse dominant directement la plaine du Pô, horizon ouest le plus dégagé du secteur. <b>À tester ce soir aussi</b>, et vérifier l'accès en soirée",
+        "<b>Dégustation</b> de Valtènesi (le rosé local, le Chiaretto) ou de Lugana",
+        "<b>Castello di Padenghe</b> — enceinte médiévale habitée, gratuite"
+      ],
+      "plan_b": "Journée piscine et lac pure, sans bouger. Mais gardez le repérage du soir : c'est cinq jours avant l'éclipse, et c'est ce qui fera la différence entre voir le spectacle et le rater derrière une colline.",
+      "notes": [
+        {
+          "ton": "soleil",
+          "texte": "Avec un soleil à 4-6° de hauteur le 12 août, une colline anodine à trois kilomètres suffit à tout gâcher. Le repérage ne se remplace pas par une carte. {{chien}}",
+          "titre": "Pourquoi ce soir"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 7,
+      "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Parking au pied de la Rocca di Manerba, côté parc. Le soir, pour le repérage, il se vide.",
-        "reserver": "Rien à réserver. Mais vérifier l'accès en soirée à la Rocca di Lonato : c'est le second spot envisagé pour l'éclipse du 12.",
         "emporter": "Maillots. Et pour le soir : une application de position du Soleil, et de quoi photographier l'horizon ouest depuis chaque point testé.",
-        "chien": "facile"
+        "reserver": "Rien à réserver. Mais vérifier l'accès en soirée à la Rocca di Lonato : c'est le second spot envisagé pour l'éclipse du 12."
       },
       "carte": [
         {
@@ -1665,24 +1788,29 @@
           "requete": "Castello di Padenghe sul Garda"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Rocca di Lonato</b> — deuxième candidat pour l'éclipse : plus haut, forteresse dominant directement la plaine du Pô, horizon ouest le plus dégagé du secteur. <b>À tester ce soir aussi</b>, et vérifier l'accès en soirée",
-        "<b>Dégustation</b> de Valtènesi (le rosé local, le Chiaretto) ou de Lugana",
-        "<b>Castello di Padenghe</b> — enceinte médiévale habitée, gratuite"
-      ],
-      "plan_b": "Journée piscine et lac pure, sans bouger. Mais gardez le repérage du soir : c'est cinq jours avant l'éclipse, et c'est ce qui fera la différence entre voir le spectacle et le rater derrière une colline.",
-      "notes": [
-        {
-          "ton": "soleil",
-          "titre": "Pourquoi ce soir",
-          "texte": "Avec un soleil à 4-6° de hauteur le 12 août, une colline anodine à trois kilomètres suffit à tout gâcher. Le repérage ne se remplace pas par une carte. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "h1zc42",
-      "ordre": 7,
       "visibilite": "amis",
+      "illustration": [
+        "lac",
+        "vagues",
+        "voile",
+        "cypres"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Piazzale Porto Dusano 3, Manerba del Garda",
+          "nom": "Osteria Da Marì con cucina",
+          "tel": "+390365551236",
+          "note": "4,4/5, terrasse directement sur l'eau, poisson du lac. Fermé le mercredi — le vendredi est bon."
+        },
+        "plat": "Le Chiaretto de Valtènesi, rosé de macération courte, et le Lugana blanc.",
+        "soir": {
+          "ou": "Via Campagnola 45, Manerba del Garda",
+          "nom": "Osteria Dalie e Fagioli",
+          "tel": "+393342233360",
+          "note": "4,3/5, Bib Gourmand Michelin, desserts maison remarquables. Ouvert tous les jours."
+        }
+      },
       "observations": [
         {
           "ou": "Le nom de la Rocca",
@@ -1778,28 +1906,7 @@
           "requete": "cantine Valtenesi Chiaretto",
           "ordre": 5
         }
-      ],
-      "illustration": [
-        "lac",
-        "vagues",
-        "voile",
-        "cypres"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Osteria Da Marì con cucina",
-          "ou": "Piazzale Porto Dusano 3, Manerba del Garda",
-          "tel": "+390365551236",
-          "note": "4,4/5, terrasse directement sur l'eau, poisson du lac. Fermé le mercredi — le vendredi est bon."
-        },
-        "soir": {
-          "nom": "Osteria Dalie e Fagioli",
-          "ou": "Via Campagnola 45, Manerba del Garda",
-          "tel": "+393342233360",
-          "note": "4,3/5, Bib Gourmand Michelin, desserts maison remarquables. Ouvert tous les jours."
-        },
-        "plat": "Le Chiaretto de Valtènesi, rosé de macération courte, et le Lugana blanc."
-      }
+      ]
     },
     {
       "ancre": "d-0808",
@@ -1811,7 +1918,6 @@
       "intensite": 4,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Dolomites de Brenta &amp; Val di Genova",
       "accroche": "La journée altitude. Un samedi d'août, la montagne est infiniment plus calme que le lac.",
       "fil": [
@@ -1836,11 +1942,29 @@
           "texte": "Redescente. Retour Salò vers 20 h 30."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Téléphérique Pinzolo — Doss del Sabion</b> : 2 100 m, panorama frontal sur le Brenta",
+        "<b>Cascate di Vallesinella</b>, au-dessus de Madonna di Campiglio — trois cascades en enfilade, boucle d'1 h 30",
+        "<b>Lago di Tovel</b> — plus sauvage, plus loin, sublime",
+        "<b>Madonna di Campiglio</b> pour un café et une promenade en station"
+      ],
+      "plan_b": "<b>Orage d'après-midi</b> — très fréquent en montagne en août. Si le ciel se charge, on redescend sur Molveno ou on rentre plus tôt. Ne jamais s'entêter dans une vallée fermée.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "10 à 15° de moins qu'au bord du lac : prendre une petite laine, même en août. Chaussures fermées. {{chien}}",
+          "titre": "À prévoir"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 8,
+      "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "L'accès en voiture au Val di Genova est réglementé en été, avec navette depuis Carisolo au-delà d'un certain point. À vérifier la veille : les modalités changent chaque saison.",
-        "reserver": "Rien, sauf si vous visez un refuge pour déjeuner un samedi d'août.",
         "emporter": "Une polaire pour tout le monde, même par 35° au bord du lac : il fera 10 à 15° de moins. Chaussures fermées. Maillots pour Molveno, l'eau est glaciale.",
-        "chien": "facile"
+        "reserver": "Rien, sauf si vous visez un refuge pour déjeuner un samedi d'août."
       },
       "carte": [
         {
@@ -1872,25 +1996,28 @@
           "requete": "Lago di Tovel"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Téléphérique Pinzolo — Doss del Sabion</b> : 2 100 m, panorama frontal sur le Brenta",
-        "<b>Cascate di Vallesinella</b>, au-dessus de Madonna di Campiglio — trois cascades en enfilade, boucle d'1 h 30",
-        "<b>Lago di Tovel</b> — plus sauvage, plus loin, sublime",
-        "<b>Madonna di Campiglio</b> pour un café et une promenade en station"
-      ],
-      "plan_b": "<b>Orage d'après-midi</b> — très fréquent en montagne en août. Si le ciel se charge, on redescend sur Molveno ou on rentre plus tôt. Ne jamais s'entêter dans une vallée fermée.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "À prévoir",
-          "texte": "10 à 15° de moins qu'au bord du lac : prendre une petite laine, même en août. Chaussures fermées. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "19q9i79",
-      "ordre": 8,
       "visibilite": "amis",
+      "illustration": [
+        "montagnes",
+        "rocher",
+        "pin"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Località Ritorto, au-dessus de Pinzolo",
+          "nom": "Rifugio Malga Ritorto",
+          "tel": "+393496398070",
+          "note": "4,4/5, cuisine de montagne, terrasse face au Brenta. Ouvert tous les jours dès 9 h."
+        },
+        "plat": "Polenta, canederli, cerf, et le strudel aux pommes.",
+        "soir": {
+          "ou": "Via Lungolago 7A, Molveno",
+          "nom": "Osteria del Maso",
+          "tel": "+390461586345",
+          "note": "4,7/5, produits locaux du Trentin, gibier. Ouvert tous les jours. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "Cascata di Nardis",
@@ -1996,27 +2123,7 @@
           "requete": "Lago di Molveno",
           "ordre": 5
         }
-      ],
-      "illustration": [
-        "montagnes",
-        "rocher",
-        "pin"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Rifugio Malga Ritorto",
-          "ou": "Località Ritorto, au-dessus de Pinzolo",
-          "tel": "+393496398070",
-          "note": "4,4/5, cuisine de montagne, terrasse face au Brenta. Ouvert tous les jours dès 9 h."
-        },
-        "soir": {
-          "nom": "Osteria del Maso",
-          "ou": "Via Lungolago 7A, Molveno",
-          "tel": "+390461586345",
-          "note": "4,7/5, produits locaux du Trentin, gibier. Ouvert tous les jours. Réserver."
-        },
-        "plat": "Polenta, canederli, cerf, et le strudel aux pommes."
-      }
+      ]
     },
     {
       "ancre": "d-0809",
@@ -2028,7 +2135,6 @@
       "intensite": 1,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Le lac, depuis l'eau",
       "accroche": "Après la montagne, une journée sans voiture. Le lac se comprend mieux vu du milieu.",
       "fil": [
@@ -2053,11 +2159,28 @@
           "texte": "Dîner tranquille."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Isola del Garda</b> — visite guidée de la villa néogothique vénitienne et des jardins en terrasses, ~2 h 30, sur réservation. Si vous ne l'avez pas faite le 3",
+        "<b>Navigazione Lago di Garda</b> — les bateaux publics vers Sirmione, Gardone, Maderno. Les chiens y sont admis",
+        "<b>Toscolano-Maderno</b> et sa <b>Valle delle Cartiere</b> — vallée des anciennes papeteries, ombragée et fraîche, méconnue"
+      ],
+      "plan_b": "Journée plage pure : Lido di Salò le matin, Baia del Vento l'après-midi. C'est la journée la plus facile à sacrifier, et la plus facile à étirer.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Le bateau sans permis résout élégamment tous les problèmes de la journée. Sinon, les chiens sont admis sur les bateaux publics, en laisse avec muselière en poche. {{chien}}",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 9,
+      "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Journée sans voiture : tout part du port de Salò.",
-        "reserver": "Le bateau sans permis se réserve la veille en août. Puissance limitée, pièce d'identité demandée, gilets fournis.",
         "emporter": "Crème solaire haute protection — sur l'eau, la réverbération double tout. De l'ombre pour le chien à bord.",
-        "chien": "facile"
+        "reserver": "Le bateau sans permis se réserve la veille en août. Puissance limitée, pièce d'identité demandée, gilets fournis."
       },
       "carte": [
         {
@@ -2081,24 +2204,28 @@
           "requete": "Valle delle Cartiere Toscolano Maderno"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Isola del Garda</b> — visite guidée de la villa néogothique vénitienne et des jardins en terrasses, ~2 h 30, sur réservation. Si vous ne l'avez pas faite le 3",
-        "<b>Navigazione Lago di Garda</b> — les bateaux publics vers Sirmione, Gardone, Maderno. Les chiens y sont admis",
-        "<b>Toscolano-Maderno</b> et sa <b>Valle delle Cartiere</b> — vallée des anciennes papeteries, ombragée et fraîche, méconnue"
-      ],
-      "plan_b": "Journée plage pure : Lido di Salò le matin, Baia del Vento l'après-midi. C'est la journée la plus facile à sacrifier, et la plus facile à étirer.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Le bateau sans permis résout élégamment tous les problèmes de la journée. Sinon, les chiens sont admis sur les bateaux publics, en laisse avec muselière en poche. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "1jf0drc",
-      "ordre": 9,
       "visibilite": "amis",
+      "illustration": [
+        "montagnes",
+        "lac",
+        "vagues",
+        "voile"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "À acheter la veille — c'est le meilleur déjeuner de la semaine",
+          "nom": "Pique-nique à bord",
+          "note": "Sinon escale à Gardone ou San Felice."
+        },
+        "plat": "Les garganelli du Gallo, et le poisson de lac grillé.",
+        "soir": {
+          "ou": "Via S. Firmina 25, Salò",
+          "nom": "Osteria Al Gallo",
+          "tel": "+390365525944",
+          "note": "4,4/5, tables dans un jardin, très bon rapport qualité-prix. Fermé le mardi ; ouvert le dimanche midi ET soir. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "La forme du lac, vue du milieu",
@@ -2197,27 +2324,7 @@
           "requete": "Limonaia del Castèl Limone sul Garda",
           "ordre": 4
         }
-      ],
-      "illustration": [
-        "montagnes",
-        "lac",
-        "vagues",
-        "voile"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Pique-nique à bord",
-          "ou": "À acheter la veille — c'est le meilleur déjeuner de la semaine",
-          "note": "Sinon escale à Gardone ou San Felice."
-        },
-        "soir": {
-          "nom": "Osteria Al Gallo",
-          "ou": "Via S. Firmina 25, Salò",
-          "tel": "+390365525944",
-          "note": "4,4/5, tables dans un jardin, très bon rapport qualité-prix. Fermé le mardi ; ouvert le dimanche midi ET soir. Réserver."
-        },
-        "plat": "Les garganelli du Gallo, et le poisson de lac grillé."
-      }
+      ]
     },
     {
       "ancre": "d-0810",
@@ -2229,7 +2336,6 @@
       "intensite": 4,
       "star": true,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Parme &amp; le Labyrinthe de la Masone",
       "accroche": "Placée un lundi : le Labirinto est ouvert (il ferme le mardi), et on évite la foule du week-end.",
       "fil": [
@@ -2266,12 +2372,30 @@
           "texte": "Retour. Arrivée Salò vers 22 h 30."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Castello di Torrechiara</b> (20 min au sud) — château perché, <i>Camera d'Oro</i>, vue sur les collines parmesanes. <b>C'est votre respiration paysage sur cette journée</b>, en remplacement d'un monument urbain",
+        "<b>Camera di San Paolo</b> — un plafond du Corrège dans un ancien couvent, presque vide de visiteurs",
+        "<b>Crémone</b>, sur la route du retour — Museo del Violino (Stradivari, Amati, Guarneri, avec auditions d'instruments) et le Torrazzo, plus haut campanile en briques d'Europe",
+        "<b>Une fromagerie Parmigiano Reggiano</b> — magnifique, mais ça se visite vers 8 h du matin. Incompatible avec le reste de la journée"
+      ],
+      "plan_b": "Si le Labirinto est complet ou fermé : <b>Crémone</b> le matin à la place (elle est littéralement sur la route), et Parme l'après-midi comme prévu. Vous ne perdez que 20 minutes de trajet.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Le Labirinto est annoncé <b>fermé le mardi</b> par le site officiel, mais une autre source indique le jeudi : <b>confirmez avant de bloquer la date</b>. Horaire d'été 10 h 30 – 19 h, caisses fermées à 18 h, <b>réservation en ligne obligatoire</b> (~18-20 €, 12 € pour les 6-12 ans), parking gratuit. Duomo et Baptistère de Parme ferment vers 18 h 30 — d'où l'ordre labyrinthe puis ville. ZTL à Parme.",
+          "titre": "À vérifier absolument"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 10,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Fontanellato : parking gratuit devant l'entrée du Labirinto. Parme : Parcheggio Toschi, souterrain, à deux pas de la Pilotta et hors ZTL.",
         "ztl": "Parme : ZTL sur le centre historique. Depuis le Toschi, tout se fait à pied.",
-        "reserver": "Labirinto della Masone : réservation en ligne obligatoire. Confirmer le jour de fermeture avant de bloquer la date.",
+        "chien": "à gérer",
+        "parking": "Fontanellato : parking gratuit devant l'entrée du Labirinto. Parme : Parcheggio Toschi, souterrain, à deux pas de la Pilotta et hors ZTL.",
         "emporter": "Casquettes et beaucoup d'eau : 3 km de labyrinthe en plein soleil, dans la plaine du Pô.",
-        "chien": "à gérer"
+        "reserver": "Labirinto della Masone : réservation en ligne obligatoire. Confirmer le jour de fermeture avant de bloquer la date."
       },
       "carte": [
         {
@@ -2307,25 +2431,29 @@
           "requete": "Cremona centro Torrazzo"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Castello di Torrechiara</b> (20 min au sud) — château perché, <i>Camera d'Oro</i>, vue sur les collines parmesanes. <b>C'est votre respiration paysage sur cette journée</b>, en remplacement d'un monument urbain",
-        "<b>Camera di San Paolo</b> — un plafond du Corrège dans un ancien couvent, presque vide de visiteurs",
-        "<b>Crémone</b>, sur la route du retour — Museo del Violino (Stradivari, Amati, Guarneri, avec auditions d'instruments) et le Torrazzo, plus haut campanile en briques d'Europe",
-        "<b>Une fromagerie Parmigiano Reggiano</b> — magnifique, mais ça se visite vers 8 h du matin. Incompatible avec le reste de la journée"
-      ],
-      "plan_b": "Si le Labirinto est complet ou fermé : <b>Crémone</b> le matin à la place (elle est littéralement sur la route), et Parme l'après-midi comme prévu. Vous ne perdez que 20 minutes de trajet.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "À vérifier absolument",
-          "texte": "Le Labirinto est annoncé <b>fermé le mardi</b> par le site officiel, mais une autre source indique le jeudi : <b>confirmez avant de bloquer la date</b>. Horaire d'été 10 h 30 – 19 h, caisses fermées à 18 h, <b>réservation en ligne obligatoire</b> (~18-20 €, 12 € pour les 6-12 ans), parking gratuit. Duomo et Baptistère de Parme ferment vers 18 h 30 — d'où l'ordre labyrinthe puis ville. ZTL à Parme."
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "6ntzzu",
-      "ordre": 10,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "vigne",
+        "clocher",
+        "chateau"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via Luigi Sanvitale 42, Fontanellato",
+          "nom": "Cibarium Salsamenteria",
+          "tel": "+390521821675",
+          "note": "4,6/5, planches de charcuterie et torta fritta, à 3 min de la Rocca. Fermé le jeudi — le lundi est bon."
+        },
+        "plat": "Culatello, torta fritta, tortelli d'erbetta, et le Lambrusco sec.",
+        "soir": {
+          "ou": "Strada Conservatorio 1, Parme",
+          "nom": "Trattoria Corrieri",
+          "tel": "+390521234426",
+          "note": "4,5/5, institution parmesane, ouverte tous les jours de midi à minuit. Le prosciutto y est exceptionnel."
+        }
+      },
       "observations": [
         {
           "ou": "Coupole du Duomo, l'Assomption du Corrège",
@@ -2466,28 +2594,7 @@
           "requete": "Rocca Sanvitale Fontanellato",
           "ordre": 8
         }
-      ],
-      "illustration": [
-        "collines",
-        "vigne",
-        "clocher",
-        "chateau"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Cibarium Salsamenteria",
-          "ou": "Via Luigi Sanvitale 42, Fontanellato",
-          "tel": "+390521821675",
-          "note": "4,6/5, planches de charcuterie et torta fritta, à 3 min de la Rocca. Fermé le jeudi — le lundi est bon."
-        },
-        "soir": {
-          "nom": "Trattoria Corrieri",
-          "ou": "Strada Conservatorio 1, Parme",
-          "tel": "+390521234426",
-          "note": "4,5/5, institution parmesane, ouverte tous les jours de midi à minuit. Le prosciutto y est exceptionnel."
-        },
-        "plat": "Culatello, torta fritta, tortelli d'erbetta, et le Lambrusco sec."
-      }
+      ]
     },
     {
       "ancre": "d-0811",
@@ -2499,7 +2606,6 @@
       "intensite": 3,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Brescia &amp; Franciacorta",
       "accroche": "Une journée courte en distance, qui finit dans une réserve naturelle au coucher du soleil.",
       "fil": [
@@ -2528,12 +2634,30 @@
           "texte": "Dîner sur place ou retour à Salò."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Castello di Brescia</b> — colline du Cidneo, panorama sur toute la ville",
+        "<b>Monte Isola</b> sur le lac d'Iseo — la plus grande île lacustre d'Europe, <b>sans voitures</b>, tour à pied ou en bateau",
+        "<b>Rocca d'Anfo</b> — immense forteresse napoléonienne à flanc de montagne, au-dessus du lac d'Idro. Visite guidée uniquement",
+        "<b>Lago d'Idro</b> — plus sauvage et bien moins fréquenté que le Garda"
+      ],
+      "plan_b": "S'il fait trop chaud pour une ville : on saute Brescia et on passe la journée entière en Franciacorta et aux Torbiere. C'est frais, vert, et au bord de l'eau.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "ZTL à Brescia. Les Torbiere del Sebino sont un parcours plat sur passerelles, parfait avec un chien tenu en laisse. {{chien}}",
+          "titre": "Attention"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 11,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Se garer en périphérie du centre de Brescia et finir à pied ou en métro : la ligne dessert le centre historique.",
         "ztl": "ZTL sur le centre de Brescia. Ne vous y engagez pas.",
-        "reserver": "Billet combiné Santa Giulia + Parc archéologique. Réservez la dégustation en Franciacorta : en août, les domaines reçoivent sur rendez-vous.",
+        "chien": "à gérer",
+        "parking": "Se garer en périphérie du centre de Brescia et finir à pied ou en métro : la ligne dessert le centre historique.",
         "emporter": "Chaussures confortables pour les passerelles des Torbiere. Anti-moustiques pour la fin de journée au bord de l'eau.",
-        "chien": "à gérer"
+        "reserver": "Billet combiné Santa Giulia + Parc archéologique. Réservez la dégustation en Franciacorta : en août, les domaines reçoivent sur rendez-vous."
       },
       "carte": [
         {
@@ -2569,25 +2693,29 @@
           "requete": "Lago d'Idro"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Castello di Brescia</b> — colline du Cidneo, panorama sur toute la ville",
-        "<b>Monte Isola</b> sur le lac d'Iseo — la plus grande île lacustre d'Europe, <b>sans voitures</b>, tour à pied ou en bateau",
-        "<b>Rocca d'Anfo</b> — immense forteresse napoléonienne à flanc de montagne, au-dessus du lac d'Idro. Visite guidée uniquement",
-        "<b>Lago d'Idro</b> — plus sauvage et bien moins fréquenté que le Garda"
-      ],
-      "plan_b": "S'il fait trop chaud pour une ville : on saute Brescia et on passe la journée entière en Franciacorta et aux Torbiere. C'est frais, vert, et au bord de l'eau.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Attention",
-          "texte": "ZTL à Brescia. Les Torbiere del Sebino sont un parcours plat sur passerelles, parfait avec un chien tenu en laisse. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "dejr0r",
-      "ordre": 11,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "vigne",
+        "clocher",
+        "chateau"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via X Giornate 4, Brescia",
+          "nom": "La Vineria",
+          "tel": "+39030280543",
+          "note": "4,4/5, terrasse avec vue sur Piazza della Loggia, menu déjeuner à prix doux. Fermé lundi et dimanche — le mardi est bon. Les chiens y sont bien accueillis d'après les avis."
+        },
+        "plat": "Casoncelli bresciani au Bagòss, manzo all'olio, et un Franciacorta brut.",
+        "soir": {
+          "ou": "Via per Monterotondo 24, Provaglio d'Iseo",
+          "nom": "Al Dossello",
+          "tel": "+393922095064",
+          "note": "4,6/5, terrasse au milieu des vignes de Franciacorta, à 10 min des Torbiere. Ouvert tous les jours. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "La Vittoria Alata",
@@ -2714,28 +2842,7 @@
           "requete": "Franciacorta cantine Erbusco",
           "ordre": 7
         }
-      ],
-      "illustration": [
-        "collines",
-        "vigne",
-        "clocher",
-        "chateau"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "La Vineria",
-          "ou": "Via X Giornate 4, Brescia",
-          "tel": "+39030280543",
-          "note": "4,4/5, terrasse avec vue sur Piazza della Loggia, menu déjeuner à prix doux. Fermé lundi et dimanche — le mardi est bon. Les chiens y sont bien accueillis d'après les avis."
-        },
-        "soir": {
-          "nom": "Al Dossello",
-          "ou": "Via per Monterotondo 24, Provaglio d'Iseo",
-          "tel": "+393922095064",
-          "note": "4,6/5, terrasse au milieu des vignes de Franciacorta, à 10 min des Torbiere. Ouvert tous les jours. Réserver."
-        },
-        "plat": "Casoncelli bresciani au Bagòss, manzo all'olio, et un Franciacorta brut."
-      }
+      ]
     },
     {
       "ancre": "d-0812",
@@ -2747,7 +2854,6 @@
       "intensite": 2,
       "star": true,
       "eclipse": true,
-      "anniversaire": false,
       "titre": "Éclipse solaire",
       "accroche": "Toute la journée reste dans le bassin sud du lac, pour qu'aucun bouchon ne puisse vous séparer du spot.",
       "fil": [
@@ -2780,12 +2886,28 @@
           "texte": "Coucher de soleil dans la foulée. Retour à Salò en 20 minutes."
         }
       ],
+      "options_titre": "Les deux spots",
+      "options": [
+        "<b>Rocca di Manerba</b> (20 min) — promontoire dégagé à 360°, vue sur le lac au sud-est et sur la plaine de Brescia à l'ouest. Accessible avec le chien. Repéré le 7 août",
+        "<b>Rocca di Lonato</b> (30 min) — <b>mon favori sur le papier</b> : plus haut, forteresse dominant directement la plaine du Pô, horizon ouest le plus dégagé de tout le secteur. Accès en soirée à confirmer"
+      ],
+      "plan_b": "<b>Le vrai risque, c'est la météo</b> — la plaine du Pô est sujette aux violents orages de chaleur en soirée d'été. Surveillez les prévisions 48 h avant. Si l'ouest est bouché au ras du sol, le repli est de <b>monter en altitude</b> — Tremosine ou le Monte Baldo — pour passer au-dessus de la couche basse. Décision à prendre le matin même, pas à 19 h.",
+      "notes": [
+        {
+          "ton": "soleil",
+          "texte": "Lunettes certifiées <b>ISO 12312-2</b> pour tout le monde, à commander maintenant : les stocks fondent à l'approche de la date. <b>Filtre solaire indispensable</b> pour tout appareil photo ou téléphone — sans filtre adapté, le capteur peut être endommagé définitivement. Et vérifiez l'azimut exact du maximum avec une application d'éclipse : avec 4° de hauteur, une colline de rien du tout à trois kilomètres vous fait tout rater.",
+          "titre": "Matériel"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 12,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Sirmione : se garer avant la presqu'île, elle est fermée aux voitures. Le soir : au spot, avant 19 h, vous ne serez pas seuls.",
         "ztl": "Presqu'île de Sirmione interdite aux véhicules non autorisés.",
-        "reserver": "Grotte di Catullo. Et surtout : les lunettes ISO 12312-2 pour cinq, plus un filtre solaire d'appareil photo, à commander bien avant.",
+        "chien": "facile",
+        "parking": "Sirmione : se garer avant la presqu'île, elle est fermée aux voitures. Le soir : au spot, avant 19 h, vous ne serez pas seuls.",
         "emporter": "Lunettes d'éclipse, filtre photo, pique-nique, sièges, une laine pour le soir. Vérifiez la météo 48 h avant : c'est le vrai risque.",
-        "chien": "facile"
+        "reserver": "Grotte di Catullo. Et surtout : les lunettes ISO 12312-2 pour cinq, plus un filtre solaire d'appareil photo, à commander bien avant."
       },
       "carte": [
         {
@@ -2809,23 +2931,23 @@
           "requete": "Rocca di Lonato del Garda"
         }
       ],
-      "options_titre": "Les deux spots",
-      "options": [
-        "<b>Rocca di Manerba</b> (20 min) — promontoire dégagé à 360°, vue sur le lac au sud-est et sur la plaine de Brescia à l'ouest. Accessible avec le chien. Repéré le 7 août",
-        "<b>Rocca di Lonato</b> (30 min) — <b>mon favori sur le papier</b> : plus haut, forteresse dominant directement la plaine du Pô, horizon ouest le plus dégagé de tout le secteur. Accès en soirée à confirmer"
-      ],
-      "plan_b": "<b>Le vrai risque, c'est la météo</b> — la plaine du Pô est sujette aux violents orages de chaleur en soirée d'été. Surveillez les prévisions 48 h avant. Si l'ouest est bouché au ras du sol, le repli est de <b>monter en altitude</b> — Tremosine ou le Monte Baldo — pour passer au-dessus de la couche basse. Décision à prendre le matin même, pas à 19 h.",
-      "notes": [
-        {
-          "ton": "soleil",
-          "titre": "Matériel",
-          "texte": "Lunettes certifiées <b>ISO 12312-2</b> pour tout le monde, à commander maintenant : les stocks fondent à l'approche de la date. <b>Filtre solaire indispensable</b> pour tout appareil photo ou téléphone — sans filtre adapté, le capteur peut être endommagé définitivement. Et vérifiez l'azimut exact du maximum avec une application d'éclipse : avec 4° de hauteur, une colline de rien du tout à trois kilomètres vous fait tout rater."
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "n2hcua",
-      "ordre": 12,
       "visibilite": "amis",
+      "illustration": null,
+      "manger": {
+        "midi": {
+          "ou": "Via XXV Aprile 71, Sirmione",
+          "nom": "Ristorante Casa dei Pescatori",
+          "tel": "+390309196107",
+          "note": "4,3/5, tables au bord de l'eau, ouvert tous les jours — la plupart des tables de Sirmione ferment le mercredi."
+        },
+        "plat": "Les olives et l'huile de Sirmione, et un Lugana bien frais pour l'apéritif du spot.",
+        "soir": {
+          "ou": "Rocca di Manerba ou Rocca di Lonato",
+          "nom": "Pique-nique au spot d'éclipse",
+          "note": "Le soir de l'éclipse, ne pas dépendre d'un restaurant : le maximum est à 20 h 20 et il faut être installé à 19 h. Acheter de quoi dîner sur place l'après-midi à Desenzano."
+        }
+      },
       "observations": [
         {
           "ou": "Sous un arbre, pendant l'éclipse",
@@ -2931,21 +3053,7 @@
           "requete": "Rocca di Manerba del Garda",
           "ordre": 4
         }
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Ristorante Casa dei Pescatori",
-          "ou": "Via XXV Aprile 71, Sirmione",
-          "tel": "+390309196107",
-          "note": "4,3/5, tables au bord de l'eau, ouvert tous les jours — la plupart des tables de Sirmione ferment le mercredi."
-        },
-        "soir": {
-          "nom": "Pique-nique au spot d'éclipse",
-          "ou": "Rocca di Manerba ou Rocca di Lonato",
-          "note": "Le soir de l'éclipse, ne pas dépendre d'un restaurant : le maximum est à 20 h 20 et il faut être installé à 19 h. Acheter de quoi dîner sur place l'après-midi à Desenzano."
-        },
-        "plat": "Les olives et l'huile de Sirmione, et un Lugana bien frais pour l'apéritif du spot."
-      }
+      ]
     },
     {
       "ancre": "d-0813",
@@ -2957,7 +3065,6 @@
       "intensite": 4,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Milan",
       "accroche": "En août, Milan se vide de ses habitants. C'est fluide, respirable — et à moitié fermé. Les deux à la fois.",
       "fil": [
@@ -2990,12 +3097,31 @@
           "texte": "<b>Aperitivo</b> milanais sur les Navigli, puis dîner. Retour vers 22 h."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>San Maurizio al Monastero Maggiore</b> — la « chapelle Sixtine de Milan », entièrement fresquée, gratuite, et presque vide. Le meilleur rapport émotion/effort de la ville",
+        "<b>Museo Nazionale Scienza e Tecnologia Leonardo da Vinci</b> — sous-marin visitable, machines de Vinci. Excellent pour des ados",
+        "<b>Pinacoteca di Brera</b> et le quartier de Brera",
+        "<b>Fondazione Prada</b> — architecture contemporaine, la Tour et le Bar Luce de Wes Anderson",
+        "<b>Cenacolo Vinciano</b> (<i>La Cène</i>) — <b>réservation des mois à l'avance, très probablement complet</b>. À tenter, mais n'y comptez pas"
+      ],
+      "plan_b": "Si Milan vous semble trop lourd le jour venu : <b>Mantoue</b> (1 h 15) est un remplacement de très haut niveau — UNESCO, Palazzo Ducale et la <i>Camera degli Sposi</i> de Mantegna, Palazzo Te et la Sala dei Giganti, le tout entouré de trois lacs.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "<b>Area C</b>, le péage urbain du centre de Milan, est actif en semaine. Garez-vous à un parking-relais (<b>Lampugnano</b>, <b>Molino Dorino</b>, <b>Cascina Gobba</b>) et prenez le métro : c'est moins cher, plus rapide, et sans stress. Le chien voyage en sac dans le métro. Terrasses du Duomo : billet séparé à réserver, ascenseur ou escalier.",
+          "titre": "Attention"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 13,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Area C : péage urbain en semaine sur le centre. Se garer à un parking-relais — Lampugnano, Molino Dorino ou Cascina Gobba — puis métro.",
         "ztl": "N'entrez pas en voiture dans le centre. Le métro fait tout, et le chien y voyage en sac.",
-        "reserver": "Terrasses du Duomo : billet séparé, à réserver. Cenacolo Vinciano : des mois à l'avance, très probablement complet.",
+        "chien": "à gérer",
+        "parking": "Area C : péage urbain en semaine sur le centre. Se garer à un parking-relais — Lampugnano, Molino Dorino ou Cascina Gobba — puis métro.",
         "emporter": "Épaules et genoux couverts : le Duomo applique un code vestimentaire, refus à l'entrée sinon. Sac du chien pour le métro.",
-        "chien": "à gérer"
+        "reserver": "Terrasses du Duomo : billet séparé, à réserver. Cenacolo Vinciano : des mois à l'avance, très probablement complet."
       },
       "carte": [
         {
@@ -3039,26 +3165,29 @@
           "requete": "Palazzo Te Mantova"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>San Maurizio al Monastero Maggiore</b> — la « chapelle Sixtine de Milan », entièrement fresquée, gratuite, et presque vide. Le meilleur rapport émotion/effort de la ville",
-        "<b>Museo Nazionale Scienza e Tecnologia Leonardo da Vinci</b> — sous-marin visitable, machines de Vinci. Excellent pour des ados",
-        "<b>Pinacoteca di Brera</b> et le quartier de Brera",
-        "<b>Fondazione Prada</b> — architecture contemporaine, la Tour et le Bar Luce de Wes Anderson",
-        "<b>Cenacolo Vinciano</b> (<i>La Cène</i>) — <b>réservation des mois à l'avance, très probablement complet</b>. À tenter, mais n'y comptez pas"
-      ],
-      "plan_b": "Si Milan vous semble trop lourd le jour venu : <b>Mantoue</b> (1 h 15) est un remplacement de très haut niveau — UNESCO, Palazzo Ducale et la <i>Camera degli Sposi</i> de Mantegna, Palazzo Te et la Sala dei Giganti, le tout entouré de trois lacs.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Attention",
-          "texte": "<b>Area C</b>, le péage urbain du centre de Milan, est actif en semaine. Garez-vous à un parking-relais (<b>Lampugnano</b>, <b>Molino Dorino</b>, <b>Cascina Gobba</b>) et prenez le métro : c'est moins cher, plus rapide, et sans stress. Le chien voyage en sac dans le métro. Terrasses du Duomo : billet séparé à réserver, ascenseur ou escalier."
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "1o24mr1",
-      "ordre": 13,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "clocher",
+        "chateau",
+        "pont"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via Casale 4, Milan",
+          "nom": "Osteria da Fortunata Navigli",
+          "tel": "+390245472283",
+          "note": "4,6/5, pâtes fraîches faites en vitrine, ouvert tous les jours de midi à 1 h. File d'attente fréquente, pas de réservation."
+        },
+        "plat": "Risotto alla milanese au safran, ossobuco, cotoletta.",
+        "soir": {
+          "ou": "Via Elia Lombardini 1, Milan",
+          "nom": "Damm-atrà Ristorante Milanese",
+          "tel": "+390258111224",
+          "note": "4,4/5, cuisine milanaise classique à 10 min des Navigli, moins touristique. Réserver — souvent complet."
+        }
+      },
       "observations": [
         {
           "ou": "Saint Barthélemy écorché, transept droit du Duomo",
@@ -3192,28 +3321,7 @@
           "requete": "Navigli Milano",
           "ordre": 8
         }
-      ],
-      "illustration": [
-        "collines",
-        "clocher",
-        "chateau",
-        "pont"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Osteria da Fortunata Navigli",
-          "ou": "Via Casale 4, Milan",
-          "tel": "+390245472283",
-          "note": "4,6/5, pâtes fraîches faites en vitrine, ouvert tous les jours de midi à 1 h. File d'attente fréquente, pas de réservation."
-        },
-        "soir": {
-          "nom": "Damm-atrà Ristorante Milanese",
-          "ou": "Via Elia Lombardini 1, Milan",
-          "tel": "+390258111224",
-          "note": "4,4/5, cuisine milanaise classique à 10 min des Navigli, moins touristique. Réserver — souvent complet."
-        },
-        "plat": "Risotto alla milanese au safran, ossobuco, cotoletta."
-      }
+      ]
     },
     {
       "ancre": "d-0814",
@@ -3225,7 +3333,6 @@
       "intensite": 3,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "La Forra, Tremosine, Limone",
       "accroche": "La route la plus spectaculaire du lac, et un balcon à 350 mètres au-dessus de l'eau.",
       "fil": [
@@ -3254,12 +3361,30 @@
           "texte": "Retour par la Gardesana au coucher du soleil, quand la falaise vire à l'orange."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Santuario di Montecastello</b>, Tignale — un autre balcon spectaculaire, sanctuaire accroché à un éperon rocheux",
+        "<b>Campione del Garda</b> — spot de kitesurf coincé au pied d'une falaise verticale, décor irréel",
+        "<b>Punta Larici</b> — randonnée panoramique au-dessus de Riva, l'une des plus belles vues du lac",
+        "<b>Monte Baldo</b> par le téléphérique de Malcesine — cabines rotatives, 1 760 m, panorama sur les Dolomites"
+      ],
+      "plan_b": "La <b>Strada della Forra</b> est parfois fermée, en sens alterné, ou interdite aux véhicules larges — <b>vérifiez avant de partir</b>. Repli : montée à <b>Tignale</b> par la route normale, avec le Santuario di Montecastello. Presque aussi beau, sans le stress.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Journée entièrement en extérieur. Attention aux dénivelés en plein soleil sur le sentier de Limone. {{chien}}",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 14,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Se garer à Pieve di Tremosine, puis tout à pied. Limone : parkings à l'entrée du village, il est piéton.",
         "ztl": "La Strada della Forra est étroite, parfois en sens alterné, et interdite aux véhicules larges. Vérifiez l'état et le sens la veille — sinon, montez par Tignale.",
-        "reserver": "Rien à réserver. Mais vérifier la veille l'état et le sens de circulation de la Strada della Forra.",
+        "chien": "facile",
+        "parking": "Se garer à Pieve di Tremosine, puis tout à pied. Limone : parkings à l'entrée du village, il est piéton.",
         "emporter": "Maillots pour Limone. La Terrazza del Brivido est un plancher de verre au-dessus du vide : prévenez ceux que ça angoisse.",
-        "chien": "facile"
+        "reserver": "Rien à réserver. Mais vérifier la veille l'état et le sens de circulation de la Strada della Forra."
       },
       "carte": [
         {
@@ -3291,25 +3416,29 @@
           "requete": "Funivia Malcesine Monte Baldo"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Santuario di Montecastello</b>, Tignale — un autre balcon spectaculaire, sanctuaire accroché à un éperon rocheux",
-        "<b>Campione del Garda</b> — spot de kitesurf coincé au pied d'une falaise verticale, décor irréel",
-        "<b>Punta Larici</b> — randonnée panoramique au-dessus de Riva, l'une des plus belles vues du lac",
-        "<b>Monte Baldo</b> par le téléphérique de Malcesine — cabines rotatives, 1 760 m, panorama sur les Dolomites"
-      ],
-      "plan_b": "La <b>Strada della Forra</b> est parfois fermée, en sens alterné, ou interdite aux véhicules larges — <b>vérifiez avant de partir</b>. Repli : montée à <b>Tignale</b> par la route normale, avec le Santuario di Montecastello. Presque aussi beau, sans le stress.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Journée entièrement en extérieur. Attention aux dénivelés en plein soleil sur le sentier de Limone. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "cmw1kk",
-      "ordre": 14,
       "visibilite": "amis",
+      "illustration": [
+        "montagnes",
+        "rocher",
+        "lac",
+        "route"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via Benaco 22, Tremosine sul Garda",
+          "nom": "Ristorante Pizzeria Brasa",
+          "tel": "+390365918119",
+          "note": "4,6/5, souvent cité comme la meilleure table de la rive ouest. Fermé le lundi — le vendredi est bon."
+        },
+        "plat": "Tout ce qui est au citron de Limone — et la trota du lac.",
+        "soir": {
+          "ou": "Via Fontana 2, Limone sul Garda",
+          "nom": "Hostaria Al Buongusto",
+          "tel": "+390365388123",
+          "note": "4,7/5, jardin à l'écart de la route, ouvert tous les jours. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "La Strada della Forra",
@@ -3422,28 +3551,7 @@
           "requete": "Gardesana Occidentale SS45bis",
           "ordre": 5
         }
-      ],
-      "illustration": [
-        "montagnes",
-        "rocher",
-        "lac",
-        "route"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Ristorante Pizzeria Brasa",
-          "ou": "Via Benaco 22, Tremosine sul Garda",
-          "tel": "+390365918119",
-          "note": "4,6/5, souvent cité comme la meilleure table de la rive ouest. Fermé le lundi — le vendredi est bon."
-        },
-        "soir": {
-          "nom": "Hostaria Al Buongusto",
-          "ou": "Via Fontana 2, Limone sul Garda",
-          "tel": "+390365388123",
-          "note": "4,7/5, jardin à l'écart de la route, ouvert tous les jours. Réserver."
-        },
-        "plat": "Tout ce qui est au citron de Limone — et la trota du lac."
-      }
+      ]
     },
     {
       "ancre": "d-0815",
@@ -3455,7 +3563,6 @@
       "intensite": 2,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Ferragosto — on ne prend pas la route",
       "accroche": "Le 15 août tombe un samedi. Fête nationale + week-end : le pire cumul de l'été italien.",
       "fil": [
@@ -3480,11 +3587,29 @@
           "texte": "Dîner à la maison, ou restaurant <b>réservé dès votre arrivée à Salò</b>."
         }
       ],
+      "options_titre": "Variantes selon l'envie",
+      "options": [
+        "<b>Monte Pizzocolo</b> (1 582 m) — le sommet qui domine Salò, depuis Sanico. Sportif : 4-5 h aller-retour, mais la vue sur tout le lac est la meilleure du secteur",
+        "<b>Monte San Bartolomeo</b> (620 m) — version courte, 1 h 30 de montée, vue plongeante sur le golfe de Salò",
+        "<b>Sentiero delle Cascate</b> à Vobarno — court, ombragé, avec des vasques",
+        "Rester strictement à Salò : lungolago tôt le matin, puis maison"
+      ],
+      "plan_b": "Ne pas bouger du tout. Sincèrement, c'est une option valable ce jour-là. Vous êtes au bord d'un des plus beaux lacs d'Europe : profitez-en pendant que les autres sont dans les bouchons.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Entre 10 h et 20 h, les routes du lac sont impraticables. Beaucoup de commerces ferment. <b>Réservez le restaurant du soir dès votre arrivée le 2 août</b>, ou prévoyez de dîner chez vous. Faites les courses la veille.",
+          "titre": "Le jour à ne pas rater"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 15,
+      "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Se garer à Toscolano-Maderno, à l'entrée de la vallée, et remonter à pied. Arrivez avant 9 h : ensuite, plus une place nulle part sur le lac.",
-        "reserver": "Le restaurant du soir, s'il n'est pas déjà pris depuis le 2 août.",
         "emporter": "Rien de spécial : la vallée est plate et ombragée. C'est le seul endroit frais du lac aujourd'hui.",
-        "chien": "facile"
+        "reserver": "Le restaurant du soir, s'il n'est pas déjà pris depuis le 2 août."
       },
       "carte": [
         {
@@ -3504,25 +3629,28 @@
           "requete": "Sentiero delle Cascate Vobarno"
         }
       ],
-      "options_titre": "Variantes selon l'envie",
-      "options": [
-        "<b>Monte Pizzocolo</b> (1 582 m) — le sommet qui domine Salò, depuis Sanico. Sportif : 4-5 h aller-retour, mais la vue sur tout le lac est la meilleure du secteur",
-        "<b>Monte San Bartolomeo</b> (620 m) — version courte, 1 h 30 de montée, vue plongeante sur le golfe de Salò",
-        "<b>Sentiero delle Cascate</b> à Vobarno — court, ombragé, avec des vasques",
-        "Rester strictement à Salò : lungolago tôt le matin, puis maison"
-      ],
-      "plan_b": "Ne pas bouger du tout. Sincèrement, c'est une option valable ce jour-là. Vous êtes au bord d'un des plus beaux lacs d'Europe : profitez-en pendant que les autres sont dans les bouchons.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Le jour à ne pas rater",
-          "texte": "Entre 10 h et 20 h, les routes du lac sont impraticables. Beaucoup de commerces ferment. <b>Réservez le restaurant du soir dès votre arrivée le 2 août</b>, ou prévoyez de dîner chez vous. Faites les courses la veille."
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "1dn09it",
-      "ordre": 15,
       "visibilite": "amis",
+      "illustration": [
+        "lac",
+        "cypres",
+        "voile",
+        "olivier"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Courses faites la veille — impératif",
+          "nom": "À la maison",
+          "note": "Le 15 août, ne comptez sur aucune table sans réservation."
+        },
+        "plat": "Les pâtes aux myrtilles de la maison — improbable et réussi.",
+        "soir": {
+          "ou": "Via Fratelli Bianchi 41, Toscolano Maderno",
+          "nom": "Osteria Gatto d'Oro",
+          "tel": "+390365540975",
+          "note": "4,5/5, décor excentrique entièrement félin, cuisine soignée, ouvert tous les jours. Les chiens y sont bienvenus d'après les avis. RÉSERVER DÈS VOTRE ARRIVÉE LE 2 AOÛT."
+        }
+      },
       "observations": [
         {
           "ou": "Le nom de la fête",
@@ -3621,27 +3749,7 @@
           "requete": "Toscolano Maderno lungolago",
           "ordre": 4
         }
-      ],
-      "illustration": [
-        "lac",
-        "cypres",
-        "voile",
-        "olivier"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "À la maison",
-          "ou": "Courses faites la veille — impératif",
-          "note": "Le 15 août, ne comptez sur aucune table sans réservation."
-        },
-        "soir": {
-          "nom": "Osteria Gatto d'Oro",
-          "ou": "Via Fratelli Bianchi 41, Toscolano Maderno",
-          "tel": "+390365540975",
-          "note": "4,5/5, décor excentrique entièrement félin, cuisine soignée, ouvert tous les jours. Les chiens y sont bienvenus d'après les avis. RÉSERVER DÈS VOTRE ARRIVÉE LE 2 AOÛT."
-        },
-        "plat": "Les pâtes aux myrtilles de la maison — improbable et réussi."
-      }
+      ]
     },
     {
       "ancre": "d-0816",
@@ -3653,7 +3761,6 @@
       "intensite": 3,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Bergame, ville haute",
       "accroche": "Dernier jour complet. Journée entièrement en extérieur, sans une seule réservation — donc annulable jusqu'à la dernière minute.",
       "fil": [
@@ -3686,12 +3793,29 @@
           "texte": "Dîner, puis retour vers 21 h. Valises."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Accademia Carrara</b> — Bellini, Mantegna, Raphaël, Botticelli. Une des meilleures pinacothèques d'Italie du Nord, jamais bondée",
+        "<b>Città Bassa</b> et le Sentierone — la ville basse, Liberty et élégante",
+        "<b>Orto Botanico</b> — petit jardin suspendu avec vue, gratuit"
+      ],
+      "plan_b": "Deux replis, selon l'humeur du jour. <b>Plus court</b> : <b>Mantoue</b> (1 h 15) — UNESCO, Palazzo Ducale, Palazzo Te, trois lacs autour de la ville, tout est plat. <b>Ou rien du tout</b> : journée lac, valises tranquilles, dîner d'adieu à Salò. Vous ne perdez aucune réservation dans les trois cas.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Journée idéale : tout est en extérieur et <b>les deux funiculaires acceptent les chiens</b>. Pensez à préparer les valises la veille au soir, la route de demain est longue. {{chien}}",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 16,
+      "anniversaire": false,
       "pratique": {
-        "parking": "Ne montez pas en voiture en Città Alta. Se garer en ville basse et prendre le funiculaire depuis Viale Vittorio Emanuele II.",
         "ztl": "Città Alta en ZTL, ruelles étroites et sens uniques. Le funiculaire est la seule bonne réponse.",
-        "reserver": "Rien d'obligatoire. C'est la journée la plus facile à improviser — ou à annuler la veille sans rien perdre.",
+        "chien": "facile",
+        "parking": "Ne montez pas en voiture en Città Alta. Se garer en ville basse et prendre le funiculaire depuis Viale Vittorio Emanuele II.",
         "emporter": "Chaussures confortables : les 6 km de remparts, ce sont des pavés.",
-        "chien": "facile"
+        "reserver": "Rien d'obligatoire. C'est la journée la plus facile à improviser — ou à annuler la veille sans rien perdre."
       },
       "carte": [
         {
@@ -3727,24 +3851,29 @@
           "requete": "Palazzo Te Mantova"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Accademia Carrara</b> — Bellini, Mantegna, Raphaël, Botticelli. Une des meilleures pinacothèques d'Italie du Nord, jamais bondée",
-        "<b>Città Bassa</b> et le Sentierone — la ville basse, Liberty et élégante",
-        "<b>Orto Botanico</b> — petit jardin suspendu avec vue, gratuit"
-      ],
-      "plan_b": "Deux replis, selon l'humeur du jour. <b>Plus court</b> : <b>Mantoue</b> (1 h 15) — UNESCO, Palazzo Ducale, Palazzo Te, trois lacs autour de la ville, tout est plat. <b>Ou rien du tout</b> : journée lac, valises tranquilles, dîner d'adieu à Salò. Vous ne perdez aucune réservation dans les trois cas.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Journée idéale : tout est en extérieur et <b>les deux funiculaires acceptent les chiens</b>. Pensez à préparer les valises la veille au soir, la route de demain est longue. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "t12gcg",
-      "ordre": 16,
       "visibilite": "amis",
+      "illustration": [
+        "montagnes",
+        "collines",
+        "clocher",
+        "chateau"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Vicolo Sant'Agata 19, Bergame haute",
+          "nom": "Circolino Città Alta",
+          "tel": "+39035218568",
+          "note": "4,4/5, immense terrasse-jardin dans une ancienne prison, ouvert tous les jours dès 8 h. Idéal avec le chien."
+        },
+        "plat": "Casoncelli alla bergamasca, scarpinocc, polenta taragna.",
+        "soir": {
+          "ou": "Via Solata 7, Bergame haute",
+          "nom": "Nonna Alda — cucina bergamasca",
+          "tel": "+39035302770",
+          "note": "4,7/5, petite salle, cuisine bergamasque stricte. Ouvert tous les jours. Réserver."
+        }
+      },
       "observations": [
         {
           "ou": "Grille de la Cappella Colleoni",
@@ -3878,28 +4007,7 @@
           "requete": "Accademia Carrara Bergamo",
           "ordre": 7
         }
-      ],
-      "illustration": [
-        "montagnes",
-        "collines",
-        "clocher",
-        "chateau"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Circolino Città Alta",
-          "ou": "Vicolo Sant'Agata 19, Bergame haute",
-          "tel": "+39035218568",
-          "note": "4,4/5, immense terrasse-jardin dans une ancienne prison, ouvert tous les jours dès 8 h. Idéal avec le chien."
-        },
-        "soir": {
-          "nom": "Nonna Alda — cucina bergamasca",
-          "ou": "Via Solata 7, Bergame haute",
-          "tel": "+39035302770",
-          "note": "4,7/5, petite salle, cuisine bergamasque stricte. Ouvert tous les jours. Réserver."
-        },
-        "plat": "Casoncelli alla bergamasca, scarpinocc, polenta taragna."
-      }
+      ]
     },
     {
       "ancre": "d-0817",
@@ -3911,7 +4019,6 @@
       "intensite": 4,
       "star": false,
       "eclipse": false,
-      "anniversaire": true,
       "titre": "Salò → Valbonne",
       "accroche": "La plus longue journée de conduite du séjour — et l'anniversaire des jumeaux le soir.",
       "fil": [
@@ -3936,11 +4043,33 @@
           "texte": "<b>Dîner d'anniversaire</b> au restaurant de l'hôtel, réservé."
         }
       ],
+      "options_titre": "Alternatives de pause",
+      "options": [
+        "<b>Côte ligure</b> — Alassio ou Finale Ligure, pause déjeuner en bord de mer et baignade",
+        "<b>Cuneo</b> — arcades et centre piémontais, pause plus rapide",
+        "Aire d'autoroute pure si vous voulez simplement arriver"
+      ],
+      "plan_b": "Si la fatigue prend le dessus : coupez à Savone ou San Remo pour la nuit, et finissez sur Valbonne le lendemain matin. Vous perdriez la matinée à Valbonne, rien de plus.",
+      "notes": [
+        {
+          "ton": "soleil",
+          "texte": "Les jumeaux. Dîner réservé le soir après une longue journée de route : partir à l'heure le matin.",
+          "titre": "Anniversaire"
+        },
+        {
+          "ton": "alerte",
+          "texte": "Pause toutes les deux heures, jamais seul dans la voiture même cinq minutes à cette période. Vérifiez la clim avant de partir.",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": "La remontée par le sud",
+      "ordre": 17,
+      "anniversaire": true,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Journée de transit. Prévoyez les arrêts plutôt que les parkings.",
-        "reserver": "Restaurant de l'hôtel réservé pour le dîner d'anniversaire.",
         "emporter": "Eau pour tout le monde et pour le chien, à portée de main. Pause toutes les deux heures, jamais le chien seul dans la voiture.",
-        "chien": "à gérer"
+        "reserver": "Restaurant de l'hôtel réservé pour le dîner d'anniversaire."
       },
       "carte": [
         {
@@ -3964,29 +4093,27 @@
           "requete": "Cuneo centro"
         }
       ],
-      "options_titre": "Alternatives de pause",
-      "options": [
-        "<b>Côte ligure</b> — Alassio ou Finale Ligure, pause déjeuner en bord de mer et baignade",
-        "<b>Cuneo</b> — arcades et centre piémontais, pause plus rapide",
-        "Aire d'autoroute pure si vous voulez simplement arriver"
-      ],
-      "plan_b": "Si la fatigue prend le dessus : coupez à Savone ou San Remo pour la nuit, et finissez sur Valbonne le lendemain matin. Vous perdriez la matinée à Valbonne, rien de plus.",
-      "notes": [
-        {
-          "ton": "soleil",
-          "titre": "Anniversaire",
-          "texte": "Les jumeaux. Dîner réservé le soir après une longue journée de route : partir à l'heure le matin."
-        },
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Pause toutes les deux heures, jamais seul dans la voiture même cinq minutes à cette période. Vérifiez la clim avant de partir."
-        }
-      ],
-      "chapitre": "La remontée par le sud",
       "quiz_controle": "1glsbrr",
-      "ordre": 17,
       "visibilite": "amis",
+      "illustration": [
+        "montagnes",
+        "route",
+        "collines"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Via Macrino 8, Alba",
+          "nom": "Osteria dei Sognatori",
+          "tel": "+393889592000",
+          "note": "4,5/5, menu différent chaque jour, très fréquenté par les locaux. Fermé le mardi — le lundi est bon. Détour d'environ 30 min depuis l'A21."
+        },
+        "plat": "Dans les Langhe : tajarin, vitello tonnato, et un Barbera d'Alba.",
+        "soir": {
+          "ou": "Valbonne",
+          "nom": "Restaurant de l'hôtel",
+          "note": "Réservé pour le dîner d'anniversaire des jumeaux."
+        }
+      },
       "observations": [
         {
           "ou": "Les Langhe",
@@ -4071,26 +4198,7 @@
           "requete": "Place des Arcades Valbonne",
           "ordre": 3
         }
-      ],
-      "illustration": [
-        "montagnes",
-        "route",
-        "collines"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Osteria dei Sognatori",
-          "ou": "Via Macrino 8, Alba",
-          "tel": "+393889592000",
-          "note": "4,5/5, menu différent chaque jour, très fréquenté par les locaux. Fermé le mardi — le lundi est bon. Détour d'environ 30 min depuis l'A21."
-        },
-        "soir": {
-          "nom": "Restaurant de l'hôtel",
-          "ou": "Valbonne",
-          "note": "Réservé pour le dîner d'anniversaire des jumeaux."
-        },
-        "plat": "Dans les Langhe : tajarin, vitello tonnato, et un Barbera d'Alba."
-      }
+      ]
     },
     {
       "ancre": "d-0818",
@@ -4102,7 +4210,6 @@
       "intensite": 3,
       "star": false,
       "eclipse": false,
-      "anniversaire": true,
       "titre": "Valbonne → Soumont",
       "accroche": "Journée coupée en deux : un matin en Provence, un après-midi de route, et la fête d'anniversaire des jumeaux le soir.",
       "fil": [
@@ -4127,11 +4234,33 @@
           "texte": "<b>Fête d'anniversaire</b> chez les grands-parents."
         }
       ],
+      "options_titre": "Alternatives de pause",
+      "options": [
+        "<b>Aix-en-Provence</b> — cours Mirabeau, vieille ville, si vous préférez une pause urbaine",
+        "<b>Aigues-Mortes</b> — remparts médiévaux intacts au milieu des salins, détour d'environ 30 min",
+        "<b>Nîmes</b> — arènes romaines et Maison Carrée, sur la route"
+      ],
+      "plan_b": "Si vous voulez arriver tôt : départ à 9 h de Valbonne sans traîner, aucun arrêt, arrivée pour 14 h. Le Pont du Gard se refait facilement depuis Soumont dans les jours suivants (1 h 15).",
+      "notes": [
+        {
+          "ton": "soleil",
+          "texte": "Fête le soir chez les grands-parents, à Soumont : prévoir un cadeau et ne pas traîner en route.",
+          "titre": "Anniversaire"
+        },
+        {
+          "ton": "alerte",
+          "texte": "Le site du Pont du Gard accepte les chiens tenus en laisse sur les espaces extérieurs. Ombre rare : y aller plutôt en fin d'après-midi.",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 18,
+      "anniversaire": true,
       "pratique": {
+        "chien": "facile",
         "parking": "Pont du Gard : parkings payants sur les deux rives, celui de la rive gauche est plus proche de l'aqueduc.",
-        "reserver": "Rien. Le site du Pont du Gard se prend à l'entrée.",
         "emporter": "Maillots pour le Gardon. Chapeaux : le site est très exposé, l'ombre est rare.",
-        "chien": "facile"
+        "reserver": "Rien. Le site du Pont du Gard se prend à l'entrée."
       },
       "carte": [
         {
@@ -4159,29 +4288,28 @@
           "requete": "Arènes de Nîmes"
         }
       ],
-      "options_titre": "Alternatives de pause",
-      "options": [
-        "<b>Aix-en-Provence</b> — cours Mirabeau, vieille ville, si vous préférez une pause urbaine",
-        "<b>Aigues-Mortes</b> — remparts médiévaux intacts au milieu des salins, détour d'environ 30 min",
-        "<b>Nîmes</b> — arènes romaines et Maison Carrée, sur la route"
-      ],
-      "plan_b": "Si vous voulez arriver tôt : départ à 9 h de Valbonne sans traîner, aucun arrêt, arrivée pour 14 h. Le Pont du Gard se refait facilement depuis Soumont dans les jours suivants (1 h 15).",
-      "notes": [
-        {
-          "ton": "soleil",
-          "titre": "Anniversaire",
-          "texte": "Fête le soir chez les grands-parents, à Soumont : prévoir un cadeau et ne pas traîner en route."
-        },
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Le site du Pont du Gard accepte les chiens tenus en laisse sur les espaces extérieurs. Ombre rare : y aller plutôt en fin d'après-midi."
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "vzdkky",
-      "ordre": 18,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "route",
+        "olivier",
+        "cypres"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "10 place des Arcades, Valbonne",
+          "nom": "Terra Rossa",
+          "tel": "+33493129511",
+          "note": "4,6/5, sur la même place. Fermé le jeudi — le mardi est bon. Déjeuner à midi avant de reprendre la route."
+        },
+        "plat": "Brandade de Nîmes, et un rosé des Costières.",
+        "soir": {
+          "ou": "Soumont",
+          "nom": "Chez les grands-parents",
+          "note": "Fête d'anniversaire des jumeaux."
+        }
+      },
       "observations": [
         {
           "ou": "Le plan de Valbonne",
@@ -4273,27 +4401,7 @@
           "requete": "Musée Pont du Gard",
           "ordre": 3
         }
-      ],
-      "illustration": [
-        "collines",
-        "route",
-        "olivier",
-        "cypres"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Terra Rossa",
-          "ou": "10 place des Arcades, Valbonne",
-          "tel": "+33493129511",
-          "note": "4,6/5, sur la même place. Fermé le jeudi — le mardi est bon. Déjeuner à midi avant de reprendre la route."
-        },
-        "soir": {
-          "nom": "Chez les grands-parents",
-          "ou": "Soumont",
-          "note": "Fête d'anniversaire des jumeaux."
-        },
-        "plat": "Brandade de Nîmes, et un rosé des Costières."
-      }
+      ]
     },
     {
       "ancre": "d-0819",
@@ -4305,7 +4413,6 @@
       "intensite": 3,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Salagou &amp; Mourèze",
       "accroche": "Le Lodévois cache deux paysages qu'on croirait importés d'ailleurs.",
       "fil": [
@@ -4326,11 +4433,28 @@
           "texte": "Retour sur le Salagou pour le coucher de soleil : c'est le moment où les ruffes s'embrasent."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Village de Celles</b> — village fantôme partiellement abandonné, sur la rive du lac",
+        "<b>Clermont-l'Hérault</b> et son marché",
+        "<b>Mont Liausson</b> — la montée qui domine tout le lac, 1 h 30 aller-retour"
+      ],
+      "plan_b": "S'il fait très chaud : Mourèze tôt le matin (les rochers donnent de l'ombre), puis Salagou en fin de journée uniquement. On inverse simplement l'ordre.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Les deux sites sont parfaitement adaptés. Attention aux cailloux coupants à Mourèze pour les coussinets. {{chien}}",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 19,
+      "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Salagou : plusieurs accès aux berges, celui de la Plage des Vailhés est le plus simple avec des ados. Mourèze : parking au village, en bas du cirque.",
-        "reserver": "Rien.",
         "emporter": "Maillots, chapeaux, beaucoup d'eau. Le Salagou est sans ombre, et Mourèze réverbère.",
-        "chien": "facile"
+        "reserver": "Rien."
       },
       "carte": [
         {
@@ -4354,24 +4478,28 @@
           "requete": "Clermont-l'Hérault marché centre"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Village de Celles</b> — village fantôme partiellement abandonné, sur la rive du lac",
-        "<b>Clermont-l'Hérault</b> et son marché",
-        "<b>Mont Liausson</b> — la montée qui domine tout le lac, 1 h 30 aller-retour"
-      ],
-      "plan_b": "S'il fait très chaud : Mourèze tôt le matin (les rochers donnent de l'ombre), puis Salagou en fin de journée uniquement. On inverse simplement l'ordre.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Les deux sites sont parfaitement adaptés. Attention aux cailloux coupants à Mourèze pour les coussinets. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "1wzyqkp",
-      "ordre": 19,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "rocher",
+        "lac"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Route du lac, rive de Clermont-l'Hérault",
+          "nom": "La Terrasse Salagou",
+          "tel": "+33984216234",
+          "note": "Terrasse ouverte face au lac, ouvert tous les jours de 10 h à 1 h. Simple, bien placé pour la baignade."
+        },
+        "plat": "Le vin de Terrasses du Larzac, et le pélardon des Cévennes.",
+        "soir": {
+          "ou": "Lieu-dit Le Mas de Riri, Celles",
+          "nom": "Le Mas de Riri",
+          "tel": "+33467967780",
+          "note": "4,4/5, face au lac, cuisine soignée malgré l'emplacement en camping. Ouvert tous les jours. Réserver, souvent complet."
+        }
+      },
       "observations": [
         {
           "ou": "Les ruffes",
@@ -4477,27 +4605,7 @@
           "requete": "Cirque de Mourèze",
           "ordre": 4
         }
-      ],
-      "illustration": [
-        "collines",
-        "rocher",
-        "lac"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "La Terrasse Salagou",
-          "ou": "Route du lac, rive de Clermont-l'Hérault",
-          "tel": "+33984216234",
-          "note": "Terrasse ouverte face au lac, ouvert tous les jours de 10 h à 1 h. Simple, bien placé pour la baignade."
-        },
-        "soir": {
-          "nom": "Le Mas de Riri",
-          "ou": "Lieu-dit Le Mas de Riri, Celles",
-          "tel": "+33467967780",
-          "note": "4,4/5, face au lac, cuisine soignée malgré l'emplacement en camping. Ouvert tous les jours. Réserver, souvent complet."
-        },
-        "plat": "Le vin de Terrasses du Larzac, et le pélardon des Cévennes."
-      }
+      ]
     },
     {
       "ancre": "d-0820",
@@ -4509,7 +4617,6 @@
       "intensite": 3,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Saint-Guilhem &amp; les gorges de l'Hérault",
       "accroche": "Dernier jour de vacances. Un des plus beaux villages de France, et une rivière pour finir.",
       "fil": [
@@ -4534,11 +4641,29 @@
           "texte": "Retour. Valises, dernier dîner."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Grotte de Clamouse</b> — concrétions d'aragonite parmi les plus belles d'Europe. <b>Chiens refusés</b>, à faire en se relayant",
+        "<b>Cirque de Navacelles</b> — méandre abandonné vertigineux, 1 h de route, spectaculaire",
+        "<b>Lodève</b> — cathédrale Saint-Fulcran, musée de Lodève",
+        "<b>Gorges de la Vis</b> — baignade plus sauvage et plus fraîche"
+      ],
+      "plan_b": "Version courte : Saint-Guilhem le matin, baignade au Pont du Diable l'après-midi, et on rentre tôt préparer la route. La journée de demain fait huit heures.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Saint-Guilhem se gare mal en août : arrivez avant 11 h ou utilisez les parkings-relais en aval. Le Pont du Diable est bondé de 14 h à 17 h. {{chien}}",
+          "titre": "Attention"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 20,
+      "anniversaire": false,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Saint-Guilhem : arrivez avant 11 h ou utilisez les parkings-relais en aval, avec navette. Le village est piéton et se gare très mal en août.",
-        "reserver": "Grotte de Clamouse si vous la faites — et sachez que les chiens n'y sont pas admis.",
         "emporter": "Maillots et chaussures qui tiennent dans l'eau : les galets du Gardon roulent.",
-        "chien": "à gérer"
+        "reserver": "Grotte de Clamouse si vous la faites — et sachez que les chiens n'y sont pas admis."
       },
       "carte": [
         {
@@ -4570,25 +4695,29 @@
           "requete": "Gorges de la Vis"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Grotte de Clamouse</b> — concrétions d'aragonite parmi les plus belles d'Europe. <b>Chiens refusés</b>, à faire en se relayant",
-        "<b>Cirque de Navacelles</b> — méandre abandonné vertigineux, 1 h de route, spectaculaire",
-        "<b>Lodève</b> — cathédrale Saint-Fulcran, musée de Lodève",
-        "<b>Gorges de la Vis</b> — baignade plus sauvage et plus fraîche"
-      ],
-      "plan_b": "Version courte : Saint-Guilhem le matin, baignade au Pont du Diable l'après-midi, et on rentre tôt préparer la route. La journée de demain fait huit heures.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Attention",
-          "texte": "Saint-Guilhem se gare mal en août : arrivez avant 11 h ou utilisez les parkings-relais en aval. Le Pont du Diable est bondé de 14 h à 17 h. {{chien}}"
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "xnudp7",
-      "ordre": 20,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "pont",
+        "cypres",
+        "rocher"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "16bis rue Cor de Nostra Dona, Saint-Guilhem-le-Désert",
+          "nom": "Les Terrasses de Saint Guilhem",
+          "tel": "+33619791154",
+          "note": "4,7/5, terrasse dominant l'abbaye, ouvert tous les jours midi et soir."
+        },
+        "plat": "L'agneau du Larzac, et le roquefort à quelques kilomètres de sa cave.",
+        "soir": {
+          "ou": "80 rue du Four à Chaux, Lodève",
+          "nom": "Chez Philippe",
+          "tel": "+33621853623",
+          "note": "5,0/5 sur 94 avis — la meilleure table du secteur, dans une maison, vue sur la cathédrale. Ouvert mercredi à vendredi uniquement : le jeudi est bon. Petite capacité, RÉSERVER TÔT."
+        }
+      },
       "observations": [
         {
           "ou": "Le cloître absent",
@@ -4687,28 +4816,7 @@
           "requete": "Gorges de l'Hérault baignade",
           "ordre": 4
         }
-      ],
-      "illustration": [
-        "collines",
-        "pont",
-        "cypres",
-        "rocher"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Les Terrasses de Saint Guilhem",
-          "ou": "16bis rue Cor de Nostra Dona, Saint-Guilhem-le-Désert",
-          "tel": "+33619791154",
-          "note": "4,7/5, terrasse dominant l'abbaye, ouvert tous les jours midi et soir."
-        },
-        "soir": {
-          "nom": "Chez Philippe",
-          "ou": "80 rue du Four à Chaux, Lodève",
-          "tel": "+33621853623",
-          "note": "5,0/5 sur 94 avis — la meilleure table du secteur, dans une maison, vue sur la cathédrale. Ouvert mercredi à vendredi uniquement : le jeudi est bon. Petite capacité, RÉSERVER TÔT."
-        },
-        "plat": "L'agneau du Larzac, et le roquefort à quelques kilomètres de sa cave."
-      }
+      ]
     },
     {
       "ancre": "d-0821",
@@ -4720,7 +4828,6 @@
       "intensite": 1,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Premier jour sans rien",
       "accroche": "Trois semaines de route s'arrêtent ici. C'est le moment de ne rien faire, et c'est prévu.",
       "fil": [
@@ -4741,20 +4848,6 @@
           "texte": "Dîner dehors si la soirée le permet, et le ciel du Larzac une fois la nuit tombée."
         }
       ],
-      "pratique": {
-        "emporter": "Rien. Maillots et crème solaire, au pire.",
-        "chien": "facile"
-      },
-      "carte": [
-        {
-          "label": "Marché de Clermont-l'Hérault",
-          "requete": "Clermont-l'Hérault marché centre"
-        },
-        {
-          "label": "Baignade au Salagou",
-          "requete": "Lac du Salagou baignade"
-        }
-      ],
       "options_titre": "Si l'envie prend quand même",
       "options": [
         "<b>Lodève</b> — cathédrale Saint-Fulcran et le musée de Lodève, à 15 min. La sortie la plus courte du secteur",
@@ -4766,14 +4859,48 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Journée idéale. Attention seulement à la chaleur des dalles autour de la piscine en milieu de journée. {{chien}}"
+          "texte": "Journée idéale. Attention seulement à la chaleur des dalles autour de la piscine en milieu de journée. {{chien}}",
+          "titre": "Chien"
         }
       ],
       "chapitre": null,
-      "quiz_controle": "17jjg7y",
       "ordre": 21,
+      "anniversaire": false,
+      "pratique": {
+        "chien": "facile",
+        "emporter": "Rien. Maillots et crème solaire, au pire."
+      },
+      "carte": [
+        {
+          "label": "Marché de Clermont-l'Hérault",
+          "requete": "Clermont-l'Hérault marché centre"
+        },
+        {
+          "label": "Baignade au Salagou",
+          "requete": "Lac du Salagou baignade"
+        }
+      ],
+      "quiz_controle": "17jjg7y",
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "aiguilles",
+        "platane",
+        "cypres"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Soumont",
+          "nom": "Chez les grands-parents",
+          "note": "Rien à réserver, rien à chercher."
+        },
+        "plat": "Le pélardon des Cévennes, et un Terrasses du Larzac.",
+        "soir": {
+          "ou": "Soumont",
+          "nom": "Chez les grands-parents",
+          "note": "Prévoir peut-être d'apporter quelque chose du marché."
+        }
+      },
       "observations": [
         {
           "ou": "Les cigales, à la tombée du jour",
@@ -4841,26 +4968,7 @@
           "requete": "Cirque de Navacelles belvédère",
           "ordre": 2
         }
-      ],
-      "illustration": [
-        "collines",
-        "aiguilles",
-        "platane",
-        "cypres"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Chez les grands-parents",
-          "ou": "Soumont",
-          "note": "Rien à réserver, rien à chercher."
-        },
-        "soir": {
-          "nom": "Chez les grands-parents",
-          "ou": "Soumont",
-          "note": "Prévoir peut-être d'apporter quelque chose du marché."
-        },
-        "plat": "Le pélardon des Cévennes, et un Terrasses du Larzac."
-      }
+      ]
     },
     {
       "ancre": "d-0822",
@@ -4872,7 +4980,6 @@
       "intensite": 1,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Dernier jour",
       "accroche": "Valises le soir, mais rien avant. La route de demain fait huit heures.",
       "fil": [
@@ -4897,17 +5004,6 @@
           "texte": "Dernier dîner du voyage."
         }
       ],
-      "pratique": {
-        "reserver": "Rien à réserver. Mais faire le plein de carburant ce soir : demain le départ est à 7 h.",
-        "emporter": "Préparer les valises la veille au soir, pas le dimanche matin.",
-        "chien": "facile"
-      },
-      "carte": [
-        {
-          "label": "Baignade au Salagou",
-          "requete": "Lac du Salagou baignade"
-        }
-      ],
       "options_titre": "Si l'envie prend quand même",
       "options": [
         "<b>Marché de Clermont-l'Hérault</b> — samedi matin, le plus grand du secteur",
@@ -4919,14 +5015,44 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "À ne pas oublier",
-          "texte": "Le plein de carburant et les valises ce soir. Un départ à 7 h un dimanche de fin août, c'est ce qui évite l'A10 saturée en fin de journée."
+          "texte": "Le plein de carburant et les valises ce soir. Un départ à 7 h un dimanche de fin août, c'est ce qui évite l'A10 saturée en fin de journée.",
+          "titre": "À ne pas oublier"
         }
       ],
       "chapitre": null,
-      "quiz_controle": "122c1j3",
       "ordre": 22,
+      "anniversaire": false,
+      "pratique": {
+        "chien": "facile",
+        "emporter": "Préparer les valises la veille au soir, pas le dimanche matin.",
+        "reserver": "Rien à réserver. Mais faire le plein de carburant ce soir : demain le départ est à 7 h."
+      },
+      "carte": [
+        {
+          "label": "Baignade au Salagou",
+          "requete": "Lac du Salagou baignade"
+        }
+      ],
+      "quiz_controle": "122c1j3",
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "vigne",
+        "platane",
+        "dolmen"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Soumont",
+          "nom": "Chez les grands-parents"
+        },
+        "plat": "Ce qui reste du marché — et le roquefort avant de quitter la région.",
+        "soir": {
+          "ou": "Soumont",
+          "nom": "Dernier dîner en famille",
+          "note": "Coucher tôt : la route de demain fait huit heures."
+        }
+      },
       "observations": [
         {
           "ou": "Les murs des maisons, à Soumont",
@@ -4994,25 +5120,7 @@
           "requete": "Marché Clermont-l'Hérault samedi",
           "ordre": 2
         }
-      ],
-      "illustration": [
-        "collines",
-        "vigne",
-        "platane",
-        "dolmen"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Chez les grands-parents",
-          "ou": "Soumont"
-        },
-        "soir": {
-          "nom": "Dernier dîner en famille",
-          "ou": "Soumont",
-          "note": "Coucher tôt : la route de demain fait huit heures."
-        },
-        "plat": "Ce qui reste du marché — et le roquefort avant de quitter la région."
-      }
+      ]
     },
     {
       "ancre": "d-0823",
@@ -5024,7 +5132,6 @@
       "intensite": 4,
       "star": false,
       "eclipse": false,
-      "anniversaire": false,
       "titre": "Soumont → Rueil-Malmaison",
       "accroche": "Trajet direct, comme convenu. Huit heures de conduite effective : tabler sur dix heures porte à porte.",
       "fil": [
@@ -5053,11 +5160,28 @@
           "texte": "Arrivée Rueil-Malmaison."
         }
       ],
+      "options_titre": "Si vous avez plus de temps",
+      "options": [
+        "<b>Saint-Flour</b> — ville haute perchée sur un plateau basaltique, belle halte",
+        "<b>Volcans d'Auvergne</b> — le puy de Dôme se voit depuis l'autoroute, un détour est possible mais coûte 2 h",
+        "<b>Bourges</b> — cathédrale UNESCO, si vous coupez par l'A71"
+      ],
+      "plan_b": "Si la journée s'étire : coupez à Nevers ou Orléans pour un dîner long plutôt que de forcer. Un vendredi soir de retour de vacances, l'A10 à l'approche de Paris peut ajouter une heure sèche.",
+      "notes": [
+        {
+          "ton": "alerte",
+          "texte": "Longue journée. Pause toutes les deux heures, eau à chaque arrêt, jamais seul dans la voiture. L'aire du viaduc de Millau est un bon endroit pour une vraie pause.",
+          "titre": "Chien"
+        }
+      ],
+      "chapitre": null,
+      "ordre": 23,
+      "anniversaire": false,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Aire du viaduc de Millau, côté sud : belvédère aménagé et vue d'ensemble. Vingt minutes bien employées.",
-        "reserver": "Rien. Mais un vendredi de retour de vacances, l'A10 à l'approche de Paris peut ajouter une heure sèche.",
         "emporter": "Le nécessaire pour ne pas s'arrêter trop souvent, et de l'eau à chaque pause pour le chien.",
-        "chien": "à gérer"
+        "reserver": "Rien. Mais un vendredi de retour de vacances, l'A10 à l'approche de Paris peut ajouter une heure sèche."
       },
       "carte": [
         {
@@ -5077,24 +5201,28 @@
           "requete": "Cathédrale de Bourges"
         }
       ],
-      "options_titre": "Si vous avez plus de temps",
-      "options": [
-        "<b>Saint-Flour</b> — ville haute perchée sur un plateau basaltique, belle halte",
-        "<b>Volcans d'Auvergne</b> — le puy de Dôme se voit depuis l'autoroute, un détour est possible mais coûte 2 h",
-        "<b>Bourges</b> — cathédrale UNESCO, si vous coupez par l'A71"
-      ],
-      "plan_b": "Si la journée s'étire : coupez à Nevers ou Orléans pour un dîner long plutôt que de forcer. Un vendredi soir de retour de vacances, l'A10 à l'approche de Paris peut ajouter une heure sèche.",
-      "notes": [
-        {
-          "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Longue journée. Pause toutes les deux heures, eau à chaque arrêt, jamais seul dans la voiture. L'aire du viaduc de Millau est un bon endroit pour une vraie pause."
-        }
-      ],
-      "chapitre": null,
       "quiz_controle": "qyou3k",
-      "ordre": 23,
       "visibilite": "amis",
+      "illustration": [
+        "collines",
+        "pont",
+        "route",
+        "montagnes"
+      ],
+      "manger": {
+        "midi": {
+          "ou": "Aire du Viaduc de Millau, Brocuejouls",
+          "nom": "Espace Gourmand",
+          "tel": "+33565603670",
+          "note": "Sur l'aire du viaduc, ouvert tous les jours 9 h - 18 h. Pratique et bien placé pour l'arrêt belvédère."
+        },
+        "plat": "Un dernier morceau de roquefort acheté sur le Larzac.",
+        "soir": {
+          "ou": "Arrivée prévue vers 17 h 30",
+          "nom": "À la maison",
+          "note": "Prévoir de quoi dîner sans courses — ou commander."
+        }
+      },
       "observations": [
         {
           "ou": "Le viaduc de Millau",
@@ -5179,27 +5307,7 @@
           "requete": "Chaîne des Puys puy de Dôme",
           "ordre": 3
         }
-      ],
-      "illustration": [
-        "collines",
-        "pont",
-        "route",
-        "montagnes"
-      ],
-      "manger": {
-        "midi": {
-          "nom": "Espace Gourmand",
-          "ou": "Aire du Viaduc de Millau, Brocuejouls",
-          "tel": "+33565603670",
-          "note": "Sur l'aire du viaduc, ouvert tous les jours 9 h - 18 h. Pratique et bien placé pour l'arrêt belvédère."
-        },
-        "soir": {
-          "nom": "À la maison",
-          "ou": "Arrivée prévue vers 17 h 30",
-          "note": "Prévoir de quoi dîner sans courses — ou commander."
-        },
-        "plat": "Un dernier morceau de roquefort acheté sur le Larzac."
-      }
+      ]
     }
   ],
   "badges": [
@@ -5483,8 +5591,7 @@
       "seuil_total": null,
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
-      "ordre": 10,
-      "conditions_brutes": []
+      "ordre": 10
     },
     {
       "nom": "Carnet complet",
@@ -5494,8 +5601,7 @@
       "seuil_total": 107,
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
-      "ordre": 11,
-      "conditions_brutes": []
+      "ordre": 11
     },
     {
       "nom": "Assidu",
@@ -5505,8 +5611,7 @@
       "seuil_total": null,
       "seuil_journees_corrigees": 24,
       "seuil_points_quiz": null,
-      "ordre": 12,
-      "conditions_brutes": []
+      "ordre": 12
     },
     {
       "nom": "Érudit",
@@ -5516,8 +5621,7 @@
       "seuil_total": null,
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": 150,
-      "ordre": 13,
-      "conditions_brutes": []
+      "ordre": 13
     }
   ]
 }
