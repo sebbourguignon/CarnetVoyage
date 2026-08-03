@@ -962,6 +962,84 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .urg-memo li{position:relative;padding:7px 0 7px 16px;font-size:.84rem;color:var(--pietra)}
 .urg-memo li::before{content:"—";position:absolute;left:0}
 
+/* ---------- onglet Admin (correction du quiz) ---------- */
+.admin-zone{margin-top:14px}
+.admin-jours{display:flex;flex-direction:column}
+.admin-jour-bouton{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  width:100%;text-align:left;background:none;color:var(--ink);font-family:inherit;
+  border:0;border-bottom:1px solid var(--rule-soft);padding:16px 0;cursor:pointer;
+}
+.admin-jour-bouton:last-child{border-bottom:0}
+.admin-jour-bouton:hover .admin-jour-titre{color:var(--rosso)}
+.admin-jour-bouton:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
+.admin-jour-bouton.actif .admin-jour-titre{color:var(--rosso)}
+.admin-jour-titre{font-weight:600;font-size:.96rem}
+.admin-jour-statut-corrige{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--oliva);font-weight:600;flex:none}
+.admin-jour-statut-attente{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--rosso);flex:none}
+.admin-jour-statut-vide{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft);font-style:italic;flex:none}
+.admin-carte-jour{margin-top:30px;padding-top:24px;border-top:2px solid var(--ink)}
+.admin-carte-jour > h3{font-size:1.08rem;margin:0 0 16px;font-weight:600}
+.admin-recap{margin:0 0 22px}
+.admin-recap > h4{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--pietra);margin:0 0 10px;font-weight:600;
+}
+.admin-membre{padding:16px 0;border-top:1px solid var(--rule-soft)}
+.admin-membre:first-child{border-top:0;padding-top:0}
+.admin-membre-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.admin-membre-nom{font-weight:600}
+.admin-membre-score{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft)}
+.admin-question-ligne{display:flex;gap:8px;font-size:.86rem;padding:5px 0;align-items:baseline;line-height:1.4}
+.admin-question-ligne .admin-puce{flex:none;width:16px}
+.admin-correcte{color:var(--oliva)}
+.admin-incorrecte{color:var(--rosso)}
+.admin-sans-reponse{color:var(--ink-soft);font-style:italic}
+.admin-actions{margin-top:12px}
+.admin-bouton{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:600;padding:10px 15px;
+  border:1px solid var(--rosso);border-radius:999px;background:transparent;
+  color:var(--rosso);cursor:pointer;
+}
+.admin-bouton:hover{background:var(--rosso);color:var(--paper)}
+.admin-bouton:disabled{opacity:.5;cursor:default}
+.admin-info{font-size:.85rem;color:var(--ink-soft);margin:8px 0 0}
+.admin-erreur{color:var(--rosso)}
+.admin-sousonglets{display:flex;gap:8px;margin:20px 0 0}
+.admin-sousonglet{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:600;padding:9px 16px;
+  border:1px solid var(--rule-soft);border-radius:999px;background:transparent;
+  color:var(--ink-soft);cursor:pointer;
+}
+.admin-sousonglet:hover{border-color:var(--rosso);color:var(--rosso)}
+.admin-sousonglet:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
+.admin-sousonglet[aria-current="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.admin-sous-panel{margin-top:18px}
+.admin-frequentation{margin-top:0}
+.admin-souszone-titre{font-size:1.08rem;margin:0 0 12px;font-weight:600}
+.admin-freq-soustitre{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--pietra);margin:26px 0 10px;font-weight:600;
+}
+.admin-freq-soustitre:first-of-type{margin-top:0}
+.admin-freq-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.admin-freq-kpi{background:var(--paper-deep);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.admin-freq-kpi-valeur{font-family:"IBM Plex Mono",monospace;font-size:1.15rem;font-weight:600;color:var(--ink)}
+.admin-freq-kpi-label{font-size:.74rem;color:var(--ink-soft)}
+.admin-freq-courbe-fig{margin:0}
+.admin-freq-courbe{display:block;width:100%;height:auto}
+.admin-freq-courbe-legende{font-size:.74rem;color:var(--pietra);margin-top:4px;text-align:right}
+.admin-freq-barres{list-style:none;margin:0;padding:0}
+.admin-freq-barre-ligne{padding:9px 0;border-top:1px solid var(--rule-soft)}
+.admin-freq-barre-ligne:first-child{border-top:0;padding-top:0}
+.admin-freq-barre-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:5px}
+.admin-freq-barre-label{font-weight:600;font-size:.86rem}
+.admin-freq-barre-valeur{font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:var(--ink-soft)}
+.admin-freq-barre-piste{height:6px;border-radius:999px;background:var(--paper-deep);overflow:hidden}
+.admin-freq-barre-remplissage{height:100%;border-radius:999px}
+
 /* ---------- journée (détail plein écran / onglet Aujourd'hui) ---------- */
 .day{
   display:grid;grid-template-columns:1fr;gap:26px;
@@ -1702,6 +1780,8 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
 
 <section class="panel" id="panel-urgences" data-panel="urgences" hidden></section>
 
+<section class="panel" id="panel-admin" data-panel="admin" hidden></section>
+
 <footer class="colophon">
   <p class="colophon-texte"><span class="colophon-marque" id="colophon-marque" aria-hidden="true"></span>Fait maison par Papa<span class="colophon-pt">·</span><br class="colophon-saut">Relu par Réglisse · Été 2026</p>
 </footer>
@@ -1740,7 +1820,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
       <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6v5.4"/><circle cx="12" cy="16.3" r="1" fill="currentColor" stroke="none"/></svg></span>
       <span class="tab-lbl">Urgences</span>
     </a>
-    <a href="../admin/" id="tab-admin" data-tab="admin">
+    <a href="#admin" id="tab-admin" data-tab="admin">
       <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 5 6.5v5c0 4.4 3 7.7 7 8.5 4-.8 7-4.1 7-8.5v-5Z"/><path d="m9 12 2 2 4-4.5"/></svg></span>
       <span class="tab-lbl">Admin</span>
     </a>
@@ -1799,8 +1879,42 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   var modeFamille = !!sessionFamille;
   document.body.classList.toggle("mode-public", !modeFamille);
   document.body.classList.toggle("est-admin", !!estAdmin);
-  var tabAdmin = document.getElementById("tab-admin");
-  if(tabAdmin) tabAdmin.href = "../admin/?voyage=" + encodeURIComponent(slugVoyage);
+
+  /* --- fréquentation famille : une ligne "visite" par chargement, pour
+     un membre famille connecté seulement (jamais un visiteur public,
+     qui n'a pas d'utilisateurId). Mesure best-effort, même philosophie
+     que la progression de quiz plus haut : pas de garantie de dernière
+     écriture si l'onglet est tué sans repasser en arrière-plan, terrain
+     oblige — on ne complexifie pas pour ce cas rare. Consultée depuis
+     l'onglet Admin, voir construireBlocFrequentation. */
+  var enregistrerOngletVisite = function(){};
+  if(utilisateurId){
+    (function(){
+      var idVisite = null;
+      var debut = Date.now();
+      var onglets = [{ onglet: "aujourdhui", le: new Date().toISOString() }];
+      supabaseClient.from("visites")
+        .insert({ voyage_id: voyageId, utilisateur_id: utilisateurId, onglets_vus: onglets })
+        .select("id").single()
+        .then(function(res){ if(!res.error && res.data) idVisite = res.data.id; });
+
+      function coeur(){
+        if(!idVisite) return;
+        supabaseClient.from("visites").update({
+          derniere_activite_le: new Date().toISOString(),
+          duree_secondes: Math.round((Date.now() - debut) / 1000),
+          onglets_vus: onglets
+        }).eq("id", idVisite).then(function(){});
+      }
+      setInterval(function(){ if(document.visibilityState === "visible") coeur(); }, 25000);
+      document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "hidden") coeur(); });
+      window.addEventListener("pagehide", coeur);
+
+      enregistrerOngletVisite = function(nom){
+        onglets.push({ onglet: nom, le: new Date().toISOString() });
+      };
+    })();
+  }
 
   /* --- {{chien}} → pastille -------------------------------------------- */
   var PASTILLE_CHIEN = '<span class="dog">Chien ok</span>';
@@ -3607,6 +3721,483 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     container.appendChild(memoWrap);
   }
 
+  /* --- onglet Admin : correction du quiz -----------------------------------
+     Repris de l'ancienne admin/index.html (voir git), en réutilisant
+     supabaseClient/voyageId/utilisateurId déjà acquis par demarrerCarnet
+     et l'aide el()/construireEnteteOnglet du moteur de rendu, pour rester
+     dans le même système visuel que les autres onglets plutôt qu'une
+     page à part. La bonne réponse de chaque question reste lue depuis
+     quiz_reponses (RLS réservée aux admins), jamais écrite ailleurs que
+     via la fonction security definer corriger_quiz. */
+  function formaterDateAdmin(date){
+    try{ return new Date(date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }); }
+    catch(e){ return date; }
+  }
+  function nomMembreAdmin(membres, utilisateurId){
+    var m = membres.filter(function(x){ return x.utilisateur_id === utilisateurId; })[0];
+    if(m && m.prenom) return m.prenom;
+    return utilisateurId.slice(0, 8) + "…";
+  }
+  function statutJourAdmin(jour, progressions){
+    var aUneReponse = false, toutCorrige = true;
+    progressions.forEach(function(prog){
+      jour.questions.forEach(function(q){
+        var etat = prog.quiz_etat || {};
+        var resultats = prog.quiz_resultats || {};
+        if(etat[q.id] != null){
+          aUneReponse = true;
+          if(resultats[q.id] == null) toutCorrige = false;
+        }
+      });
+    });
+    if(!aUneReponse) return "vide";
+    return toutCorrige ? "corrige" : "attente";
+  }
+  function construireLigneQuestionAdmin(q, reponse, indexCorrect){
+    var ligne = el("div", "admin-question-ligne");
+    var texteCorrect = (indexCorrect != null && q.choix[indexCorrect]) ? q.choix[indexCorrect] : "?";
+    if(reponse == null){
+      ligne.appendChild(el("span", "admin-puce", "·"));
+      ligne.appendChild(el("span", "admin-sans-reponse", q.question + " — sans réponse (bonne réponse : " + texteCorrect + ")"));
+    } else {
+      var correcte = reponse === indexCorrect;
+      ligne.appendChild(el("span", "admin-puce " + (correcte ? "admin-correcte" : "admin-incorrecte"), correcte ? "✓" : "✗"));
+      var texte = q.question + " — répondu : " + (q.choix[reponse] || "?");
+      if(!correcte) texte += " (bonne réponse : " + texteCorrect + ")";
+      ligne.appendChild(el("span", correcte ? "admin-correcte" : "admin-incorrecte", texte));
+    }
+    return ligne;
+  }
+  function construireRecapJourAdmin(jour, membres, progressions, monId){
+    var recap = el("div", "admin-recap");
+    var auMoinsUn = false;
+    membres.forEach(function(m){
+      var prog = progressions.filter(function(p){ return p.utilisateur_id === m.utilisateur_id; })[0];
+      var etat = (prog && prog.quiz_etat) || {};
+      var resultats = (prog && prog.quiz_resultats) || {};
+      var questionsCorrigees = jour.questions.filter(function(q){ return etat[q.id] != null && resultats[q.id] != null; });
+      if(!questionsCorrigees.length) return;
+      if(!auMoinsUn){ recap.appendChild(el("h4", null, "Déjà corrigé")); auMoinsUn = true; }
+      var score = 0;
+      questionsCorrigees.forEach(function(q){ if(etat[q.id].reponse === resultats[q.id]) score += POINTS_PAR_BONNE_REPONSE_QUIZ; });
+      var bloc = el("div", "admin-membre");
+      var tete = el("div", "admin-membre-tete");
+      tete.appendChild(el("span", "admin-membre-nom", nomMembreAdmin(membres, m.utilisateur_id) + (m.utilisateur_id === monId ? " (vous)" : "")));
+      tete.appendChild(el("span", "admin-membre-score", score + " pts sur cette journée · " + questionsCorrigees.length + "/" + jour.questions.length + " corrigées"));
+      bloc.appendChild(tete);
+      questionsCorrigees.forEach(function(q){ bloc.appendChild(construireLigneQuestionAdmin(q, etat[q.id].reponse, resultats[q.id])); });
+      recap.appendChild(bloc);
+    });
+    recap.hidden = !auMoinsUn;
+    return recap;
+  }
+  function afficherCorrectionJourAdmin(jour, membres, progressions, monId, bonnesReponses, carteJour, onCorrection){
+    carteJour.innerHTML = "";
+    carteJour.hidden = false;
+    var recapEl = construireRecapJourAdmin(jour, membres, progressions, monId);
+    carteJour.appendChild(recapEl);
+    function rafraichirRecap(){
+      var nouveauRecap = construireRecapJourAdmin(jour, membres, progressions, monId);
+      recapEl.replaceWith(nouveauRecap);
+      recapEl = nouveauRecap;
+    }
+
+    carteJour.appendChild(el("h3", null, formaterDateAdmin(jour.date) + " — " + jour.titre));
+
+    var membresEnAttente = 0, quelquUnARepondu = false;
+    membres.forEach(function(m){
+      var prog = progressions.filter(function(p){ return p.utilisateur_id === m.utilisateur_id; })[0];
+      var etat = (prog && prog.quiz_etat) || {};
+      var resultatsConnus = (prog && prog.quiz_resultats) || {};
+      if(jour.questions.some(function(q){ return etat[q.id] != null; })) quelquUnARepondu = true;
+      var questionsEnAttente = jour.questions.filter(function(q){ return etat[q.id] != null && resultatsConnus[q.id] == null; });
+      if(!questionsEnAttente.length) return;
+      membresEnAttente++;
+
+      var resultatsFusionnes = Object.assign({}, resultatsConnus, bonnesReponses);
+      var blocMembre = el("div", "admin-membre");
+      var tete = el("div", "admin-membre-tete");
+      tete.appendChild(el("span", "admin-membre-nom", nomMembreAdmin(membres, m.utilisateur_id) + (m.utilisateur_id === monId ? " (vous)" : "")));
+      var scoreTotal = 0;
+      Object.keys(etat).forEach(function(qid){
+        if(etat[qid] && etat[qid].reponse != null && resultatsFusionnes[qid] != null && etat[qid].reponse === resultatsFusionnes[qid]){
+          scoreTotal += POINTS_PAR_BONNE_REPONSE_QUIZ;
+        }
+      });
+      tete.appendChild(el("span", "admin-membre-score", scoreTotal + " pts au total · " + questionsEnAttente.length + " question(s) à corriger sur ce jour"));
+      blocMembre.appendChild(tete);
+      questionsEnAttente.forEach(function(q){ blocMembre.appendChild(construireLigneQuestionAdmin(q, etat[q.id].reponse, bonnesReponses[q.id])); });
+
+      var actions = el("div", "admin-actions");
+      var boutonValider = el("button", "admin-bouton", "Valider pour " + nomMembreAdmin(membres, m.utilisateur_id));
+      boutonValider.type = "button";
+      var messageValidation = el("p", "admin-info");
+      boutonValider.addEventListener("click", function(){
+        boutonValider.disabled = true;
+        var resultatsJour = {};
+        jour.questions.forEach(function(q){ if(bonnesReponses[q.id] != null) resultatsJour[q.id] = bonnesReponses[q.id]; });
+        supabaseClient.rpc("corriger_quiz", {
+          cible_utilisateur_id: m.utilisateur_id,
+          cible_voyage_id: jour.voyage_id,
+          nouveau_score: scoreTotal,
+          nouveaux_resultats: resultatsJour
+        }).then(function(res){
+          if(res.error){
+            messageValidation.textContent = "Échec : " + res.error.message;
+            messageValidation.className = "admin-info admin-erreur";
+            boutonValider.disabled = false;
+            return;
+          }
+          if(prog){
+            prog.quiz_resultats = Object.assign({}, prog.quiz_resultats, resultatsJour);
+            prog.quiz_score = scoreTotal;
+            prog.quiz_corrige = true;
+          } else {
+            progressions.push({ utilisateur_id: m.utilisateur_id, quiz_etat: etat, quiz_resultats: resultatsJour, quiz_score: scoreTotal, quiz_corrige: true });
+          }
+          blocMembre.remove();
+          rafraichirRecap();
+          if(onCorrection) onCorrection();
+        });
+      });
+      actions.appendChild(boutonValider);
+      blocMembre.appendChild(actions);
+      blocMembre.appendChild(messageValidation);
+      carteJour.appendChild(blocMembre);
+    });
+
+    if(!membresEnAttente){
+      carteJour.appendChild(el("p", "admin-info", quelquUnARepondu
+        ? "Rien à corriger : tout le monde est déjà corrigé sur cette journée."
+        : "Personne n'a encore répondu au quiz de cette journée."));
+    }
+  }
+  /* --- fréquentation famille : tableau de bord (indicateurs, barres par
+     membre, courbe des visites par jour, top des onglets), lu depuis la
+     table visites (voir tracking dans demarrerCarnet plus haut). RLS
+     réserve la lecture aux comptes admin du voyage — pas de vérification
+     supplémentaire ici. Tout en SVG/HTML natif, sans bibliothèque de
+     graphique : cohérent avec le reste du moteur de rendu (voir les
+     icônes de la barre d'onglets, elles aussi du SVG écrit à la main). */
+  var NOMS_ONGLETS_FREQUENTATION = {
+    aujourdhui: "Accueil", jours: "Agenda", chasse: "Chasse",
+    reserver: "Réserver", urgences: "Urgences", admin: "Admin"
+  };
+  function formaterDureeFrequentation(secondes){
+    var min = Math.round(secondes / 60);
+    if(min < 60) return min + " min";
+    return Math.floor(min / 60) + " h " + String(min % 60).padStart(2, "0");
+  }
+  // "il y a …" plutôt qu'une date pour la dernière activité : c'est la
+  // lecture la plus utile pour l'organisateur qui regarde ce panneau au
+  // fil de l'eau. Repli sur la date exacte au-delà d'une semaine.
+  function formaterRelatifFrequentation(isoDate){
+    if(!isoDate) return "jamais";
+    var diffMs = Date.now() - new Date(isoDate).getTime();
+    var jours = Math.floor(diffMs / 86400000);
+    if(jours <= 0) return "aujourd'hui";
+    if(jours === 1) return "hier";
+    if(jours < 7) return "il y a " + jours + " jours";
+    return formaterDateAdmin(isoDate.slice(0, 10));
+  }
+  function construireBarresFrequentation(lignes, couleurVar){
+    var max = Math.max.apply(null, lignes.map(function(l){ return l.valeur; })) || 1;
+    var liste = el("ul", "admin-freq-barres");
+    lignes.forEach(function(l){
+      var li = document.createElement("li");
+      li.className = "admin-freq-barre-ligne";
+      var tete = el("div", "admin-freq-barre-tete");
+      tete.appendChild(el("span", "admin-freq-barre-label", l.label));
+      tete.appendChild(el("span", "admin-freq-barre-valeur", l.sousLabel));
+      li.appendChild(tete);
+      var piste = el("div", "admin-freq-barre-piste");
+      var remplissage = el("div", "admin-freq-barre-remplissage");
+      remplissage.style.width = Math.round((l.valeur / max) * 100) + "%";
+      remplissage.style.background = "var(" + couleurVar + ")";
+      piste.appendChild(remplissage);
+      li.appendChild(piste);
+      liste.appendChild(li);
+    });
+    return liste;
+  }
+  // Courbe des visites par jour sur les deux dernières semaines, zéros
+  // compris (un jour sans visite doit se voir, pas disparaître).
+  function construireCourbeFrequentation(parJour){
+    var NB_JOURS = 14;
+    var jours = [];
+    for(var i = NB_JOURS - 1; i >= 0; i--){
+      var d = new Date();
+      d.setDate(d.getDate() - i);
+      var cle = d.toISOString().slice(0, 10);
+      jours.push({ cle: cle, valeur: parJour[cle] || 0 });
+    }
+    var max = Math.max.apply(null, jours.map(function(j){ return j.valeur; })) || 1;
+    var largeur = 640, hauteur = 120, marge = 8;
+    var pasX = (largeur - marge * 2) / (jours.length - 1);
+    var points = jours.map(function(j, i){
+      var x = marge + i * pasX;
+      var y = hauteur - marge - (j.valeur / max) * (hauteur - marge * 2);
+      return x.toFixed(1) + "," + y.toFixed(1);
+    }).join(" ");
+
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 " + largeur + " " + hauteur);
+    svg.setAttribute("class", "admin-freq-courbe");
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "Nombre de visites par jour sur les quatorze derniers jours");
+
+    var ligneBase = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    ligneBase.setAttribute("x1", marge); ligneBase.setAttribute("x2", largeur - marge);
+    ligneBase.setAttribute("y1", hauteur - marge); ligneBase.setAttribute("y2", hauteur - marge);
+    ligneBase.setAttribute("stroke", "var(--rule-soft)");
+    svg.appendChild(ligneBase);
+
+    var polyligne = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    polyligne.setAttribute("points", points);
+    polyligne.setAttribute("fill", "none");
+    polyligne.setAttribute("stroke", "var(--rosso)");
+    polyligne.setAttribute("stroke-width", "2");
+    polyligne.setAttribute("stroke-linecap", "round");
+    polyligne.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(polyligne);
+
+    jours.forEach(function(j, i){
+      if(!j.valeur) return;
+      var x = marge + i * pasX;
+      var y = hauteur - marge - (j.valeur / max) * (hauteur - marge * 2);
+      var point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      point.setAttribute("cx", x.toFixed(1)); point.setAttribute("cy", y.toFixed(1));
+      point.setAttribute("r", "3"); point.setAttribute("fill", "var(--rosso)");
+      var titre = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      titre.textContent = formaterDateAdmin(j.cle) + " — " + j.valeur + " visite" + (j.valeur > 1 ? "s" : "");
+      point.appendChild(titre);
+      svg.appendChild(point);
+    });
+
+    var figure = el("figure", "admin-freq-courbe-fig");
+    figure.appendChild(svg);
+    var legende = el("figcaption", "admin-freq-courbe-legende");
+    legende.textContent = formaterDateAdmin(jours[0].cle) + " → " + formaterDateAdmin(jours[jours.length - 1].cle);
+    figure.appendChild(legende);
+    return figure;
+  }
+  function construireBlocFrequentation(container, voyageId, membres){
+    var bloc = el("div", "admin-frequentation");
+    var zone = el("p", "admin-info", "Chargement…");
+    bloc.appendChild(zone);
+    container.appendChild(bloc);
+
+    supabaseClient.from("visites")
+      .select("utilisateur_id, debutee_le, duree_secondes, onglets_vus")
+      .eq("voyage_id", voyageId)
+      .then(function(res){
+        if(res.error){ zone.textContent = "Chargement de la fréquentation impossible : " + res.error.message; return; }
+        if(!membres.length){ zone.textContent = "Aucun membre famille pour ce voyage."; return; }
+
+        var parMembre = {};
+        membres.forEach(function(m){
+          parMembre[m.utilisateur_id] = { prenom: m.prenom, visites: 0, secondes: 0, derniere: null };
+        });
+        var parJour = {};
+        var parOnglet = {};
+        var derniereGlobale = null;
+        (res.data || []).forEach(function(v){
+          var jour = (v.debutee_le || "").slice(0, 10);
+          if(jour) parJour[jour] = (parJour[jour] || 0) + 1;
+          (v.onglets_vus || []).forEach(function(o){
+            parOnglet[o.onglet] = (parOnglet[o.onglet] || 0) + 1;
+          });
+          if(!derniereGlobale || v.debutee_le > derniereGlobale) derniereGlobale = v.debutee_le;
+
+          var m = parMembre[v.utilisateur_id];
+          if(!m) return; // membre retiré du voyage depuis : on ignore ses visites passées pour l'agrégat par membre
+          m.visites += 1;
+          m.secondes += v.duree_secondes || 0;
+          if(!m.derniere || v.debutee_le > m.derniere) m.derniere = v.debutee_le;
+        });
+
+        var totalVisites = 0, totalSecondes = 0, membresActifs = 0;
+        var seuilActif = Date.now() - 3 * 86400000;
+        Object.keys(parMembre).forEach(function(id){
+          var m = parMembre[id];
+          totalVisites += m.visites;
+          totalSecondes += m.secondes;
+          if(m.derniere && new Date(m.derniere).getTime() >= seuilActif) membresActifs++;
+        });
+
+        zone.remove();
+
+        var kpis = el("div", "admin-freq-kpis");
+        [
+          { valeur: totalVisites, label: "visite" + (totalVisites > 1 ? "s" : "") + " au total" },
+          { valeur: formaterDureeFrequentation(totalSecondes), label: "temps cumulé" },
+          { valeur: membresActifs + " / " + membres.length, label: "actifs ces 3 derniers jours" },
+          { valeur: formaterRelatifFrequentation(derniereGlobale), label: "dernière activité" }
+        ].forEach(function(k){
+          var carte = el("div", "admin-freq-kpi");
+          carte.appendChild(el("span", "admin-freq-kpi-valeur", String(k.valeur)));
+          carte.appendChild(el("span", "admin-freq-kpi-label", k.label));
+          kpis.appendChild(carte);
+        });
+        bloc.appendChild(kpis);
+
+        bloc.appendChild(el("h4", "admin-freq-soustitre", "Visites par jour (14 derniers jours)"));
+        bloc.appendChild(construireCourbeFrequentation(parJour));
+
+        bloc.appendChild(el("h4", "admin-freq-soustitre", "Par membre"));
+        if(!Object.keys(parMembre).length){
+          bloc.appendChild(el("p", "admin-info", "Aucun membre famille pour ce voyage."));
+        } else {
+          bloc.appendChild(construireBarresFrequentation(
+            Object.keys(parMembre).map(function(id){
+              var m = parMembre[id];
+              return {
+                label: m.prenom,
+                valeur: m.visites,
+                sousLabel: m.visites + " visite" + (m.visites > 1 ? "s" : "") + " · " + formaterDureeFrequentation(m.secondes)
+                  + " · " + formaterRelatifFrequentation(m.derniere)
+              };
+            }),
+            "--rosso"
+          ));
+        }
+
+        var ongletsTries = Object.keys(parOnglet)
+          .map(function(o){ return { onglet: o, valeur: parOnglet[o] }; })
+          .sort(function(a, b){ return b.valeur - a.valeur; })
+          .slice(0, 5);
+        if(ongletsTries.length){
+          bloc.appendChild(el("h4", "admin-freq-soustitre", "Onglets les plus consultés"));
+          bloc.appendChild(construireBarresFrequentation(
+            ongletsTries.map(function(o){
+              return {
+                label: NOMS_ONGLETS_FREQUENTATION[o.onglet] || o.onglet,
+                valeur: o.valeur,
+                sousLabel: String(o.valeur)
+              };
+            }),
+            "--oliva"
+          ));
+        }
+      });
+  }
+
+  /* --- console d'administration : sous-onglets internes -------------------
+     Deux sections (Quiz, Fréquentation), une seule visible à la fois — même
+     mécanique que la barre d'onglets principale (aria-current, panneaux
+     cachés plutôt que reconstruits), pour ne pas obliger à défiler toute
+     la correction du quiz avant d'atteindre les statistiques. */
+  function construirePanelAdmin(container, voyageId, utilisateurId){
+    container.appendChild(construireEnteteOnglet("Admin"));
+
+    var sousOnglets = el("div", "admin-sousonglets");
+    sousOnglets.setAttribute("role", "tablist");
+    var boutonsSousOnglets = {};
+    var zonesSousOnglets = {};
+    function creerSousOnglet(nom, libelle){
+      var bouton = document.createElement("button");
+      bouton.type = "button";
+      bouton.className = "admin-sousonglet";
+      bouton.setAttribute("role", "tab");
+      bouton.textContent = libelle;
+      bouton.addEventListener("click", function(){ afficherSousOnglet(nom); });
+      boutonsSousOnglets[nom] = bouton;
+      sousOnglets.appendChild(bouton);
+      var zone = el("div", "admin-sous-panel");
+      zonesSousOnglets[nom] = zone;
+      return zone;
+    }
+    function afficherSousOnglet(nom){
+      Object.keys(zonesSousOnglets).forEach(function(id){
+        zonesSousOnglets[id].hidden = (id !== nom);
+        boutonsSousOnglets[id].setAttribute("aria-current", id === nom ? "true" : "false");
+      });
+    }
+
+    var zoneQuiz = creerSousOnglet("quiz", "Quiz");
+    var zoneFrequentation = creerSousOnglet("frequentation", "Fréquentation");
+    container.appendChild(sousOnglets);
+    container.appendChild(zoneQuiz);
+    container.appendChild(zoneFrequentation);
+    afficherSousOnglet("quiz");
+
+    var zone = el("div", "admin-zone");
+    zone.appendChild(el("p", "admin-info", "Chargement…"));
+    zoneQuiz.appendChild(zone);
+
+    supabaseClient.from("journees").select("id, date, titre, ordre, quiz_questions(id, question, choix, ordre)")
+      .eq("voyage_id", voyageId).order("ordre", { ascending: true })
+      .then(function(resJournees){
+        if(resJournees.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement du quiz impossible : " + resJournees.error.message)); return; }
+
+        var jours = (resJournees.data || [])
+          .filter(function(j){ return j.quiz_questions && j.quiz_questions.length; })
+          .map(function(j){
+            return {
+              id: j.id, date: j.date, titre: j.titre, voyage_id: voyageId,
+              questions: j.quiz_questions.slice().sort(function(a, b){ return a.ordre - b.ordre; })
+                .map(function(q){ return { id: q.id, question: q.question, choix: q.choix }; })
+            };
+          });
+
+        if(!jours.length){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info", "Aucune question de quiz pour ce voyage.")); return; }
+
+        var idsQuestions = [];
+        jours.forEach(function(j){ j.questions.forEach(function(q){ idsQuestions.push(q.id); }); });
+
+        Promise.all([
+          supabaseClient.from("membres_famille").select("utilisateur_id, prenom").eq("voyage_id", voyageId),
+          supabaseClient.from("progression").select("utilisateur_id, quiz_etat, quiz_resultats, quiz_score, quiz_corrige").eq("voyage_id", voyageId),
+          supabaseClient.from("quiz_reponses").select("question_id, reponse_correcte").in("question_id", idsQuestions)
+        ]).then(function(resultats){
+          var resMembres = resultats[0], resProgression = resultats[1], resReponses = resultats[2];
+          if(resMembres.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement des membres impossible : " + resMembres.error.message)); return; }
+          if(resProgression.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement des réponses impossible : " + resProgression.error.message)); return; }
+          if(resReponses.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement des bonnes réponses impossible : " + resReponses.error.message)); return; }
+
+          var membres = resMembres.data || [];
+          var progressions = resProgression.data || [];
+          construireBlocFrequentation(zoneFrequentation, voyageId, membres);
+          var bonnesReponses = {};
+          (resReponses.data || []).forEach(function(r){ bonnesReponses[r.question_id] = r.reponse_correcte; });
+
+          zone.innerHTML = "";
+          var listeJours = el("div", "admin-jours");
+          zone.appendChild(listeJours);
+          var carteJour = el("div", "admin-carte-jour");
+          carteJour.hidden = true;
+          zone.appendChild(carteJour);
+
+          var boutonsJours = {}, statutSpans = {};
+          function rafraichirStatutJour(jour){
+            var statut = statutJourAdmin(jour, progressions);
+            var span = statutSpans[jour.id];
+            span.className = "admin-jour-statut-" + statut;
+            span.textContent = statut === "vide" ? "personne n'a répondu" : statut === "corrige" ? "✓ corrigée" : "en attente de correction";
+          }
+
+          jours.forEach(function(jour){
+            var statut = statutJourAdmin(jour, progressions);
+            var bouton = el("button", "admin-jour-bouton");
+            bouton.type = "button";
+            var gauche = el("span", "admin-jour-titre", formaterDateAdmin(jour.date) + " — " + jour.titre);
+            var droite = el("span", "admin-jour-statut-" + statut,
+              statut === "vide" ? "personne n'a répondu" : statut === "corrige" ? "✓ corrigée" : "en attente de correction");
+            bouton.appendChild(gauche);
+            bouton.appendChild(droite);
+            bouton.addEventListener("click", function(){
+              Object.keys(boutonsJours).forEach(function(id){ boutonsJours[id].classList.toggle("actif", id === jour.id); });
+              afficherCorrectionJourAdmin(jour, membres, progressions, utilisateurId, bonnesReponses, carteJour, function(){ rafraichirStatutJour(jour); });
+              carteJour.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+            boutonsJours[jour.id] = bouton;
+            statutSpans[jour.id] = droite;
+            listeJours.appendChild(bouton);
+          });
+        });
+      });
+  }
+
   /* --- onglet À réserver : agrégation chronologique de pratique.reserver.
      Chaque vignette porte un id "resa-MMJJ" pour permettre un lien direct
      depuis le bandeau de synthèse d'une journée (#reserver-MMJJ, voir
@@ -3895,6 +4486,17 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
   /* --- panneau Urgences --------------------------------------------------- */
   construirePanelUrgences(document.getElementById("panel-urgences"), "Urgences", URGENCES);
+
+  /* --- panneau Admin (correction du quiz) ---------------------------------
+     Réservé aux comptes membres_famille.role="admin" (voir tabbar plus
+     bas et body.est-admin). L'onglet n'est construit que pour eux : pas
+     de fetch Supabase superflu pour tout le monde. Remplace l'ancienne
+     page séparée admin/index.html, qui faisait sortir complètement de
+     l'app (voir historique) ; session et rôle sont déjà acquis ici via
+     sessionFamille/estAdmin, donc pas de nouvel écran de connexion. */
+  if(estAdmin){
+    construirePanelAdmin(document.getElementById("panel-admin"), voyageId, utilisateurId);
+  }
 
   /* --- panneau À réserver -------------------------------------------------- */
   rendrePanelReserver();
@@ -5053,7 +5655,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   }
 
   /* --- routage par ancre --------------------------------------------------- */
-  var PANELS = ["aujourdhui", "jours", "chasse", "reserver", "urgences"];
+  var PANELS = ["aujourdhui", "jours", "chasse", "reserver", "urgences", "admin"];
   var tabbar = document.getElementById("tabbar");
 
   function afficherPanel(nom, scrollY){
@@ -5061,6 +5663,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     Array.prototype.forEach.call(tabbar.querySelectorAll("a"), function(a){
       a.setAttribute("aria-current", a.getAttribute("data-tab") === nom ? "page" : "false");
     });
+    enregistrerOngletVisite(nom);
     window.scrollTo(0, scrollY || 0);
   }
 
@@ -5088,6 +5691,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      ancre profonde (lien copié, favori) doit retomber sur l'accueil,
      jamais sur un onglet caché ni une page vide. */
   function ancreVersOngletMasque(h){
+    if(h === "admin") return !estAdmin;
     return !modeFamille && (h === "chasse" || h === "urgences" || /^reserver(-\d{4})?$/.test(h));
   }
   function route(){
@@ -5123,6 +5727,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     else if(h === "urgences"){ afficherPanel("urgences"); titrerOnglet("urgences"); }
     else if(h === "chasse"){ afficherPanel("chasse"); titrerOnglet("chasse"); }
     else if(h === "reserver"){ afficherPanel("reserver", detailEtaitOuvert ? scrollPositions.reserver : 0); titrerOnglet("reserver"); }
+    else if(h === "admin"){ afficherPanel("admin"); titrerOnglet("admin"); }
     else if(h === "jours"){
       if(detailEtaitOuvert){
         afficherPanel("jours", scrollPositions.jours);
