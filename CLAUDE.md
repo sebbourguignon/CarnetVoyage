@@ -9,6 +9,12 @@ Un seul moteur de rendu (`app/`) sert n'importe quel voyage via `?voyage=<slug>`
 Il documente le format exact attendu, pour qu'une session Claude qui n'a
 jamais vu ce projet sache quoi produire sans redécouvrir le schéma à tâtons.
 
+Si la préparation du contenu se fait ailleurs que dans Claude Code (chat
+web, autre assistant), utiliser plutôt `docs/preparer-un-voyage.md` — un
+brief autonome, sans dépendance au dépôt — et `voyages/_modele.md` comme
+squelette JSON à copier. Ce `CLAUDE.md` reste la référence quand on
+travaille directement dans le dépôt.
+
 ## Principes hérités (non négociables)
 
 - **Ne jamais inventer une donnée** — horaire, tarif, jour de fermeture,
