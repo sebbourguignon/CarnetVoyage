@@ -261,7 +261,17 @@ button:disabled{opacity:.5;cursor:default}
     carteJour.style.display = "none";
     zone.appendChild(carteJour);
 
-    var boutonsJours = {};
+    var boutonsJours = {}, statutSpans = {};
+    /* remet à jour le badge de statut d'une journée dans la liste, sans
+       tout reconstruire — appelé après chaque correction individuelle
+       réussie, pour que "en attente" devienne "corrigée" en direct. */
+    function rafraichirStatutJour(jour){
+      var statut = statutJour(jour, progressions);
+      var span = statutSpans[jour.id];
+      span.className = "jour-statut-" + statut;
+      span.textContent = statut === "vide" ? "personne n'a répondu" : statut === "corrige" ? "✓ corrigée" : "en attente de correction";
+    }
+
     jours.forEach(function(jour){
       var statut = statutJour(jour, progressions);
       var bouton = document.createElement("button");
@@ -274,13 +284,14 @@ button:disabled{opacity:.5;cursor:default}
       bouton.appendChild(droite);
       bouton.addEventListener("click", function(){
         Object.keys(boutonsJours).forEach(function(id){ boutonsJours[id].classList.toggle("actif", id === jour.id); });
-        afficherCorrectionJour(jour, voyage, membres, progressions, monId, carteJour);
+        afficherCorrectionJour(jour, voyage, membres, progressions, monId, carteJour, function(){ rafraichirStatutJour(jour); });
         /* la liste des journées peut être longue (un voyage entier) : sans
            ça, la carte de détail apparaît hors écran en dessous et donne
            l'impression que rien ne s'est passé au clic. */
         carteJour.scrollIntoView({ behavior: "smooth", block: "start" });
       });
       boutonsJours[jour.id] = bouton;
+      statutSpans[jour.id] = droite;
       listeJours.appendChild(bouton);
     });
   }
@@ -341,10 +352,16 @@ button:disabled{opacity:.5;cursor:default}
     return recap;
   }
 
-  function afficherCorrectionJour(jour, voyage, membres, progressions, monId, carteJour){
+  function afficherCorrectionJour(jour, voyage, membres, progressions, monId, carteJour, onCorrection){
     carteJour.style.display = "";
     carteJour.innerHTML = "";
-    carteJour.appendChild(construireRecapJour(jour, membres, progressions, monId));
+    var recapEl = construireRecapJour(jour, membres, progressions, monId);
+    carteJour.appendChild(recapEl);
+    function rafraichirRecap(){
+      var nouveauRecap = construireRecapJour(jour, membres, progressions, monId);
+      recapEl.replaceWith(nouveauRecap);
+      recapEl = nouveauRecap;
+    }
 
     var carteAttente = el("div", "carte");
     carteAttente.appendChild(el("h3", null, formaterDate(jour.date) + " — " + jour.titre));
@@ -374,13 +391,14 @@ button:disabled{opacity:.5;cursor:default}
       carteResultats.appendChild(el("p", "info",
         "Vérifiez que les bonnes réponses ci-dessous semblent cohérentes avant de valider — un mauvais mot de passe produit des réponses au hasard, sans erreur visible ici."));
 
-      var envoisParMembre = {}; // utilisateur_id -> { scoreTotal, resultatsJour }
+      var membresEnAttente = 0;
       membres.forEach(function(m){
         var prog = progressions.filter(function(p){ return p.utilisateur_id === m.utilisateur_id; })[0];
         var etat = (prog && prog.quiz_etat) || {};
         var resultatsConnus = (prog && prog.quiz_resultats) || {};
         var questionsEnAttente = jour.questions.filter(function(q){ return etat[q.id] != null && resultatsConnus[q.id] == null; });
         if(!questionsEnAttente.length) return; // rien de nouveau à corriger pour ce membre sur ce jour
+        membresEnAttente++;
 
         /* score total = questions déjà corrigées lors de journées précédentes
            (resultatsConnus) + celles de ce jour qu'on s'apprête à corriger —
@@ -404,45 +422,52 @@ button:disabled{opacity:.5;cursor:default}
           blocMembre.appendChild(construireLigneQuestion(q, etat[q.id].reponse, resultatsJour[q.id]));
         });
 
-        carteResultats.appendChild(blocMembre);
-        envoisParMembre[m.utilisateur_id] = { scoreTotal: scoreTotal, resultatsJour: resultatsJour };
-      });
-
-      if(!Object.keys(envoisParMembre).length){
-        carteResultats.appendChild(el("p", "info", "Rien à corriger : tout le monde est déjà corrigé, ou personne n'a encore répondu au quiz de cette journée."));
-        return;
-      }
-
-      var actions = el("div", "actions");
-      var boutonValider = el("button", null, "Valider la correction de cette journée");
-      var messageValidation = el("p", "info");
-      boutonValider.addEventListener("click", function(){
-        boutonValider.disabled = true;
-        var appels = Object.keys(envoisParMembre).map(function(uid){
-          var s = envoisParMembre[uid];
-          return supabase.rpc("corriger_quiz", {
-            cible_utilisateur_id: uid,
+        /* un bouton par personne — corriger Jules ne doit pas obliger à
+           corriger Coralie en même temps, chacun répond et se fait
+           corriger à son rythme. */
+        var actions = el("div", "actions");
+        var boutonValider = el("button", null, "Valider pour " + nomMembre(membres, m.utilisateur_id));
+        var messageValidation = el("p", "info");
+        boutonValider.addEventListener("click", function(){
+          boutonValider.disabled = true;
+          supabase.rpc("corriger_quiz", {
+            cible_utilisateur_id: m.utilisateur_id,
             cible_voyage_id: voyage.id,
-            nouveau_score: s.scoreTotal,
-            nouveaux_resultats: s.resultatsJour
-          }).then(function(res){ return { uid: uid, error: res.error }; });
+            nouveau_score: scoreTotal,
+            nouveaux_resultats: resultatsJour
+          }).then(function(res){
+            if(res.error){
+              messageValidation.textContent = "Échec : " + res.error.message;
+              messageValidation.className = "erreur";
+              boutonValider.disabled = false;
+              return;
+            }
+            /* reflète la correction localement (sans recharger la page) :
+               met à jour progressions pour que le récap, le statut de la
+               journée dans la liste, et les prochains clics sur d'autres
+               journées voient tout de suite ce membre comme corrigé. */
+            if(prog){
+              prog.quiz_resultats = Object.assign({}, prog.quiz_resultats, resultatsJour);
+              prog.quiz_score = scoreTotal;
+              prog.quiz_corrige = true;
+            } else {
+              progressions.push({ utilisateur_id: m.utilisateur_id, quiz_etat: etat, quiz_resultats: resultatsJour, quiz_score: scoreTotal, quiz_corrige: true });
+            }
+            blocMembre.remove();
+            rafraichirRecap();
+            if(onCorrection) onCorrection();
+          });
         });
-        Promise.all(appels).then(function(resultatsAppels){
-          var echecs = resultatsAppels.filter(function(r){ return r.error; });
-          if(echecs.length){
-            messageValidation.textContent = echecs.length + " correction(s) ont échoué : " +
-              echecs.map(function(e){ return nomMembre(membres, e.uid) + " (" + e.error.message + ")"; }).join(", ");
-            messageValidation.className = "erreur";
-          } else {
-            messageValidation.textContent = "Corrections enregistrées pour " + resultatsAppels.length + " membre(s) sur cette journée. Chaque appareil verra sa correction à son prochain chargement.";
-            messageValidation.className = "info";
-          }
-          boutonValider.disabled = false;
-        });
+        actions.appendChild(boutonValider);
+        blocMembre.appendChild(actions);
+        blocMembre.appendChild(messageValidation);
+
+        carteResultats.appendChild(blocMembre);
       });
-      actions.appendChild(boutonValider);
-      carteResultats.appendChild(actions);
-      carteResultats.appendChild(messageValidation);
+
+      if(!membresEnAttente){
+        carteResultats.appendChild(el("p", "info", "Rien à corriger : tout le monde est déjà corrigé, ou personne n'a encore répondu au quiz de cette journée."));
+      }
     });
   }
 
