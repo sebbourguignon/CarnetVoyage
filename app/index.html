@@ -468,6 +468,45 @@ h1 em{font-style:italic;color:var(--lago)}
 .chasse-badge.obtenu .chasse-badge-nom{color:var(--ink)}
 .chasse-badge-resume{font-size:.82rem;line-height:1.4;color:var(--ink-soft);margin:0}
 
+/* ---------- classement famille (podium + liste) -------------------------
+   même esprit que .chasse-badge : filet du haut plutôt que carte encadrée,
+   couleur = seule marque de distinction (or/argent/bronze), pas de fond. */
+.classement-podium{
+  display:flex;align-items:flex-end;gap:10px;margin:0 0 18px;padding:0 0 4px;
+}
+.classement-marche{
+  flex:1 1 0;min-width:0;text-align:center;
+  border-top:3px solid var(--rule);padding-top:10px;
+}
+.classement-marche.rang-1{border-top-color:var(--sole);order:2}
+.classement-marche.rang-2{border-top-color:var(--pietra);order:1}
+.classement-marche.rang-3{border-top-color:#8a5a3a;order:3}
+.classement-marche-rang{
+  font-family:"Bodoni Moda",Georgia,serif;font-size:1.6rem;font-weight:700;
+  color:var(--ink-soft);line-height:1;margin:0 0 6px;
+}
+.classement-marche.rang-1 .classement-marche-rang{color:var(--sole);font-size:2.1rem}
+.classement-marche-nom{font-weight:600;font-size:.9rem;margin:0 0 3px;overflow-wrap:anywhere}
+.classement-marche-pts{
+  font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--ink-soft);margin:0;
+}
+.classement-liste{margin:0}
+.classement-ligne{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 0;border-top:1px solid var(--rule-soft);
+}
+.classement-ligne:first-child{border-top:0}
+.classement-ligne-rang{
+  flex:0 0 auto;width:22px;text-align:right;
+  font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--pietra);
+}
+.classement-ligne-nom{flex:1 1 auto;min-width:0;font-size:.92rem;overflow-wrap:anywhere}
+.classement-ligne.moi .classement-ligne-nom{font-weight:600;color:var(--rosso)}
+.classement-ligne-pts{
+  flex:0 0 auto;font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--ink-soft);
+}
+.classement-detail{font-size:.78rem;color:var(--ink-soft);margin:2px 0 0}
+
 /* vue par journée de l'onglet Chasse : quelles observations restent à
    cocher, jour par jour — réutilise .regarder tel quel (voir
    construireRegarderJour), juste précédé d'un en-tête de journée propre
@@ -1983,15 +2022,43 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   function idPourCondition(cond){ return ID_PAR_JOUR_OU[cond.jour + "||" + cond.ou]; }
 
   var STOCKAGE_REGARDER = slugVoyage + "-carnet-regarder-v1";
-  function chargerEtatRegarder(){
+  function chargerEtatRegarderLocal(){
     try{
       var brut = window.localStorage.getItem(STOCKAGE_REGARDER);
       return brut ? JSON.parse(brut) : {};
     }catch(e){ return {}; }
   }
-  var etatRegarder = chargerEtatRegarder();
+  /* fusion locale/serveur par simple union : une entrée cochée sur un
+     appareil (local ou déjà envoyée à Supabase) le reste partout, jamais
+     de décochage à la fusion — même logique que fusionnerProgressionQuiz,
+     en plus simple puisqu'il n'y a pas de correction à distance ici. */
+  function fusionnerProgressionRegarder(local, progression){
+    var etat = Object.assign({}, local || {});
+    var distant = (progression && progression.observations_cochees) || {};
+    Object.keys(distant).forEach(function(id){ if(distant[id]) etat[id] = true; });
+    return etat;
+  }
+  var etatRegarder = fusionnerProgressionRegarder(chargerEtatRegarderLocal(), progressionInitiale);
   function sauvegarderEtatRegarder(){
     try{ window.localStorage.setItem(STOCKAGE_REGARDER, JSON.stringify(etatRegarder)); }catch(e){}
+  }
+  /* pousse l'ensemble des cases cochées vers Supabase — même volume et
+     même stratégie best-effort que synchroniserReponsesQuiz : hors
+     connexion, le localStorage a déjà fait foi, et le prochain clic en
+     ligne retentera. Nécessaire pour que le classement (voir plus bas)
+     puisse lire la progression des autres membres de la famille. */
+  function synchroniserObservations(){
+    if(!modeFamille || !utilisateurId || !voyageId) return;
+    var cocheesReseau = {};
+    Object.keys(etatRegarder).forEach(function(id){ if(etatRegarder[id]) cocheesReseau[id] = true; });
+    supabaseClient.from("progression").upsert({
+      voyage_id: voyageId,
+      utilisateur_id: utilisateurId,
+      observations_cochees: cocheesReseau,
+      maj_le: new Date().toISOString()
+    }, { onConflict: "voyage_id,utilisateur_id" }).then(function(res){
+      if(res.error) console.error("Échec de synchronisation de la chasse :", res.error);
+    });
   }
   /* pondération : niveau 1 (visible sans chercher) à 3 (il faut vraiment
      le chercher) → 1, 3 ou 5 points. niveau absent des données = 1. Les
@@ -2081,6 +2148,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   function basculerCoche(id){
     etatRegarder[id] = !etatRegarder[id];
     sauvegarderEtatRegarder();
+    synchroniserObservations();
     rafraichirRegarder();
   }
 
@@ -4481,6 +4549,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     var panel = document.getElementById("panel-chasse");
     panel.appendChild(construireEnteteOnglet("Chasse au trésor"));
 
+    if(modeFamille) panel.appendChild(construireBlocClassement());
+
     var rAuj = jourDuJour();
     var idJourAuj = rAuj.exact ? rAuj.jour.id : null;
     if(rAuj.exact){
@@ -4549,6 +4619,103 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       carte.appendChild(texte);
       container.appendChild(carte);
     });
+  }
+
+  /* --- classement famille : podium top 3 + liste, quiz + chasse combinés.
+     Le quiz vit déjà sur Supabase (progression.quiz_score, posé une fois
+     par membre par admin/index.html) ; la chasse vient d'y être ajoutée
+     (observations_cochees, voir synchroniserObservations plus haut) —
+     c'est ce qui rend ce classement possible pour la première fois.
+     Lecture globale autorisée par la policy "lecture progression par la
+     famille du voyage" (RLS, tous les membres peuvent lire la progression
+     des autres, jamais l'écrire). Construit une fois au chargement du
+     panneau puis rempli de façon asynchrone : pas la peine de retenter au
+     fil des cases cochées, un rafraîchissement de page suffit à voir
+     bouger les autres. */
+  function chasseScoreDe(cochees){
+    return ENTREES_REGARDER.reduce(function(acc, e){ return acc + (cochees[e.id] ? pointsEntree(e.id) : 0); }, 0);
+  }
+  function chasseBadgesDe(cochees){
+    return BADGES.filter(function(b){
+      /* seuils basés sur le quiz (journées corrigées, points) : hors de
+         portée d'un etat "cochees" seul, jamais comptés dans le classement
+         d'un autre membre — seuls les badges liés à la chasse le sont. */
+      if(b.seuilJourneesCorrigees != null || b.seuilPointsQuiz != null) return false;
+      return badgeObtenu(b, cochees);
+    }).length;
+  }
+  function construireBlocClassement(){
+    var bloc = el("div", "block classement");
+    bloc.appendChild(el("h3", null, ICONES.badge + " Classement de la famille"));
+    var zone = el("div", "classement-zone");
+    zone.appendChild(el("p", "classement-detail", "Chargement…"));
+    bloc.appendChild(zone);
+
+    Promise.all([
+      supabaseClient.from("progression")
+        .select("utilisateur_id, observations_cochees, quiz_score, quiz_corrige")
+        .eq("voyage_id", voyageId),
+      supabaseClient.from("membres_famille")
+        .select("utilisateur_id, prenom")
+        .eq("voyage_id", voyageId)
+    ]).then(function(res){
+      var resProgression = res[0], resMembres = res[1];
+      if(resProgression.error || resMembres.error){
+        zone.innerHTML = "";
+        zone.appendChild(el("p", "classement-detail", "Classement indisponible pour le moment."));
+        return;
+      }
+      var prenomParId = {};
+      (resMembres.data || []).forEach(function(m){ prenomParId[m.utilisateur_id] = m.prenom; });
+      var lignes = (resProgression.data || []).map(function(p){
+        var cochees = p.observations_cochees || {};
+        var ptsChasse = chasseScoreDe(cochees);
+        var ptsQuiz = p.quiz_corrige ? (p.quiz_score || 0) : 0;
+        return {
+          id: p.utilisateur_id,
+          nom: prenomParId[p.utilisateur_id] || "Un membre de la famille",
+          total: ptsChasse + ptsQuiz,
+          ptsChasse: ptsChasse,
+          ptsQuiz: ptsQuiz,
+          badges: chasseBadgesDe(cochees)
+        };
+      }).sort(function(a, b){ return b.total - a.total; });
+
+      zone.innerHTML = "";
+      if(!lignes.length){
+        zone.appendChild(el("p", "classement-detail", "Personne n'a encore de score sur ce voyage."));
+        return;
+      }
+
+      var MEDAILLES = ["1", "2", "3"];
+      var podium = el("div", "classement-podium");
+      lignes.slice(0, 3).forEach(function(ligne, i){
+        var marche = el("div", "classement-marche rang-" + (i + 1));
+        marche.appendChild(el("p", "classement-marche-rang", MEDAILLES[i]));
+        marche.appendChild(el("p", "classement-marche-nom", ligne.nom + (ligne.id === utilisateurId ? " (vous)" : "")));
+        marche.appendChild(el("p", "classement-marche-pts", ligne.total + " pts"));
+        podium.appendChild(marche);
+      });
+      zone.appendChild(podium);
+
+      if(lignes.length > 3){
+        var liste = el("div", "classement-liste");
+        lignes.slice(3).forEach(function(ligne, i){
+          var l = el("div", "classement-ligne" + (ligne.id === utilisateurId ? " moi" : ""));
+          l.appendChild(el("span", "classement-ligne-rang", String(i + 4)));
+          l.appendChild(el("span", "classement-ligne-nom", ligne.nom + (ligne.id === utilisateurId ? " (vous)" : "")));
+          l.appendChild(el("span", "classement-ligne-pts", ligne.total + " pts"));
+          liste.appendChild(l);
+        });
+        zone.appendChild(liste);
+      }
+    }).catch(function(err){
+      console.error("Échec de chargement du classement :", err);
+      zone.innerHTML = "";
+      zone.appendChild(el("p", "classement-detail", "Classement indisponible pour le moment."));
+    });
+
+    return bloc;
   }
 
   /* --- partage : un texte autoporteur (score, observations, badges), rien
@@ -4788,6 +4955,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       if(window.confirm("Remettre à zéro toute la progression de la chasse au trésor sur cet appareil ? Les objectifs cochés seront décochés.")){
         etatRegarder = {};
         sauvegarderEtatRegarder();
+        synchroniserObservations();
         rafraichirRegarder();
       }
     });
