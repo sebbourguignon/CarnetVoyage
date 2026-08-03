@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Correction du quiz — admin</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root{
+  --paper:#F3F1EA; --ink:#1A1A18; --ink-soft:#6E6B63; --rule:#DCD8CC;
+  --rosso:#B23A2E; --oliva:#4B6B3A; --paper-2:#EAE6D9;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; padding:24px 16px 60px; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,sans-serif; line-height:1.5;
+}
+.page{max-width:640px;margin:0 auto}
+h1{font-size:1.3rem;margin:0 0 4px}
+.sous-titre{color:var(--ink-soft);font-size:.9rem;margin:0 0 28px}
+.carte{
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:10px;
+  padding:20px;margin-bottom:20px;
+}
+label{display:block;font-size:.82rem;color:var(--ink-soft);margin-bottom:6px}
+input[type="email"],input[type="password"]{
+  width:100%;padding:10px 12px;border:1.5px solid var(--rule);border-radius:6px;
+  font-size:.95rem;background:var(--paper);color:var(--ink);margin-bottom:14px;
+}
+button{
+  font-family:inherit;font-size:.85rem;font-weight:600;letter-spacing:.02em;
+  padding:10px 18px;border-radius:6px;border:1.5px solid var(--ink);
+  background:var(--ink);color:var(--paper);cursor:pointer;
+}
+button:hover{background:var(--rosso);border-color:var(--rosso)}
+button.secondaire{background:none;color:var(--ink);border-color:var(--rule)}
+button.secondaire:hover{border-color:var(--ink);background:none;color:var(--ink)}
+button:disabled{opacity:.5;cursor:default}
+.erreur{color:var(--rosso);font-size:.85rem;margin:8px 0 0}
+.info{color:var(--ink-soft);font-size:.85rem}
+.membre{border-top:1px solid var(--rule);padding-top:14px;margin-top:14px}
+.membre:first-child{border-top:0;padding-top:0;margin-top:0}
+.membre-tete{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.membre-nom{font-weight:600}
+.membre-score{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--ink-soft)}
+.question-ligne{display:flex;gap:8px;font-size:.85rem;padding:4px 0;align-items:baseline}
+.question-ligne .puce{flex:none;width:16px}
+.correcte{color:var(--oliva)}
+.incorrecte{color:var(--rosso)}
+.sans-reponse{color:var(--ink-soft);font-style:italic}
+.statut-corrige{font-size:.78rem;color:var(--oliva);font-weight:600}
+.statut-attente{font-size:.78rem;color:var(--ink-soft)}
+.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Correction du quiz</h1>
+  <p class="sous-titre" id="sous-titre">Chargement…</p>
+  <div id="zone"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* Écran de correction à distance du quiz — voir README « Quiz et
+     correction à distance ». Un membre famille connecté entre le mot de
+     passe du quiz une seule fois ; les réponses chiffrées de tous les
+     membres du voyage sont déchiffrées côté client (jamais envoyées au
+     serveur), les scores calculés, puis chaque résultat est écrit en base
+     via la fonction security definer corriger_quiz(...) — jamais par une
+     écriture directe sur la table progression, pour ne jamais pouvoir
+     modifier les réponses brutes d'un autre membre. */
+
+  var URL_PROJET = "https://cgxnrgkalhfyfkpesshq.supabase.co";
+  var CLE_PUBLISHABLE = "sb_publishable_fbZPyz9G6UIBWwU00phJig_fQegJUl9";
+  var supabase = window.supabase.createClient(URL_PROJET, CLE_PUBLISHABLE);
+  var POINTS_PAR_BONNE_REPONSE_QUIZ = 3; // doit rester égal à app/index.html
+
+  var params = new URLSearchParams(window.location.search);
+  var slug = params.get("voyage") || "salo2026";
+
+  var zone = document.getElementById("zone");
+  var sousTitre = document.getElementById("sous-titre");
+
+  function el(tag, className, texte){
+    var n = document.createElement(tag);
+    if(className) n.className = className;
+    if(texte != null) n.textContent = texte;
+    return n;
+  }
+
+  /* même mécanique de déchiffrement que l'ancien Italie2026 (XOR + base64
+     URL-safe), voir outils/chiffrer-quiz.js pour la production du bloc
+     chiffré. */
+  function dechiffrer(base64url, motDePasse){
+    var b64 = String(base64url || "").replace(/-/g, "+").replace(/_/g, "/");
+    while(b64.length % 4) b64 += "=";
+    var bin;
+    try{ bin = window.atob(b64); }catch(e){ return null; }
+    var clair = "";
+    for(var i = 0; i < bin.length; i++){
+      clair += String.fromCharCode(bin.charCodeAt(i) ^ motDePasse.charCodeAt(i % motDePasse.length));
+    }
+    var indexCorrect = parseInt(clair, 10);
+    return isNaN(indexCorrect) ? null : indexCorrect;
+  }
+
+  function afficherLogin(){
+    zone.innerHTML = "";
+    sousTitre.textContent = "Voyage « " + slug + " » — connexion famille requise";
+
+    var carte = el("div", "carte");
+    var champEmail = document.createElement("input");
+    champEmail.type = "email"; champEmail.autocomplete = "email"; champEmail.placeholder = "email@exemple.com";
+    var labelEmail = el("label", null, "Email");
+    var champMdp = document.createElement("input");
+    champMdp.type = "password"; champMdp.autocomplete = "current-password";
+    var labelMdp = el("label", null, "Mot de passe du compte famille");
+    carte.appendChild(labelEmail); carte.appendChild(champEmail);
+    carte.appendChild(labelMdp); carte.appendChild(champMdp);
+
+    var bouton = el("button", null, "Se connecter");
+    var erreur = el("p", "erreur");
+    bouton.addEventListener("click", function(){
+      erreur.textContent = "";
+      supabase.auth.signInWithPassword({ email: champEmail.value, password: champMdp.value })
+        .then(function(res){
+          if(res.error){ erreur.textContent = "Connexion refusée : " + res.error.message; return; }
+          demarrer();
+        });
+    });
+    carte.appendChild(bouton);
+    carte.appendChild(erreur);
+    zone.appendChild(carte);
+  }
+
+  function afficherErreur(message){
+    zone.innerHTML = "";
+    sousTitre.textContent = "";
+    zone.appendChild(el("p", "erreur", message));
+  }
+
+  function demarrer(){
+    supabase.auth.getSession().then(function(resSession){
+      var session = resSession.data && resSession.data.session;
+      if(!session){ afficherLogin(); return; }
+      var utilisateurId = session.user.id;
+
+      supabase.from("voyages").select("id, titre").eq("slug", slug).maybeSingle().then(function(resVoyage){
+        if(resVoyage.error || !resVoyage.data){
+          afficherErreur("Voyage introuvable pour « " + slug + " ».");
+          return;
+        }
+        var voyage = resVoyage.data;
+
+        supabase.from("membres_famille").select("utilisateur_id, prenom").eq("voyage_id", voyage.id)
+          .then(function(resMembres){
+            if(resMembres.error){ afficherErreur("Chargement des membres impossible : " + resMembres.error.message); return; }
+            var membres = resMembres.data || [];
+            if(!membres.some(function(m){ return m.utilisateur_id === utilisateurId; })){
+              afficherErreur("Ce compte n'est pas membre famille du voyage « " + slug + " ».");
+              return;
+            }
+
+            supabase.from("journees").select("ancre, titre, quiz_questions(id, question, choix, reponse_chiffree, ordre)")
+              .eq("voyage_id", voyage.id).order("ordre", { ascending: true })
+              .then(function(resJournees){
+                if(resJournees.error){ afficherErreur("Chargement du quiz impossible : " + resJournees.error.message); return; }
+
+                var questions = [];
+                (resJournees.data || []).forEach(function(j){
+                  (j.quiz_questions || []).slice().sort(function(a, b){ return a.ordre - b.ordre; }).forEach(function(q){
+                    questions.push({ id: q.id, journee: j.titre, question: q.question, choix: q.choix, reponseChiffree: q.reponse_chiffree });
+                  });
+                });
+
+                if(!questions.length){
+                  afficherErreur("Aucune question de quiz pour ce voyage.");
+                  return;
+                }
+
+                supabase.from("progression").select("utilisateur_id, quiz_etat, quiz_resultats, quiz_score, quiz_corrige")
+                  .eq("voyage_id", voyage.id)
+                  .then(function(resProgression){
+                    if(resProgression.error){ afficherErreur("Chargement des réponses impossible : " + resProgression.error.message); return; }
+                    sousTitre.textContent = voyage.titre + " — " + questions.length + " question" + (questions.length > 1 ? "s" : "");
+                    afficherEcranCorrection(voyage, membres, questions, resProgression.data || [], utilisateurId);
+                  });
+              });
+          });
+      });
+    });
+  }
+
+  function nomMembre(membres, utilisateurId){
+    var m = membres.filter(function(x){ return x.utilisateur_id === utilisateurId; })[0];
+    if(m && m.prenom) return m.prenom;
+    return utilisateurId.slice(0, 8) + "…";
+  }
+
+  function afficherEcranCorrection(voyage, membres, questions, progressions, monId){
+    zone.innerHTML = "";
+
+    var carteMdp = el("div", "carte");
+    carteMdp.appendChild(el("label", null, "Mot de passe du quiz"));
+    var champMdp = document.createElement("input");
+    champMdp.type = "password"; champMdp.autocomplete = "off";
+    carteMdp.appendChild(champMdp);
+    var boutonDechiffrer = el("button", null, "Déchiffrer et prévisualiser");
+    var erreurMdp = el("p", "erreur");
+    carteMdp.appendChild(boutonDechiffrer);
+    carteMdp.appendChild(erreurMdp);
+    zone.appendChild(carteMdp);
+
+    var carteResultats = el("div", "carte");
+    carteResultats.style.display = "none";
+    zone.appendChild(carteResultats);
+
+    boutonDechiffrer.addEventListener("click", function(){
+      var motDePasse = champMdp.value;
+      if(!motDePasse){ erreurMdp.textContent = "Entrez un mot de passe."; return; }
+      erreurMdp.textContent = "";
+
+      var resultats = {}; // qid -> indexCorrect
+      questions.forEach(function(q){ resultats[q.id] = dechiffrer(q.reponseChiffree, motDePasse); });
+
+      carteResultats.style.display = "";
+      carteResultats.innerHTML = "";
+      carteResultats.appendChild(el("p", "info",
+        "Vérifiez que les bonnes réponses ci-dessous semblent cohérentes avant de valider — un mauvais mot de passe produit des réponses au hasard, sans erreur visible ici."));
+
+      var scoresParMembre = {}; // utilisateur_id -> { score, resultats }
+      membres.forEach(function(m){
+        var prog = progressions.filter(function(p){ return p.utilisateur_id === m.utilisateur_id; })[0];
+        var etat = (prog && prog.quiz_etat) || {};
+        var aRepondu = questions.some(function(q){ return etat[q.id] != null; });
+        if(!aRepondu) return; // pas encore joué, rien à corriger
+
+        var blocMembre = el("div", "membre");
+        var tete = el("div", "membre-tete");
+        tete.appendChild(el("span", "membre-nom", nomMembre(membres, m.utilisateur_id) + (m.utilisateur_id === monId ? " (vous)" : "")));
+        var score = 0, repondues = 0;
+        questions.forEach(function(q){
+          var reponse = etat[q.id] ? etat[q.id].reponse : null;
+          if(reponse == null) return;
+          repondues++;
+          if(resultats[q.id] != null && reponse === resultats[q.id]) score += POINTS_PAR_BONNE_REPONSE_QUIZ;
+        });
+        tete.appendChild(el("span", "membre-score", score + " pts · " + repondues + "/" + questions.length + " répondues"));
+        blocMembre.appendChild(tete);
+
+        questions.forEach(function(q){
+          var reponse = etat[q.id] ? etat[q.id].reponse : null;
+          var ligne = el("div", "question-ligne");
+          var indexCorrect = resultats[q.id];
+          var texteCorrect = (indexCorrect != null && q.choix[indexCorrect]) ? q.choix[indexCorrect] : "?";
+          if(reponse == null){
+            ligne.appendChild(el("span", "puce", "·"));
+            ligne.appendChild(el("span", "sans-reponse", q.question + " — sans réponse (bonne réponse : " + texteCorrect + ")"));
+          } else {
+            var correcte = reponse === indexCorrect;
+            ligne.appendChild(el("span", "puce " + (correcte ? "correcte" : "incorrecte"), correcte ? "✓" : "✗"));
+            var texte = q.question + " — répondu : " + (q.choix[reponse] || "?");
+            if(!correcte) texte += " (bonne réponse : " + texteCorrect + ")";
+            ligne.appendChild(el("span", correcte ? "correcte" : "incorrecte", texte));
+          }
+          blocMembre.appendChild(ligne);
+        });
+
+        carteResultats.appendChild(blocMembre);
+        scoresParMembre[m.utilisateur_id] = { score: score, resultats: resultats };
+      });
+
+      if(!Object.keys(scoresParMembre).length){
+        carteResultats.appendChild(el("p", "info", "Personne n'a encore répondu au quiz."));
+        return;
+      }
+
+      var actions = el("div", "actions");
+      var boutonValider = el("button", null, "Valider et enregistrer les corrections");
+      var messageValidation = el("p", "info");
+      boutonValider.addEventListener("click", function(){
+        boutonValider.disabled = true;
+        var appels = Object.keys(scoresParMembre).map(function(uid){
+          var s = scoresParMembre[uid];
+          return supabase.rpc("corriger_quiz", {
+            cible_utilisateur_id: uid,
+            cible_voyage_id: voyage.id,
+            nouveau_score: s.score,
+            nouveaux_resultats: s.resultats
+          }).then(function(res){ return { uid: uid, error: res.error }; });
+        });
+        Promise.all(appels).then(function(resultatsAppels){
+          var echecs = resultatsAppels.filter(function(r){ return r.error; });
+          if(echecs.length){
+            messageValidation.textContent = echecs.length + " correction(s) ont échoué : " +
+              echecs.map(function(e){ return nomMembre(membres, e.uid) + " (" + e.error.message + ")"; }).join(", ");
+            messageValidation.className = "erreur";
+          } else {
+            messageValidation.textContent = "Corrections enregistrées pour " + resultatsAppels.length + " membre(s). Chaque appareil verra sa correction à son prochain chargement.";
+            messageValidation.className = "info";
+          }
+          boutonValider.disabled = false;
+        });
+      });
+      actions.appendChild(boutonValider);
+      carteResultats.appendChild(actions);
+      carteResultats.appendChild(messageValidation);
+    });
+  }
+
+  demarrer();
+})();
+</script>
+</body>
+</html>

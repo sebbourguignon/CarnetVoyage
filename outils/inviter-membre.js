@@ -29,9 +29,9 @@ function echouer(message) {
   process.exit(1);
 }
 
-const [email, motDePasse, slug] = process.argv.slice(2);
+const [email, motDePasse, slug, prenom] = process.argv.slice(2);
 if (!email || !motDePasse || !slug) {
-  echouer("usage : node outils/inviter-membre.js <email> <mot-de-passe> <slug-du-voyage>");
+  echouer("usage : node outils/inviter-membre.js <email> <mot-de-passe> <slug-du-voyage> [prenom]");
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -118,7 +118,9 @@ async function trouverVoyageId() {
 }
 
 async function rattacherAuVoyage(utilisateurId, voyageId) {
-  const corps = JSON.stringify({ voyage_id: voyageId, utilisateur_id: utilisateurId });
+  const ligne = { voyage_id: voyageId, utilisateur_id: utilisateurId };
+  if (prenom) ligne.prenom = prenom;
+  const corps = JSON.stringify(ligne);
   const url = new URL(BASE + "/rest/v1/membres_famille");
   const reponse = await requeteHttps(url, {
     method: "POST",

@@ -1343,58 +1343,10 @@ body.mode-public .regarder-item{cursor:default}
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;
 }
 .quiz-score{margin:0;font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft)}
-.quiz-corriger{
-  display:block;padding:0;border:0;background:none;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.05em;
-  color:var(--pietra);text-decoration:underline;text-underline-offset:2px;cursor:pointer;
-}
-.quiz-corriger:hover{color:var(--rosso)}
-.quiz-corriger:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
-/* boîte de mot de passe : remplace window.prompt (toujours en clair,
-   impossible à masquer) par un vrai <input type="password">. Construite
-   en JS comme le reste du carnet, jamais présente dans le DOM au repos. */
-.quiz-pw-overlay{
-  position:fixed;inset:0;z-index:60;background:rgba(26,26,24,.45);
-  display:flex;align-items:center;justify-content:center;padding:20px;
-}
-.quiz-pw-boite{
-  width:100%;max-width:340px;background:var(--paper);color:var(--ink);
-  border:1.5px solid var(--ink);border-radius:10px;padding:22px;
-  box-shadow:0 12px 32px rgba(26,26,24,.25);
-}
-.quiz-pw-titre{margin:0 0 14px;font-size:.95rem;line-height:1.4}
-.quiz-pw-champ{
-  display:flex;align-items:center;gap:4px;border:1.5px solid var(--rule);
-  border-radius:8px;padding:0 4px 0 12px;background:var(--paper);
-}
-.quiz-pw-champ:focus-within{border-color:var(--ink)}
-.quiz-pw-input{
-  flex:1;min-width:0;border:0;background:none;outline:none;
-  font-family:"IBM Plex Mono",monospace;font-size:.95rem;color:var(--ink);padding:11px 0;
-}
-.quiz-pw-oeil{
-  flex:none;display:flex;align-items:center;justify-content:center;
-  width:34px;height:34px;padding:0;border:0;border-radius:6px;
-  background:none;color:var(--pietra);cursor:pointer;
-}
-.quiz-pw-oeil:hover{color:var(--ink)}
-.quiz-pw-oeil:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
-.quiz-pw-oeil.actif{color:var(--rosso)}
-.quiz-pw-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
-.quiz-pw-annuler,.quiz-pw-valider{
-  font-family:"IBM Plex Mono",monospace;font-size:.78rem;letter-spacing:.04em;
-  padding:9px 14px;border-radius:6px;cursor:pointer;
-}
-.quiz-pw-annuler{background:none;border:1.5px solid var(--rule);color:var(--ink-soft)}
-.quiz-pw-annuler:hover{border-color:var(--ink);color:var(--ink)}
-.quiz-pw-valider{background:var(--ink);border:1.5px solid var(--ink);color:var(--paper)}
-.quiz-pw-valider:hover{background:var(--rosso);border-color:var(--rosso)}
-.quiz-pw-annuler:focus-visible,.quiz-pw-valider:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
-
-/* boîte de mot de passe de l'accès famille : même facture visuelle que
-   .quiz-pw-*, en jeu de classes séparé — mécanique et mot de passe
-   distincts du quiz, jamais réutilisés l'un pour l'autre. */
+/* boîte de mot de passe de l'accès famille — la correction du quiz, elle,
+   se fait à distance (admin/) : plus de boîte de mot de passe par journée
+   dans le carnet lui-même, voir demarrerCarnet ci-dessous. */
 .famille-pw-overlay{
   position:fixed;inset:0;z-index:60;background:rgba(26,26,24,.45);
   display:flex;align-items:center;justify-content:center;padding:20px;
@@ -1755,7 +1707,7 @@ body.mode-public .tabbar a[data-tab="urgences"]{display:none}
    tel quel le corps de l'ancienne IIFE, en recevant JOURS/BADGES/CARNET
    en paramètres plutôt qu'en globales.
    ========================================================================== */
-function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES){
+function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale){
   "use strict";
 
   /* --- constantes de filtres : propriété du moteur de rendu, pas du
@@ -2047,181 +1999,71 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     return ENTREES_REGARDER.reduce(function(acc, e){ return acc + pointsEntree(e.id); }, 0);
   }
 
-  /* --- quiz : réponses en attente côté joueur, correction par mot de
-     passe côté maître du jeu ------------------------------------------
-     Principe : la bonne réponse (l'index du choix, en clair) est chiffrée
-     par XOR avec le mot de passe puis encodée en base64 URL-safe — voir
-     `outils/chiffrer-quiz.js`, qui produit ce bloc hors-ligne. Le mot de
-     passe n'est jamais écrit dans ce fichier ni dans donnees.js : il est
-     redemandé à chaque correction, sur chaque appareil, et n'existe qu'en
-     mémoire le temps de la fonction.
-
-     `quizControle` (un champ par journée, voir donnees.js) permet de
-     détecter un mot de passe erroné avant de tenter le moindre
-     déchiffrement : c'est un hachage non cryptographique (djb2 — largement
-     suffisant ici, il ne protège pas un secret, il détecte une faute de
-     frappe) du mot de passe, de l'id du jour et des blocs chiffrés eux-
-     mêmes. Sans lui, un mauvais mot de passe déchiffrerait chaque question
-     en charabia sans qu'on puisse le distinguer d'une vraie réponse. */
-  function hachageDjb2(texte){
-    var h = 5381;
-    for(var i = 0; i < texte.length; i++){
-      h = ((h << 5) + h + texte.charCodeAt(i)) | 0;
-    }
-    return (h >>> 0).toString(36);
-  }
-  function dechiffrerReponseQuiz(base64url, motDePasse){
-    var b64 = String(base64url || "").replace(/-/g, "+").replace(/_/g, "/");
-    while(b64.length % 4) b64 += "=";
-    var bin;
-    try{ bin = window.atob(b64); }catch(e){ return null; }
-    var clair = "";
-    for(var i = 0; i < bin.length; i++){
-      clair += String.fromCharCode(bin.charCodeAt(i) ^ motDePasse.charCodeAt(i % motDePasse.length));
-    }
-    return clair;
-  }
-  function sommeControleQuiz(j, motDePasse){
-    var chiffres = (j.quiz || []).map(function(q){ return q.reponseChiffree; }).join("|");
-    return hachageDjb2(motDePasse + "::" + j.id + "::" + chiffres);
-  }
-  function motDePasseQuizValide(j, motDePasse){
-    return !!(motDePasse && j.quizControle && sommeControleQuiz(j, motDePasse) === j.quizControle);
-  }
-
+  /* --- quiz : réponses envoyées à Supabase (table progression), corrigées
+     à distance depuis admin/ (pas d'écran de correction ici, voir README
+     « Quiz et correction à distance »). ---------------------------------
+     etatQuiz reste la source pour le rendu, comme dans Italie2026, mais
+     ses clés sont maintenant l'id de question (uuid), et son contenu est
+     la fusion entre le cache local (réponses, y compris posées hors
+     connexion) et progressionInitiale (chargé depuis Supabase au démarrage,
+     seule source de la correction : quiz_resultats + quiz_corrige). */
   var STOCKAGE_QUIZ = slugVoyage + "-carnet-quiz-v1";
-  function chargerEtatQuiz(){
+  function chargerEtatQuizLocal(){
     try{
       var brut = window.localStorage.getItem(STOCKAGE_QUIZ);
       return brut ? JSON.parse(brut) : {};
     }catch(e){ return {}; }
   }
-  var etatQuiz = chargerEtatQuiz();
+  function fusionnerProgressionQuiz(local, progression){
+    var etat = local || {};
+    if(progression){
+      var reponses = progression.quiz_etat || {};
+      var resultats = progression.quiz_resultats || {};
+      Object.keys(reponses).forEach(function(qid){
+        etat[qid] = etat[qid] || {};
+        etat[qid].reponse = reponses[qid].reponse;
+      });
+      Object.keys(resultats).forEach(function(qid){
+        etat[qid] = etat[qid] || {};
+        etat[qid].corrige = true;
+        etat[qid].indexCorrect = resultats[qid];
+        etat[qid].correcte = (etat[qid].reponse === resultats[qid]);
+      });
+    }
+    return etat;
+  }
+  var etatQuiz = fusionnerProgressionQuiz(chargerEtatQuizLocal(), progressionInitiale);
   function sauvegarderEtatQuiz(){
     try{ window.localStorage.setItem(STOCKAGE_QUIZ, JSON.stringify(etatQuiz)); }catch(e){}
   }
-  /* la réponse reste modifiable tant que la question n'est pas corrigée ;
-     une fois corrigée (voir corrigerJourneeQuiz), plus aucun changement
-     n'est accepté. */
+  /* pousse l'ensemble des réponses en attente vers Supabase — coup par
+     coup plutôt qu'un diff, le volume (quelques dizaines de questions max)
+     ne justifie pas plus fin. Best-effort : hors connexion, l'upsert
+     échoue silencieusement, sauvegarderEtatQuiz() (localStorage) a déjà
+     fait foi pour cet appareil, et le prochain démarrage en ligne
+     retentera via ce même appel au clic suivant. */
+  function synchroniserReponsesQuiz(){
+    if(!modeFamille || !utilisateurId || !voyageId) return;
+    var quizEtatReseau = {};
+    Object.keys(etatQuiz).forEach(function(qid){
+      quizEtatReseau[qid] = { reponse: etatQuiz[qid].reponse };
+    });
+    supabaseClient.from("progression").upsert({
+      voyage_id: voyageId,
+      utilisateur_id: utilisateurId,
+      quiz_etat: quizEtatReseau,
+      maj_le: new Date().toISOString()
+    }, { onConflict: "voyage_id,utilisateur_id" }).then(function(res){
+      if(res.error) console.error("Échec de synchronisation du quiz :", res.error);
+    });
+  }
+  /* la réponse reste modifiable tant que la question n'est pas corrigée. */
   function choisirReponseQuiz(id, choixIndex){
     if(etatQuiz[id] && etatQuiz[id].corrige) return;
     etatQuiz[id] = { reponse: choixIndex, corrige: false };
     sauvegarderEtatQuiz();
+    synchroniserReponsesQuiz();
     rafraichirQuiz();
-  }
-  /* corrige, à cet instant précis, les seules questions déjà répondues
-     de cette journée — celles sans réponse restent scellées et pourront
-     être corrigées lors d'un passage ultérieur (voir remplirBlocQuiz,
-     rappelé à chaque rendu : rien n'empêche de rouvrir ce bouton plus
-     tard). Résultat et bonne réponse sont conservés dans etatQuiz une
-     fois corrigés : ils n'ont plus besoin du mot de passe pour être
-     réaffichés après un rechargement de la page. */
-  /* boîte de saisie du mot de passe : un window.prompt() natif ne peut
-     pas être mis en type="password" (ni recevoir de bouton œil), d'où
-     ce mini-dialogue construit à la volée et détruit juste après, comme
-     le reste de l'UI du carnet (voir el() plus haut). onValider reçoit
-     la saisie puis le champ est effacé et le dialogue retiré du DOM :
-     aucune trace du mot de passe ne survit à l'appel. */
-  function demanderMotDePasseQuiz(libelle, onValider){
-    var overlay = el("div", "quiz-pw-overlay");
-    var boite = el("div", "quiz-pw-boite");
-    boite.setAttribute("role", "dialog");
-    boite.setAttribute("aria-modal", "true");
-    boite.setAttribute("aria-labelledby", "quiz-pw-titre");
-    overlay.appendChild(boite);
-
-    var titre = el("p", "quiz-pw-titre", "Mot de passe pour corriger « " + libelle + " » :");
-    titre.id = "quiz-pw-titre";
-    boite.appendChild(titre);
-
-    var champ = el("div", "quiz-pw-champ");
-    var input = document.createElement("input");
-    input.type = "password";
-    input.className = "quiz-pw-input";
-    input.autocomplete = "off";
-    input.setAttribute("autocorrect", "off");
-    input.setAttribute("autocapitalize", "off");
-    input.spellcheck = false;
-    champ.appendChild(input);
-
-    var boutonOeil = document.createElement("button");
-    boutonOeil.type = "button";
-    boutonOeil.className = "quiz-pw-oeil";
-    boutonOeil.setAttribute("aria-label", "Afficher le mot de passe");
-    boutonOeil.innerHTML = ICONES.oeil;
-    boutonOeil.addEventListener("click", function(){
-      var revele = input.type === "text";
-      input.type = revele ? "password" : "text";
-      boutonOeil.innerHTML = revele ? ICONES.oeil : ICONES.oeilBarre;
-      boutonOeil.setAttribute("aria-label", revele ? "Afficher le mot de passe" : "Masquer le mot de passe");
-      boutonOeil.classList.toggle("actif", !revele);
-      input.focus();
-    });
-    champ.appendChild(boutonOeil);
-    boite.appendChild(champ);
-
-    var actions = el("div", "quiz-pw-actions");
-    var boutonAnnuler = document.createElement("button");
-    boutonAnnuler.type = "button";
-    boutonAnnuler.className = "quiz-pw-annuler";
-    boutonAnnuler.textContent = "Annuler";
-    var boutonValider = document.createElement("button");
-    boutonValider.type = "button";
-    boutonValider.className = "quiz-pw-valider";
-    boutonValider.textContent = "Valider";
-    actions.appendChild(boutonAnnuler);
-    actions.appendChild(boutonValider);
-    boite.appendChild(actions);
-
-    function fermer(){
-      input.value = "";
-      document.removeEventListener("keydown", surTouche);
-      if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
-    }
-    function valider(){
-      var valeur = input.value;
-      fermer();
-      onValider(valeur);
-    }
-    function surTouche(ev){
-      if(ev.key === "Escape") fermer();
-    }
-    boutonAnnuler.addEventListener("click", fermer);
-    boutonValider.addEventListener("click", valider);
-    input.addEventListener("keydown", function(ev){
-      if(ev.key === "Enter"){ ev.preventDefault(); valider(); }
-    });
-    overlay.addEventListener("click", function(ev){
-      if(ev.target === overlay) fermer();
-    });
-    document.addEventListener("keydown", surTouche);
-
-    document.body.appendChild(overlay);
-    input.focus();
-  }
-  function corrigerJourneeQuiz(j){
-    demanderMotDePasseQuiz(texteJour(j), function(motDePasse){
-      if(!motDePasse) return;
-      if(!motDePasseQuizValide(j, motDePasse)){
-        window.alert("Mot de passe incorrect.");
-        return;
-      }
-      var nbCorrigees = 0;
-      j.quiz.forEach(function(q, i){
-        var id = j.id + "-q" + i;
-        var e = etatQuiz[id];
-        if(!e || e.corrige) return;
-        var clair = dechiffrerReponseQuiz(q.reponseChiffree, motDePasse);
-        var indexCorrect = clair == null ? -1 : parseInt(clair, 10);
-        e.corrige = true;
-        e.indexCorrect = indexCorrect;
-        e.correcte = (indexCorrect === e.reponse);
-        nbCorrigees++;
-      });
-      sauvegarderEtatQuiz();
-      rafraichirQuiz();
-      if(!nbCorrigees) window.alert("Aucune réponse en attente à corriger sur cette journée.");
-    });
   }
 
   function estCoche(id){ return !!etatRegarder[id]; }
@@ -2732,8 +2574,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   function journeesQuizCorrigees(){
     return JOURS.filter(function(j){
       if(!j.quiz || !j.quiz.length) return false;
-      return j.quiz.every(function(q, i){
-        var e = etatQuiz[j.id + "-q" + i];
+      return j.quiz.every(function(q){
+        var e = etatQuiz[q.id];
         return !!(e && e.corrige);
       });
     }).length;
@@ -2742,8 +2584,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   function pointsQuizObtenus(){
     var total = 0;
     JOURS.forEach(function(j){
-      (j.quiz || []).forEach(function(q, i){
-        var e = etatQuiz[j.id + "-q" + i];
+      (j.quiz || []).forEach(function(q){
+        var e = etatQuiz[q.id];
         if(e && e.corrige && e.correcte) total += POINTS_PAR_BONNE_REPONSE_QUIZ;
       });
     });
@@ -2766,7 +2608,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     resumeEl.appendChild(bonne);
   }
   function construireQuestionQuiz(j, q, index, wrap){
-    var id = j.id + "-q" + index;
+    var id = q.id;
     var e = etatQuiz[id];
     var corrige = !!(e && e.corrige);
 
@@ -2833,8 +2675,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     wrap.innerHTML = "";
 
     var total = j.quiz.length, corrigees = 0, bonnes = 0;
-    j.quiz.forEach(function(q, i){
-      var e = etatQuiz[j.id + "-q" + i];
+    j.quiz.forEach(function(q){
+      var e = etatQuiz[q.id];
       if(e && e.corrige){ corrigees++; if(e.correcte) bonnes++; }
     });
 
@@ -2847,17 +2689,13 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
     j.quiz.forEach(function(q, i){ wrap.appendChild(construireQuestionQuiz(j, q, i, wrap)); });
 
+    /* la correction se fait à distance (admin/), pas de bouton ici — voir
+       README « Quiz et correction à distance ». Chaque appareil voit sa
+       correction dès son prochain chargement (progressionInitiale). */
     var pied = el("div", "quiz-pied");
     pied.appendChild(el("p", "quiz-score", corrigees ?
       bonnes + " / " + corrigees + " bonnes réponses · " + corrigees + " / " + total + " corrigées" :
-      total + " question" + (total > 1 ? "s" : "") + " · en attente de correction"));
-
-    var boutonCorriger = document.createElement("button");
-    boutonCorriger.type = "button";
-    boutonCorriger.className = "quiz-corriger";
-    boutonCorriger.textContent = "Corriger cette journée";
-    boutonCorriger.addEventListener("click", function(){ corrigerJourneeQuiz(j); });
-    pied.appendChild(boutonCorriger);
+      total + " question" + (total > 1 ? "s" : "") + " · en attente de correction à distance"));
 
     wrap.appendChild(pied);
   }
@@ -5277,7 +5115,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         .slice()
         .sort(function(a, b){ return a.ordre - b.ordre; })
         .map(function(q){
-          return { question: q.question, choix: q.choix, reponseChiffree: q.reponse_chiffree };
+          return { id: q.id, question: q.question, choix: q.choix, reponseChiffree: q.reponse_chiffree };
         })
     };
   }
@@ -5307,7 +5145,9 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      ne sert qu'à l'affichage (voir demarrerCarnet) : la vraie restriction
      est appliquée par Supabase, pas par ce fichier. */
   supabase.auth.getSession().then(function(resSession){
-    var sessionFamille = !!(resSession.data && resSession.data.session);
+    var session = resSession.data && resSession.data.session;
+    var sessionFamille = !!session;
+    var utilisateurId = session ? session.user.id : null;
 
     supabase
     .from("voyages")
@@ -5365,12 +5205,25 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
                 aVerifier: voyage.a_verifier
               };
 
-              /* zoneChargement retiré seulement après un démarrage réussi :
-                 si demarrerCarnet() lève une exception, elle doit encore
-                 pouvoir s'afficher dedans via le .catch() plus bas — pas
-                 sur un noeud déjà détaché du DOM. */
-              demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille, voyage.urgences || {});
-              zoneChargement.remove();
+              /* progression du membre famille connecté (réponses au quiz
+                 déjà envoyées, corrections déjà reçues) : lue une fois au
+                 démarrage, voir fusionnerProgressionQuiz. Absente pour un
+                 visiteur non famille (utilisateurId null) ou un membre qui
+                 n'a encore jamais répondu (maybeSingle → null). */
+              var chargerProgression = utilisateurId
+                ? supabase.from("progression").select("*")
+                    .eq("voyage_id", voyage.id).eq("utilisateur_id", utilisateurId).maybeSingle()
+                : Promise.resolve({ data: null });
+
+              return chargerProgression.then(function(resProgression){
+                /* zoneChargement retiré seulement après un démarrage réussi :
+                   si demarrerCarnet() lève une exception, elle doit encore
+                   pouvoir s'afficher dedans via le .catch() plus bas — pas
+                   sur un noeud déjà détaché du DOM. */
+                demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille,
+                  voyage.urgences || {}, voyage.id, utilisateurId, resProgression.data || null);
+                zoneChargement.remove();
+              });
             });
         });
     })
