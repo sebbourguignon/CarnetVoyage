@@ -101,15 +101,19 @@ prochain chargement.
 
 ## État actuel
 
-Schéma Supabase posé et appliqué (`0001_init.sql`, `0002_champs_manquants.sql`,
-`0003_acces_famille_et_quiz.sql`). Moteur de rendu porté vers `app/` avec
-fetch Supabase (`demarrerCarnet`). Reste à faire :
+Schéma Supabase posé et appliqué (`0001_init.sql` à `0010_visites.sql`).
+Moteur de rendu porté vers `app/` avec fetch Supabase (`demarrerCarnet`).
+Le voyage salo2026 est publié et sert de validation sur données réelles.
 
-1. Écrire `outils/publier-voyage.js` et migrer le contenu réel d'Italie2026
-   (`donnees.js` → `voyages/salo2026.json` → publication), pour valider le
-   modèle sur des données réelles
-2. Écrire `outils/exporter-voyage.js`
-3. Onglet Admin (correction du quiz) dans `app/`
-4. Authentification famille (comptes + `membres_famille`) côté `app/`
-5. Thème + illustrations chargés dynamiquement par slug
-6. Service worker (cache-first sur le contenu du voyage actif)
+Fait : `outils/publier-voyage.js`, `outils/exporter-voyage.js`,
+authentification famille, onglet Admin (correction du quiz +
+fréquentation), service worker (cache-first shell, network-first
+données Supabase).
+
+Reste à faire :
+
+1. Thème (palette, polices) et illustrations chargés dynamiquement par
+   slug — aujourd'hui la palette Officina Bodoniana et les polices
+   Google Fonts sont en dur dans `app/index.html`, ce qui empêche un
+   deuxième voyage de porter sa propre identité visuelle sans toucher
+   au moteur
