@@ -98,10 +98,14 @@ button:disabled{opacity:.5;cursor:default}
   var zone = document.getElementById("zone");
   var sousTitre = document.getElementById("sous-titre");
 
-  function el(tag, className, texte){
+  /* innerHTML, pas textContent : même convention que app/index.html (el()
+     y admet le HTML léger autorisé dans les champs texte du carnet — voir
+     CLAUDE.md). Sans ça, un titre de journée contenant par ex. « &amp; »
+     s'affiche en toutes lettres au lieu de « & ». */
+  function el(tag, className, html){
     var n = document.createElement(tag);
     if(className) n.className = className;
-    if(texte != null) n.textContent = texte;
+    if(html != null) n.innerHTML = html;
     return n;
   }
 
