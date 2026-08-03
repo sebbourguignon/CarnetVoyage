@@ -234,9 +234,13 @@ h1 em{font-style:italic;color:var(--lago)}
   position:absolute;z-index:2;top:14px;right:14px;
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   border:0;border-radius:999px;background:rgba(15,15,14,.5);color:#fff;cursor:pointer;
+  transition:transform .12s ease-out;
 }
+.accueil-hero-verrou:active{transform:scale(0.94)}
 .accueil-hero-verrou .iico{width:18px;height:18px}
-.accueil-hero-verrou:hover{background:rgba(15,15,14,.72)}
+@media (hover:hover) and (pointer:fine){
+  .accueil-hero-verrou:hover{background:rgba(15,15,14,.72)}
+}
 .accueil-hero-verrou:focus-visible{outline:2px solid #fff;outline-offset:2px}
 
 @media(max-width:480px){
@@ -296,8 +300,11 @@ h1 em{font-style:italic;color:var(--lago)}
   position:absolute;display:flex;min-width:44px;min-height:44px;
   padding:4px;box-sizing:border-box;text-decoration:none;color:var(--ink);
 }
-.itin-label:hover .itin-label-nom,.itin-label:focus-visible .itin-label-nom{color:var(--rosso)}
+.itin-label:focus-visible .itin-label-nom{color:var(--rosso)}
 .itin-label:focus-visible{outline:2px solid var(--rosso);outline-offset:2px;border-radius:8px}
+@media (hover:hover) and (pointer:fine){
+  .itin-label:hover .itin-label-nom{color:var(--rosso)}
+}
 .itin-label-nom{
   font-family:var(--font-display);font-weight:600;font-size:13px;
   line-height:1.25;white-space:nowrap;
@@ -337,7 +344,9 @@ h1 em{font-style:italic;color:var(--lago)}
   border:1.5px solid var(--cat-route);border-radius:999px;background:transparent;
 }
 .itineraire-bouton .iico{flex:0 0 auto;color:var(--cat-route)}
-.itineraire-bouton:hover{background:var(--cat-route-light)}
+@media (hover:hover) and (pointer:fine){
+  .itineraire-bouton:hover{background:var(--cat-route-light)}
+}
 .itineraire-bouton:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 @media(min-width:481px){
   .itineraire-bouton{width:auto}
@@ -370,7 +379,9 @@ h1 em{font-style:italic;color:var(--lago)}
   font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--oliva);font-weight:700;margin:0 0 3px;
 }
-.accueil-chasse-resume:hover .accueil-chasse-resume-tete{color:var(--rosso)}
+@media (hover:hover) and (pointer:fine){
+  .accueil-chasse-resume:hover .accueil-chasse-resume-tete{color:var(--rosso)}
+}
 .accueil-chasse-resume-score{
   font-family:var(--font-display);font-weight:600;
   font-size:clamp(2.1rem,8vw,2.7rem);line-height:1;margin:0 0 2px;color:var(--ink);
@@ -540,7 +551,9 @@ h1 em{font-style:italic;color:var(--lago)}
   font-family:var(--font-display);font-weight:600;font-size:1.05rem;
   color:var(--ink);line-height:1.2;
 }
-.chasse-jour-head:hover .chasse-jour-titre{color:var(--rosso)}
+@media (hover:hover) and (pointer:fine){
+  .chasse-jour-head:hover .chasse-jour-titre{color:var(--rosso)}
+}
 .chasse-jour-head:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .chasse-jour-tete-etat{flex:0 0 auto;display:flex;align-items:center;gap:8px}
 .chasse-jour-progres{
@@ -556,7 +569,7 @@ h1 em{font-style:italic;color:var(--lago)}
    anime jusqu'à la hauteur réelle du contenu sans la connaître à l'avance.
    min-height:0 sur l'intérieur est ce qui permet au contenu de descendre
    sous sa taille naturelle quand la piste de grille vaut 0fr. */
-.chasse-jour-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
+.chasse-jour-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s cubic-bezier(0.23,1,0.32,1)}
 .chasse-jour.open .chasse-jour-collapse{grid-template-rows:1fr}
 .chasse-jour-collapse-inner{overflow:hidden;min-height:0;padding-top:0;transition:padding-top .25s ease}
 .chasse-jour.open .chasse-jour-collapse-inner{padding-top:10px}
@@ -584,7 +597,9 @@ h1 em{font-style:italic;color:var(--lago)}
   background:transparent;color:var(--ink-soft);cursor:pointer;white-space:nowrap;
 }
 .chasse-partage .iico{color:var(--pietra)}
-.chasse-partage:hover{border-color:var(--lago);color:var(--lago)}
+@media (hover:hover) and (pointer:fine){
+  .chasse-partage:hover{border-color:var(--lago);color:var(--lago)}
+}
 .chasse-partage:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
 .accueil-demain{opacity:.82}
@@ -626,7 +641,7 @@ h1 em{font-style:italic;color:var(--lago)}
 .jours-outils:empty{margin:0}
 .recherche-bar{
   display:flex;align-items:center;gap:9px;
-  padding:11px 14px;border:1px solid var(--rule);border-radius:10px;
+  padding:11px 14px;border:1px solid var(--pietra);border-radius:10px;
   background:var(--card);
 }
 .recherche-icone{flex:0 0 auto;width:17px;height:17px;color:var(--pietra)}
@@ -668,13 +683,18 @@ h1 em{font-style:italic;color:var(--lago)}
   background:none;border:0;padding:0;cursor:pointer;
   display:flex;flex-direction:column;justify-content:flex-end;height:100%;
 }
+@keyframes friseEntree{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 .tick .bar{
-  width:100%;border-radius:1px;
+  width:100%;border-radius:1px;transform-origin:bottom;
   background:var(--lago-mid);opacity:.5;
   transition:opacity .18s ease,transform .18s ease;
+  animation:friseEntree .3s cubic-bezier(0.23,1,0.32,1) both;
 }
-.tick:hover .bar,.tick:focus-visible .bar{opacity:1;transform:scaleY(1.06);transform-origin:bottom}
+.tick:focus-visible .bar{opacity:1;transform:scaleY(1.06);transform-origin:bottom}
 .tick:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
+@media (hover:hover) and (pointer:fine){
+  .tick:hover .bar{opacity:1;transform:scaleY(1.06);transform-origin:bottom}
+}
 .tick[data-kind="nature"] .bar{background:var(--oliva)}
 .tick[data-kind="ville"] .bar{background:var(--lago)}
 .tick[data-kind="route"] .bar{background:var(--pietra)}
@@ -701,9 +721,12 @@ h1 em{font-style:italic;color:var(--lago)}
   padding:7px 13px;margin-bottom:14px;
   border:1px solid var(--rule);border-radius:999px;
   background:transparent;color:var(--ink-soft);cursor:pointer;
-  transition:background .15s ease,color .15s ease,border-color .15s ease;
+  transition:background .15s ease,color .15s ease,border-color .15s ease,transform .12s ease-out;
 }
-.filters button:hover{border-color:var(--ink);color:var(--ink)}
+.filters button:active{transform:scale(0.96)}
+@media (hover:hover) and (pointer:fine){
+  .filters button:hover{border-color:var(--ink);color:var(--ink)}
+}
 .filters button:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 
@@ -720,7 +743,9 @@ h1 em{font-style:italic;color:var(--lago)}
   display:block;padding:18px 0 18px 14px;text-decoration:none;color:inherit;
   border-bottom:1px solid var(--rule-soft);
   border-left:3px solid transparent;
+  transition:transform .12s ease-out;
 }
+.card:active{transform:scale(0.98)}
 .card.hidden{display:none}
 .card[data-kind="route"]{border-left-color:var(--cat-route)}
 .card[data-kind="ville"]{border-left-color:var(--cat-ville)}
@@ -794,7 +819,9 @@ h1 em{font-style:italic;color:var(--lago)}
   font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;
   color:var(--pietra);text-decoration:underline;text-underline-offset:2px;cursor:pointer;
 }
-.reinit-chasse:hover{color:var(--rosso)}
+@media (hover:hover) and (pointer:fine){
+  .reinit-chasse:hover{color:var(--rosso)}
+}
 .reinit-chasse:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
 /* ---------- à réserver : agrégation de pratique.reserver -------------- */
@@ -1291,12 +1318,14 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   font-family:var(--font-mono);font-size:.78rem;font-weight:600;
   letter-spacing:.02em;color:var(--pietra);text-decoration:none;
 }
-.lieu-maps:hover,.lieu-maps:focus-visible{color:var(--rosso)}
-.lieu-maps:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
+.lieu-maps:focus-visible{color:var(--rosso);outline:2px solid var(--rosso);outline-offset:2px}
+@media (hover:hover) and (pointer:fine){
+  .lieu-maps:hover{color:var(--rosso)}
+}
 .lieu-maps .iico{flex:0 0 auto}
 /* dépliage : même technique grid-template-rows 0fr→1fr que .chasse-jour-
    collapse, ici appliquée par fiche plutôt que par journée entière. */
-.lieu-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
+.lieu-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s cubic-bezier(0.23,1,0.32,1)}
 .lieu-item.open .lieu-collapse{grid-template-rows:1fr}
 .lieu-collapse-inner{overflow:hidden;min-height:0;padding-top:0;transition:padding-top .25s ease}
 .lieu-item.open .lieu-collapse-inner{padding-top:0;padding-bottom:14px}
@@ -1315,7 +1344,8 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   background:var(--rule-soft);margin:0 0 6px;
 }
 .regarder-progress-bar{
-  height:100%;width:0;background:var(--lago);transition:width .2s ease;
+  height:100%;width:100%;transform:scaleX(0);transform-origin:left;
+  background:var(--lago);transition:transform .2s ease;
 }
 .day[data-kind="route"] .regarder-progress-bar{background:var(--cat-route)}
 .day[data-kind="ville"] .regarder-progress-bar{background:var(--cat-ville)}
@@ -1389,7 +1419,9 @@ body.mode-public .regarder-item{cursor:default}
   line-height:1.4;padding:11px 14px;border:1.5px solid var(--rule);border-radius:8px;
   background:var(--paper);color:var(--ink);cursor:pointer;
 }
-.quiz-choix-item:hover:not(:disabled){border-color:var(--ink)}
+@media (hover:hover) and (pointer:fine){
+  .quiz-choix-item:hover:not(:disabled){border-color:var(--ink)}
+}
 .quiz-choix-item:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .quiz-choix-item:disabled{cursor:default}
 .quiz-choix-item.choisi{border-color:var(--lago);background:var(--cat-ville-light)}
@@ -1406,7 +1438,9 @@ body.mode-public .regarder-item{cursor:default}
   display:block;width:100%;text-align:left;background:none;border:0;
   padding:8px 0;margin:0;cursor:pointer;font:inherit;color:inherit;
 }
-.quiz-compact:hover .quiz-compact-question{color:var(--rosso)}
+@media (hover:hover) and (pointer:fine){
+  .quiz-compact:hover .quiz-compact-question{color:var(--rosso)}
+}
 .quiz-compact:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .quiz-compact-question{
   display:block;font-size:.86rem;line-height:1.3;color:var(--ink);margin:0 0 3px;
@@ -1455,7 +1489,9 @@ body.mode-public .regarder-item{cursor:default}
   display:flex;align-items:center;justify-content:center;
 }
 .famille-pw-fermer .iico{width:15px;height:15px}
-.famille-pw-fermer:hover{color:var(--rosso)}
+@media (hover:hover) and (pointer:fine){
+  .famille-pw-fermer:hover{color:var(--rosso)}
+}
 .famille-pw-fermer:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .famille-pw-champ{
   display:flex;align-items:center;gap:4px;border:1.5px solid var(--rule);
@@ -1471,7 +1507,9 @@ body.mode-public .regarder-item{cursor:default}
   width:34px;height:34px;padding:0;border:0;border-radius:6px;
   background:none;color:var(--pietra);cursor:pointer;
 }
-.famille-pw-oeil:hover{color:var(--ink)}
+@media (hover:hover) and (pointer:fine){
+  .famille-pw-oeil:hover{color:var(--ink)}
+}
 .famille-pw-oeil:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .famille-pw-oeil.actif{color:var(--rosso)}
 .famille-pw-erreur{
@@ -1484,7 +1522,9 @@ body.mode-public .regarder-item{cursor:default}
   padding:9px 14px;border-radius:6px;cursor:pointer;
   background:var(--ink);border:1.5px solid var(--ink);color:var(--paper);
 }
-.famille-pw-valider:hover{background:var(--rosso);border-color:var(--rosso)}
+@media (hover:hover) and (pointer:fine){
+  .famille-pw-valider:hover{background:var(--rosso);border-color:var(--rosso)}
+}
 .famille-pw-valider:disabled{opacity:.6;cursor:default}
 .famille-pw-valider:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
@@ -1510,9 +1550,12 @@ body.mode-public .regarder-item{cursor:default}
   position:fixed;inset:0;z-index:15;
   background:var(--paper);overflow-y:auto;
   visibility:hidden;transform:translateX(100%);
-  transition:transform .25s ease;
+  transition:transform .18s cubic-bezier(0.23,1,0.32,1);
 }
-.detail.open{visibility:visible;transform:translateX(0)}
+.detail.open{
+  visibility:visible;transform:translateX(0);
+  transition:transform .28s cubic-bezier(0.23,1,0.32,1);
+}
 .detail:not(.open){pointer-events:none}
 .back{
   display:inline-flex;align-items:center;gap:6px;
@@ -1521,7 +1564,9 @@ body.mode-public .regarder-item{cursor:default}
   letter-spacing:.1em;text-transform:uppercase;
   background:none;border:0;color:var(--ink-soft);cursor:pointer;
 }
-.back:hover{color:var(--ink)}
+@media (hover:hover) and (pointer:fine){
+  .back:hover{color:var(--ink)}
+}
 .back:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
 /* navigation séquentielle : barre fine sticky, ancrée juste au-dessus de
@@ -1550,7 +1595,9 @@ body.mode-public .regarder-item{cursor:default}
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .day-nav-sticky-next{justify-content:flex-end;text-align:right}
-.day-nav-sticky-link:hover{color:var(--rosso)}
+@media (hover:hover) and (pointer:fine){
+  .day-nav-sticky-link:hover{color:var(--rosso)}
+}
 .day-nav-sticky-link:focus-visible{outline:2px solid var(--rosso);outline-offset:-2px}
 .day-nav-sticky-link[aria-disabled="true"]{color:var(--pietra)}
 
@@ -1591,7 +1638,9 @@ body.mode-public .regarder-item{cursor:default}
   flex:0 0 auto;width:28px;height:28px;border-radius:999px;border:0;
   background:none;color:var(--pietra);font-size:1.15rem;line-height:1;cursor:pointer;
 }
-.install-banner-fermer:hover{color:var(--rosso)}
+@media (hover:hover) and (pointer:fine){
+  .install-banner-fermer:hover{color:var(--rosso)}
+}
 .install-banner-fermer:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
 /* ---------- barre d'onglets ---------- */
@@ -2240,7 +2289,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     (j.regarder || []).forEach(function(r, i){ if(estCoche(j.id + "-r" + i)) coches++; });
     var barre = wrap.querySelector(".regarder-progress-bar");
     var label = wrap.querySelector(".regarder-progress-label");
-    if(barre) barre.style.width = (total ? Math.round(coches / total * 100) : 0) + "%";
+    if(barre) barre.style.transform = "scaleX(" + (total ? coches / total : 0) + ")";
     if(label) label.textContent = coches + (total === 1 ? " / 1 objectif repéré" : " / " + total + " objectifs repérés");
   }
   function rafraichirRegarder(){
@@ -2396,7 +2445,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
     animationEclipseCachee = overlay.animate(trames, {
       duration: reduit ? 700 : 15000,
-      easing: "ease-in-out"
+      easing: "cubic-bezier(0.77,0,0.175,1)"
     });
     animationEclipseCachee.addEventListener("finish", nettoyerEclipseCachee);
     animationEclipseCachee.addEventListener("cancel", nettoyerEclipseCachee);
@@ -2640,7 +2689,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
           { transform: "translateY(-120%) rotate(0deg)", offset: 1 }
         ];
 
-    var anim = wrap.animate(trames, { duration: duree, easing: "ease-in-out" });
+    var anim = wrap.animate(trames, { duration: duree, easing: "cubic-bezier(0.77,0,0.175,1)" });
 
     function nettoyer(){
       if(wrap.parentNode) wrap.remove();
@@ -3071,7 +3120,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(queue && !reduit){
       queue.animate(
         [ { transform: "rotate(0deg)" }, { transform: "rotate(16deg)" }, { transform: "rotate(0deg)" } ],
-        { duration: 300, iterations: Math.ceil(duree / 300), easing: "ease-in-out" }
+        { duration: 300, iterations: Math.ceil(duree / 300), easing: "cubic-bezier(0.77,0,0.175,1)" }
       );
     }
 
@@ -4217,13 +4266,14 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
   /* --- frise ------------------------------------------------------------ */
   var spine = document.getElementById("spine");
-  JOURS.forEach(function(j){
+  JOURS.forEach(function(j, i){
     var b = el("button", "tick" + (j.star ? " star" : ""));
     b.setAttribute("data-kind", j.cat);
     var libelle = j.num + " " + j.mois + " — " + texteJour(j);
     b.setAttribute("title", libelle);
     b.setAttribute("aria-label", "Voir le " + libelle);
-    b.innerHTML = '<span class="bar" style="height:' + (18 + j.intensite * 17) + '%"></span>' +
+    var delai = Math.min(i * 15, 300);
+    b.innerHTML = '<span class="bar" style="height:' + (18 + j.intensite * 17) + '%;animation-delay:' + delai + 'ms"></span>' +
                   '<span class="num">' + j.num + "</span>";
     b.addEventListener("click", function(){ location.hash = "#jour-" + idCourt(j); });
     spine.appendChild(b);
@@ -4339,7 +4389,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
           { transform: "translateY(0px)", offset: 0 },
           { transform: "translateY(" + (-amp) + "px)", offset: .5 },
           { transform: "translateY(0px)", offset: 1 }
-        ], { duration: dureeReduite, easing: "ease-in-out" });
+        ], { duration: dureeReduite, easing: "cubic-bezier(0.77,0,0.175,1)" });
       });
       setTimeout(function(){ ventCacheEnCours = false; }, dureeReduite + 50);
       return;
@@ -4361,7 +4411,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         { transform: "translateY(0px)", offset: .64 },
         { transform: "translateY(" + (-amp * .25) + "px)", offset: .82 },
         { transform: "translateY(0px)", offset: 1 }
-      ], { duration: dureeOscillation, delay: delai, easing: "ease-in-out" });
+      ], { duration: dureeOscillation, delay: delai, easing: "cubic-bezier(0.77,0,0.175,1)" });
     });
 
     /* minuterie plutôt que suivi des "finish" de chaque animation : le
@@ -4671,7 +4721,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     cellule.style.width = cellule.getBoundingClientRect().width + "px";
 
     var reduit = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var duree = reduit ? 1 : 2000;
+    var duree = reduit ? 1 : 800;
     var depart = null;
 
     function image(horodatage){
