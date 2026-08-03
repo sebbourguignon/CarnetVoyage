@@ -321,7 +321,6 @@ button:disabled{opacity:.5;cursor:default}
      n'a plus rien de secret. */
   function construireRecapJour(jour, membres, progressions, monId){
     var recap = el("div", "carte");
-    recap.appendChild(el("h3", null, "Déjà corrigé"));
     var auMoinsUn = false;
 
     membres.forEach(function(m){
@@ -343,12 +342,15 @@ button:disabled{opacity:.5;cursor:default}
       questionsCorrigees.forEach(function(q){
         bloc.appendChild(construireLigneQuestion(q, etat[q.id].reponse, resultats[q.id]));
       });
+      if(auMoinsUn && recap.children.length === 0) recap.appendChild(el("h3", null, "Déjà corrigé"));
       recap.appendChild(bloc);
     });
 
-    if(!auMoinsUn){
-      recap.appendChild(el("p", "info", "Aucune correction enregistrée pour l'instant sur cette journée."));
-    }
+    /* rien à corriger connu pour ce jour : pas de carte du tout plutôt
+       qu'un titre "Déjà corrigé" suivi d'un texte qui le contredit —
+       l'élément reste dans le DOM (juste invisible) pour que rafraichirRecap
+       puisse toujours le remplacer par replaceWith, corrigé ou non. */
+    if(!auMoinsUn) recap.style.display = "none";
     return recap;
   }
 
