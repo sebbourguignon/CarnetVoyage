@@ -212,6 +212,20 @@ le thème par défaut du moteur, palette Officina Bodoniana). C'est un
 vrai exercice de design, pas juste choisir des couleurs — mêmes
 contraintes que le thème par défaut :
 
+**Important — penser le système comme un tout, pas comme une palette
+qu'on change.** L'identité actuelle (Officina Bodoniana : polices,
+couleurs, ET motifs d'illustration) a été conçue spécifiquement pour
+l'Italie — les silhouettes existantes (cyprès, olivier, campanile,
+capot de voiture pour Motor Valley, labyrinthe pour le Labirinto della
+Masone...) sont des références italiennes précises, pas un vocabulaire
+neutre. Pour un voyage ailleurs, les trois dimensions (polices,
+couleurs, motifs) doivent être repensées ensemble, ancrées sur ce lieu
+précis — pas juste changer `--rosso` en gardant des cyprès toscans dans
+les bandeaux d'un voyage en Champagne. Le meilleur point de départ,
+souvent, est une seule référence culturelle forte du lieu (comme Bodoni
+pour l'Italie, choisi parce que le Museo Bodoniano et le Labirinto sont
+deux étapes réelles du voyage) plutôt qu'un choix de couleurs abstrait.
+
 ### Contrainte d'usage, non négociable
 
 L'écran est un téléphone, souvent au soleil, souvent en extérieur.
@@ -263,11 +277,15 @@ Les noms `--pietra`/`--lago`/`--oliva` viennent du thème par défaut
 équivalent thématique dans le nouveau lieu, ce sont juste des noms de
 variable — seule la valeur hexadécimale compte pour le nouveau thème.
 
-### Vocabulaire d'illustration disponible
+### Illustrations — mécanique technique et vocabulaire à réinventer
 
-Les bandeaux de journée sont composés à partir d'une bibliothèque de
-silhouettes existante, par mots-clés dans `journees[].illustration`.
-Motifs déjà disponibles :
+Les bandeaux de journée sont composés par un moteur générique : chaque
+silhouette est un dessin plat (une seule couleur, celle de la catégorie
+de la journée), rangée en trois plans (fond/milieu/premier plan),
+référencée par mot-clé dans `journees[].illustration` — ex.
+`["collines", "vigne", "clocher"]`, du plan lointain vers le premier
+plan. **Ce mécanisme est neutre et réutilisable pour n'importe quel
+lieu.** Ce qui ne l'est pas, ce sont les silhouettes elles-mêmes :
 
 ```
 montagnes, collines, lac, vagues, vigne, route, pont, chateau, clocher,
@@ -276,13 +294,22 @@ aqueduc, viaduc, remparts, cascade, aiguilles, gorge, terrasses,
 tourbiere, dolmen, bambou, citronnier, platane, capot, labyrinthe, volcan
 ```
 
-Compose chaque `illustration` avec 2 à 4 de ces mots-clés, du plan
-lointain vers le premier plan (ex. `["collines", "vigne", "clocher"]`
-pour un paysage viticole avec un village). **Si le lieu a vraiment
-besoin d'un motif absent de cette liste** (une cathédrale gothique, un
-port de pêche...), décris-le en une phrase plutôt que d'inventer un
-mot-clé qui ne correspond à rien — je le ferai ajouter à la
-bibliothèque techniquement.
+— ce sont des motifs italiens (cyprès, olivier, campanile, capot de
+Ferrari...), choisis pour le voyage 2026. Pour un voyage ailleurs,
+**propose un nouveau jeu de motifs propres au lieu** (pour la
+Champagne, par exemple : coteaux de vignes en terrasses, une flèche de
+cathédrale gothique plutôt qu'un campanile italien, des fûts/pupitres
+de vinification, des champs de craie...) plutôt que de piocher dans la
+liste ci-dessus par facilité. Une poignée de motifs génériques
+(montagnes, collines, lac, vagues, route, pont, rocher, soleil) peuvent
+rester pertinents tels quels si le paysage s'y prête réellement — à
+juger au cas par cas, pas par défaut.
+
+Pour chaque motif proposé (qu'il soit nouveau ou réutilisé), une
+description en une phrase suffit (ex. « une flèche de cathédrale
+gothique élancée, à trois niveaux ») — je le ferai ajouter à la
+bibliothèque technique, en silhouette plate à une couleur cohérente
+avec le reste du système.
 
 ### Format attendu
 
