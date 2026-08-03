@@ -370,10 +370,12 @@ button:disabled{opacity:.5;cursor:default}
     carteAttente.appendChild(el("h3", null, formaterDate(jour.date) + " — " + jour.titre));
 
     var membresEnAttente = 0;
+    var quelquUnARepondu = false;
     membres.forEach(function(m){
       var prog = progressions.filter(function(p){ return p.utilisateur_id === m.utilisateur_id; })[0];
       var etat = (prog && prog.quiz_etat) || {};
       var resultatsConnus = (prog && prog.quiz_resultats) || {};
+      if(jour.questions.some(function(q){ return etat[q.id] != null; })) quelquUnARepondu = true;
       var questionsEnAttente = jour.questions.filter(function(q){ return etat[q.id] != null && resultatsConnus[q.id] == null; });
       if(!questionsEnAttente.length) return; // rien de nouveau à corriger pour ce membre sur ce jour
       membresEnAttente++;
@@ -446,7 +448,10 @@ button:disabled{opacity:.5;cursor:default}
     });
 
     if(!membresEnAttente){
-      carteAttente.appendChild(el("p", "info", "Rien à corriger : tout le monde est déjà corrigé, ou personne n'a encore répondu au quiz de cette journée."));
+      var texteRien = quelquUnARepondu
+        ? "Rien à corriger : tout le monde est déjà corrigé sur cette journée."
+        : "Personne n'a encore répondu au quiz de cette journée.";
+      carteAttente.appendChild(el("p", "info", texteRien));
     }
     carteJour.appendChild(carteAttente);
   }
