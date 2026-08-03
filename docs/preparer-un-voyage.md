@@ -50,7 +50,7 @@ la base de données du projet.
    si le voyage est long (une journée = un objet dans `journees`).
 5. En option, tu proposes une palette de couleurs et deux ou trois
    polices Google Fonts qui évoquent le lieu du voyage (voir section
-   « Thème visuel »).
+   « Système de design »).
 6. Je récupère le JSON final et je le publie moi-même côté technique —
    tu n'as pas besoin d'accéder à une base de données ou à un dépôt Git.
 
@@ -205,10 +205,86 @@ Détail champ par champ ci-dessous.
 | `ordre` | entier | position d'affichage |
 | `conditions_brutes` | tableau, facultatif | `[{"jour":"<ancre de la journée>", "ou":"<texte identique à observations[].ou>"}]` |
 
-## Thème visuel (facultatif)
+## Système de design (facultatif)
 
 Si tu veux proposer une identité visuelle pour ce voyage (sinon on garde
-le thème par défaut du moteur) :
+le thème par défaut du moteur, palette Officina Bodoniana). C'est un
+vrai exercice de design, pas juste choisir des couleurs — mêmes
+contraintes que le thème par défaut :
+
+### Contrainte d'usage, non négociable
+
+L'écran est un téléphone, souvent au soleil, souvent en extérieur.
+Conséquences directes :
+- **Contraste fort obligatoire** entre le texte et le fond — viser au
+  moins le ratio WCAG AA (4.5:1 pour le texte courant, 3:1 pour les
+  gros titres). Pas de gris clair sur fond clair, pas de pari sur un
+  bel écran calibré : on ne l'aura pas.
+- **Une police à empattements marqués (display) réservée aux gros
+  corps** (titres, numéros de jour — au-dessus de 28px environ) :
+  les pleins et déliés d'une police élégante se brouillent en petite
+  taille en plein soleil. Jamais cette police dans le corps de texte,
+  une liste ou un badge.
+- **Une police sans-serif pour le corps de texte**, lisible en petit.
+- **Une police mono pour les données** (heures, distances, badges) —
+  aligne les chiffres, signale visuellement « c'est une donnée, pas
+  de la prose ».
+- **Un seul accent de couleur dominant** (titres de rubrique, alertes),
+  un second accent plus rare. Pas une palette arc-en-ciel : le carnet
+  doit rester lisible d'un coup d'œil, pas décoratif.
+
+### Jetons de couleur — lesquels toucher
+
+Il y a deux familles de jetons. **Ne surcharger que les jetons de
+base** ci-dessous : les variantes dérivées (`-light`, `-deep`,
+`-synth`) se recalculent automatiquement à partir d'eux (mélange CSS
+`color-mix`), inutile et risqué de les redéfinir une par une.
+
+Jetons de base à choisir :
+
+| Jeton | Rôle |
+|---|---|
+| `--paper` | fond principal (papier) |
+| `--paper-deep` | fond légèrement plus soutenu (cartes, creux) |
+| `--card` | fond de carte |
+| `--ink` | texte principal |
+| `--ink-soft` | texte secondaire |
+| `--rosso` | accent principal — titres de rubrique, alertes |
+| `--sole` | accent rare |
+| `--blu` | second accent, réservé à un usage exceptionnel (ex. un événement particulier du voyage) |
+| `--pietra` | couleur de la catégorie `route` |
+| `--lago` | couleur de la catégorie `ville` |
+| `--oliva` | couleur de la catégorie `nature` |
+| `--lago-mid` | couleur de la catégorie `lac` |
+| (`--sole` sert aussi de couleur à la catégorie `evenement`) | |
+
+Les noms `--pietra`/`--lago`/`--oliva` viennent du thème par défaut
+(pierre, lac, olivier) : ne pas se sentir obligé de leur trouver un
+équivalent thématique dans le nouveau lieu, ce sont juste des noms de
+variable — seule la valeur hexadécimale compte pour le nouveau thème.
+
+### Vocabulaire d'illustration disponible
+
+Les bandeaux de journée sont composés à partir d'une bibliothèque de
+silhouettes existante, par mots-clés dans `journees[].illustration`.
+Motifs déjà disponibles :
+
+```
+montagnes, collines, lac, vagues, vigne, route, pont, chateau, clocher,
+cypres, pin, olivier, voile, rocher, soleil, arcades, coupole, creneaux,
+aqueduc, viaduc, remparts, cascade, aiguilles, gorge, terrasses,
+tourbiere, dolmen, bambou, citronnier, platane, capot, labyrinthe, volcan
+```
+
+Compose chaque `illustration` avec 2 à 4 de ces mots-clés, du plan
+lointain vers le premier plan (ex. `["collines", "vigne", "clocher"]`
+pour un paysage viticole avec un village). **Si le lieu a vraiment
+besoin d'un motif absent de cette liste** (une cathédrale gothique, un
+port de pêche...), décris-le en une phrase plutôt que d'inventer un
+mot-clé qui ne correspond à rien — je le ferai ajouter à la
+bibliothèque techniquement.
+
+### Format attendu
 
 ```json
 {
@@ -219,13 +295,15 @@ le thème par défaut du moteur) :
 
 - `polices_google` : identifiants Google Fonts (`Famille:wght@poids`),
   sans domaine.
-- `css` : un bloc `:root{...}` qui ne surcharge que les variables
-  voulues, parmi : `--paper` (fond), `--ink` (texte), `--rosso` (accent
-  principal), `--sole` (accent rare), `--oliva`, `--lago`, `--lago-mid`
-  (couleurs de catégories), `--font-display` (titres), `--font-body`
-  (corps de texte), `--font-mono` (données/heures). Propose 2-3 options
-  avec une justification courte (ce qu'elles évoquent du lieu), je
-  choisirai.
+- `css` : un bloc `:root{...}` qui ne surcharge que les jetons choisis
+  ci-dessus, plus `--font-display` / `--font-body` / `--font-mono` si
+  tu changes les polices.
+
+Propose 2-3 directions de palette avec une justification courte (ce
+qu'elles évoquent du lieu, pourquoi le contraste tient), je choisirai.
+Comme pour le contenu : **je ne peux valider le rendu réel qu'en le
+testant moi-même dans l'application** — ce document ne permet pas de
+voir le résultat en direct, seulement de proposer les valeurs.
 
 ## Comment me rendre le résultat
 
