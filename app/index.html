@@ -5886,6 +5886,13 @@ function appliquerTheme(theme){
 (function chargerEtDemarrer(){
   "use strict";
 
+  /* Lu avant toute autre chose, y compris avant la création du client
+     Supabase : supabase-js consomme et nettoie le fragment d'URL dès
+     l'initialisation (detectSessionInUrl), il ne serait déjà plus lisible
+     une ligne plus bas. */
+  var paramsFragment = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  var typeLienAuth = paramsFragment.get("type");
+
   var URL_PROJET = "https://cgxnrgkalhfyfkpesshq.supabase.co";
   var CLE_PUBLISHABLE = "sb_publishable_fbZPyz9G6UIBWwU00phJig_fQegJUl9";
   /* Clé publique par construction (voir CLAUDE.md du projet) : la sécurité
@@ -5904,6 +5911,150 @@ function appliquerTheme(theme){
 
   function afficherErreur(message){
     zoneChargement.textContent = message;
+  }
+
+  /* --- accueil d'une invitation / d'une récupération de mot de passe ----
+     Supabase-js consomme automatiquement le jeton posé dans le fragment
+     d'URL par le lien reçu par e-mail (detectSessionInUrl, activé par
+     défaut) et pose une session — mais ne demande jamais de mot de passe
+     lui-même. `type=invite` (premier accès) ou `type=recovery` (mot de
+     passe oublié) reste lisible dans le fragment le temps de ce chargement :
+     on s'en sert pour savoir s'il faut intercepter le démarrage normal du
+     carnet et proposer l'écran « Choisissez votre mot de passe » avant
+     toute chose — personne, pas même l'organisateur, ne connaît ensuite
+     le mot de passe choisi. Même facture visuelle que le dialogue de
+     connexion (.famille-pw-*, voir demarrerCarnet), en pleine page
+     puisqu'il n'y a encore aucun carnet chargé derrière. */
+  function nettoyerFragmentAuth(){
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+
+  function gererLienAuth(type){
+    supabase.auth.getSession().then(function(resSession){
+      var session = resSession.data && resSession.data.session;
+      if(!session){
+        nettoyerFragmentAuth();
+        afficherErreur("Ce lien n'est plus valide — il a peut-être déjà été utilisé, ou a expiré. Demandez un nouveau lien.");
+        return;
+      }
+      afficherFormulaireNouveauMotDePasse(session.user.email, type);
+    });
+  }
+
+  /* ICONES est défini à l'intérieur de demarrerCarnet, hors de portée
+     ici : les deux seules icônes nécessaires (œil ouvert/barré) sont
+     reprises telles quelles plutôt que d'exposer tout ICONES plus tôt. */
+  function icooOeil(interieur){
+    return '<svg class="iico" viewBox="0 0 24 24" width="14" height="14" fill="none" ' +
+           'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" ' +
+           'aria-hidden="true">' + interieur + '</svg>';
+  }
+  var ICOO_OEIL = icooOeil('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.6"/>');
+  var ICOO_OEIL_BARRE = icooOeil('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.6"/><line x1="4" y1="4" x2="20" y2="20"/>');
+
+  function afficherFormulaireNouveauMotDePasse(email, type){
+    zoneChargement.innerHTML = "";
+    zoneChargement.style.cssText = "";
+
+    var overlay = document.createElement("div");
+    overlay.className = "famille-pw-overlay";
+    var boite = document.createElement("div");
+    boite.className = "famille-pw-boite";
+    boite.setAttribute("role", "dialog");
+    boite.setAttribute("aria-labelledby", "nouveau-mdp-titre");
+    overlay.appendChild(boite);
+
+    var titre = document.createElement("p");
+    titre.className = "famille-pw-titre";
+    titre.id = "nouveau-mdp-titre";
+    titre.textContent = (type === "recovery" ? "Choisissez un nouveau mot de passe" : "Bienvenue — choisissez votre mot de passe")
+      + " (" + email + ")";
+    boite.appendChild(titre);
+
+    function creerChampMotDePasse(placeholder, autocomplete){
+      var champ = document.createElement("div");
+      champ.className = "famille-pw-champ";
+      champ.style.marginTop = "8px";
+      var input = document.createElement("input");
+      input.type = "password";
+      input.className = "famille-pw-input";
+      input.placeholder = placeholder;
+      input.autocomplete = autocomplete;
+      input.setAttribute("autocorrect", "off");
+      input.setAttribute("autocapitalize", "off");
+      input.spellcheck = false;
+      champ.appendChild(input);
+
+      var boutonOeil = document.createElement("button");
+      boutonOeil.type = "button";
+      boutonOeil.className = "famille-pw-oeil";
+      boutonOeil.setAttribute("aria-label", "Afficher le mot de passe");
+      boutonOeil.innerHTML = ICOO_OEIL;
+      boutonOeil.addEventListener("click", function(){
+        var revele = input.type === "text";
+        input.type = revele ? "password" : "text";
+        boutonOeil.innerHTML = revele ? ICOO_OEIL : ICOO_OEIL_BARRE;
+        boutonOeil.setAttribute("aria-label", revele ? "Afficher le mot de passe" : "Masquer le mot de passe");
+        boutonOeil.classList.toggle("actif", !revele);
+        input.focus();
+      });
+      champ.appendChild(boutonOeil);
+      boite.appendChild(champ);
+      return input;
+    }
+
+    var inputMdp = creerChampMotDePasse("Nouveau mot de passe", "new-password");
+    var inputMdpConfirme = creerChampMotDePasse("Confirmez le mot de passe", "new-password");
+
+    var erreur = document.createElement("p");
+    erreur.className = "famille-pw-erreur";
+    erreur.hidden = true;
+    boite.appendChild(erreur);
+
+    var actions = document.createElement("div");
+    actions.className = "famille-pw-actions";
+    var boutonValider = document.createElement("button");
+    boutonValider.type = "button";
+    boutonValider.className = "famille-pw-valider";
+    boutonValider.textContent = "Valider";
+    actions.appendChild(boutonValider);
+    boite.appendChild(actions);
+
+    function valider(){
+      var mdp = inputMdp.value;
+      var mdpConfirme = inputMdpConfirme.value;
+      if(!mdp || mdp.length < 6){
+        erreur.textContent = "Le mot de passe doit faire au moins 6 caractères.";
+        erreur.hidden = false;
+        return;
+      }
+      if(mdp !== mdpConfirme){
+        erreur.textContent = "Les deux mots de passe ne correspondent pas.";
+        erreur.hidden = false;
+        return;
+      }
+      boutonValider.disabled = true;
+      supabase.auth.updateUser({ password: mdp }).then(function(res){
+        if(res.error){
+          boutonValider.disabled = false;
+          erreur.textContent = res.error.message || "Impossible d'enregistrer ce mot de passe.";
+          erreur.hidden = false;
+          return;
+        }
+        nettoyerFragmentAuth();
+        location.reload();
+      });
+    }
+    boutonValider.addEventListener("click", valider);
+    inputMdp.addEventListener("keydown", function(ev){
+      if(ev.key === "Enter"){ ev.preventDefault(); inputMdpConfirme.focus(); }
+    });
+    inputMdpConfirme.addEventListener("keydown", function(ev){
+      if(ev.key === "Enter"){ ev.preventDefault(); valider(); }
+    });
+
+    zoneChargement.appendChild(overlay);
+    inputMdp.focus();
   }
 
   /* --- noms de mois français, pour reconstituer dow/num/mois depuis la
@@ -5984,6 +6135,11 @@ function appliquerTheme(theme){
       .filter(Boolean);
     if(conditions.length) badge.conditions = conditions;
     return badge;
+  }
+
+  if(typeLienAuth === "invite" || typeLienAuth === "recovery"){
+    gererLienAuth(typeLienAuth);
+    return;
   }
 
   /* Session famille : lue avant toute requête de contenu, pour que le

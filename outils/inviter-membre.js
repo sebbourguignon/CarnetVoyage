@@ -1,20 +1,27 @@
 #!/usr/bin/env node
 /* ==========================================================================
-   inviter-membre.js — crée un compte famille et le rattache à un voyage.
+   inviter-membre.js — invite un compte famille par e-mail et le rattache
+   à un voyage.
 
    Usage :
-     SUPABASE_URL=... SUPABASE_SERVICE_KEY=... \
-       node outils/inviter-membre.js email@exemple.com "mot de passe" salo2026
+     SUPABASE_URL=... SUPABASE_SERVICE_KEY=... SITE_URL=https://salo2026.netlify.app \
+       node outils/inviter-membre.js email@exemple.com salo2026 [prenom] [role: admin|membre]
 
-   Crée directement le compte avec le mot de passe fourni (pas d'email
-   d'invitation Supabase envoyé — évite de dépendre d'un SMTP configuré) :
-   à toi de communiquer le mot de passe à la personne par un canal séparé.
-   Le compte est aussitôt ajouté à membres_famille pour le voyage donné,
-   ce qui débloque le contenu "famille" et le quiz pour cette personne.
+   Appelle l'API d'invitation de Supabase Auth (/auth/v1/invite) : le
+   compte est créé sans mot de passe, un e-mail part avec un lien qui
+   ramène la personne sur SITE_URL avec un jeton de session temporaire.
+   C'est app/index.html qui détecte ce jeton au chargement (voir
+   gererLienInvitation) et affiche l'écran « Choisissez votre mot de
+   passe » — personne, pas même l'organisateur, ne connaît le mot de
+   passe final de quelqu'un d'autre.
 
-   Si l'email existe déjà comme compte Supabase Auth, le script réutilise
-   ce compte (ne le recrée pas, n'écrase pas son mot de passe) et se
-   contente de l'ajouter à membres_famille s'il n'y est pas déjà.
+   SITE_URL doit correspondre à une URL de redirection autorisée dans
+   Supabase (Authentication → URL Configuration → Redirect URLs) : sans
+   ça, l'invitation part mais le lien échoue à la validation.
+
+   Si l'email existe déjà comme compte Supabase Auth, le script ne
+   renvoie pas d'invitation (l'API refuse de toute façon) et se contente
+   de rattacher le compte existant à membres_famille.
 
    Aucune dépendance npm, module natif `https`.
    ========================================================================== */
@@ -29,18 +36,22 @@ function echouer(message) {
   process.exit(1);
 }
 
-const [email, motDePasse, slug, prenom, role] = process.argv.slice(2);
-if (!email || !motDePasse || !slug) {
-  echouer("usage : node outils/inviter-membre.js <email> <mot-de-passe> <slug-du-voyage> [prenom] [role: admin|membre]");
+const [email, slug, prenom, role] = process.argv.slice(2);
+if (!email || !slug) {
+  echouer("usage : node outils/inviter-membre.js <email> <slug-du-voyage> [prenom] [role: admin|membre]");
 }
 if (role && role !== "admin" && role !== "membre") {
-  echouer("role invalide : « " + role + "  » — attendu admin ou membre.");
+  echouer("role invalide : « " + role + " » — attendu admin ou membre.");
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SITE_URL = process.env.SITE_URL;
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   echouer("variables d'environnement SUPABASE_URL et SUPABASE_SERVICE_KEY requises.");
+}
+if (!SITE_URL) {
+  echouer("variable d'environnement SITE_URL requise (ex. https://salo2026.netlify.app) — c'est là que le lien d'invitation ramène la personne.");
 }
 
 const BASE = SUPABASE_URL.replace(/\/+$/, "");
@@ -66,9 +77,9 @@ function headersAuth() {
   };
 }
 
-async function creerOuTrouverUtilisateur() {
-  const corps = JSON.stringify({ email, password: motDePasse, email_confirm: true });
-  const url = new URL(BASE + "/auth/v1/admin/users");
+async function inviterOuTrouverUtilisateur() {
+  const corps = JSON.stringify({ email });
+  const url = new URL(BASE + "/auth/v1/invite?redirect_to=" + encodeURIComponent(SITE_URL));
   const reponse = await requeteHttps(url, {
     method: "POST",
     headers: Object.assign({}, headersAuth(), {
@@ -80,7 +91,7 @@ async function creerOuTrouverUtilisateur() {
   const json = reponse.corps ? JSON.parse(reponse.corps) : {};
 
   if (reponse.statut >= 200 && reponse.statut < 300) {
-    console.log("Compte créé : " + email + " (id " + json.id + ")");
+    console.log("Invitation envoyée à " + email + " (id " + json.id + ")");
     return json.id;
   }
 
@@ -89,10 +100,10 @@ async function creerOuTrouverUtilisateur() {
   // supplémentaire.
   const dejaExistant = reponse.statut === 422 || reponse.statut === 400;
   if (!dejaExistant) {
-    throw new Error("création du compte a échoué (HTTP " + reponse.statut + ") : " + reponse.corps);
+    throw new Error("invitation a échoué (HTTP " + reponse.statut + ") : " + reponse.corps);
   }
 
-  console.log("Compte déjà existant pour " + email + ", recherche de son id…");
+  console.log("Compte déjà existant pour " + email + ", aucune invitation renvoyée — recherche de son id…");
   const urlListe = new URL(BASE + "/auth/v1/admin/users?email=" + encodeURIComponent(email));
   const reponseListe = await requeteHttps(urlListe, { method: "GET", headers: headersAuth() });
   if (reponseListe.statut < 200 || reponseListe.statut >= 300) {
@@ -147,10 +158,10 @@ async function rattacherAuVoyage(utilisateurId, voyageId) {
 }
 
 async function main() {
-  const utilisateurId = await creerOuTrouverUtilisateur();
+  const utilisateurId = await inviterOuTrouverUtilisateur();
   const voyageId = await trouverVoyageId();
   await rattacherAuVoyage(utilisateurId, voyageId);
-  console.log("\nTerminé. " + email + " peut se connecter avec le mot de passe fourni.");
+  console.log("\nTerminé. " + email + " doit ouvrir le lien reçu par e-mail pour choisir son mot de passe.");
 }
 
 main().catch((e) => {
