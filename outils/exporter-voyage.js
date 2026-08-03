@@ -101,8 +101,19 @@ async function main() {
       get("/quiz_questions?journee_id=eq." + j.id + "&order=ordre.asc"),
       get("/lieux?journee_id=eq." + j.id + "&order=ordre.asc"),
     ]);
+    // reponse_correcte vit dans quiz_reponses (réservée admin par RLS, voir
+    // migration 0008), pas dans quiz_questions — on la rejoint ici à la main
+    // avant que nettoyer() ne retire les id dont on a encore besoin.
+    let reponsesParQuestionId = {};
+    if (quizQuestions.length) {
+      const ids = quizQuestions.map((q) => q.id).join(",");
+      const reponses = await get("/quiz_reponses?question_id=in.(" + ids + ")");
+      reponses.forEach((r) => { reponsesParQuestionId[r.question_id] = r.reponse_correcte; });
+    }
     j.observations = observations.map((o) => nettoyer(o, ["id", "journee_id"]));
-    j.quiz_questions = quizQuestions.map((q) => nettoyer(q, ["id", "journee_id"]));
+    j.quiz_questions = quizQuestions.map((q) =>
+      Object.assign(nettoyer(q, ["id", "journee_id"]), { reponse_correcte: reponsesParQuestionId[q.id] })
+    );
     j.lieux = lieux.map((l) => nettoyer(l, ["id", "journee_id"]));
     totalObs += observations.length;
     totalQuiz += quizQuestions.length;

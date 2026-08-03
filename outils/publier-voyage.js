@@ -168,11 +168,16 @@ async function main() {
       compteObservations += lignesObs.length;
     }
 
-    // quiz_questions
+    // quiz_questions — reponse_correcte ne vit pas dans cette table (lisible
+    // par toute la famille) mais dans quiz_reponses, réservée aux comptes
+    // admin par RLS (voir migration 0008). On la retire du corps avant
+    // l'insertion, puis on la réinjecte à part une fois l'id de question connu.
     if (j.quiz_questions && j.quiz_questions.length) {
-      const corpsQuiz = j.quiz_questions.map((q) =>
-        Object.assign({}, q, { journee_id: ligneJournee.id })
-      );
+      const reponsesCorrectes = j.quiz_questions.map((q) => q.reponse_correcte);
+      const corpsQuiz = j.quiz_questions.map((q) => {
+        const { reponse_correcte, ...reste } = q;
+        return Object.assign({}, reste, { journee_id: ligneJournee.id });
+      });
       let lignesQuiz;
       try {
         lignesQuiz = await post("quiz_questions", corpsQuiz);
@@ -180,6 +185,18 @@ async function main() {
         echouer("insertion du quiz de " + j.ancre + " : " + e.message);
       }
       compteQuiz += lignesQuiz.length;
+
+      const corpsReponses = lignesQuiz.map((ligne, i) => ({
+        question_id: ligne.id,
+        reponse_correcte: reponsesCorrectes[i],
+      })).filter((r) => r.reponse_correcte != null);
+      if (corpsReponses.length) {
+        try {
+          await post("quiz_reponses", corpsReponses);
+        } catch (e) {
+          echouer("insertion des bonnes réponses du quiz de " + j.ancre + " : " + e.message);
+        }
+      }
     }
 
     // lieux

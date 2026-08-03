@@ -29,9 +29,12 @@ function echouer(message) {
   process.exit(1);
 }
 
-const [email, motDePasse, slug, prenom] = process.argv.slice(2);
+const [email, motDePasse, slug, prenom, role] = process.argv.slice(2);
 if (!email || !motDePasse || !slug) {
-  echouer("usage : node outils/inviter-membre.js <email> <mot-de-passe> <slug-du-voyage> [prenom]");
+  echouer("usage : node outils/inviter-membre.js <email> <mot-de-passe> <slug-du-voyage> [prenom] [role: admin|membre]");
+}
+if (role && role !== "admin" && role !== "membre") {
+  echouer("role invalide : « " + role + "  » — attendu admin ou membre.");
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -120,6 +123,7 @@ async function trouverVoyageId() {
 async function rattacherAuVoyage(utilisateurId, voyageId) {
   const ligne = { voyage_id: voyageId, utilisateur_id: utilisateurId };
   if (prenom) ligne.prenom = prenom;
+  if (role) ligne.role = role;
   const corps = JSON.stringify(ligne);
   const url = new URL(BASE + "/rest/v1/membres_famille");
   const reponse = await requeteHttps(url, {

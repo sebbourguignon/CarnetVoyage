@@ -5106,16 +5106,15 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
          comme titre de chapitre, sans numéro distinct — c'est le seul
          écart de mapping non trivial entre les deux formats. */
       chapitre: ligne.chapitre ? { numero: "", titre: ligne.chapitre } : null,
-      /* quiz : reponseChiffree/quizControle n'existent qu'au niveau de
-         chaque question dans le schéma SQL (reponse_chiffree), il n'y a
-         pas de somme de contrôle par journée distincte — quizControle
-         est laissé vide, la vérification par mot de passe se fera par
-         question. */
+      /* la bonne réponse n'est jamais envoyée ici : elle vit dans
+         quiz_reponses, réservée aux comptes admin par RLS (voir
+         supabase/migrations/0008) — voir admin/index.html pour la
+         correction. */
       quiz: (ligne.quiz_questions || [])
         .slice()
         .sort(function(a, b){ return a.ordre - b.ordre; })
         .map(function(q){
-          return { id: q.id, question: q.question, choix: q.choix, reponseChiffree: q.reponse_chiffree };
+          return { id: q.id, question: q.question, choix: q.choix };
         })
     };
   }
