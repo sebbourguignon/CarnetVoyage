@@ -22,7 +22,14 @@ var CACHES_ACTUELLES = [CACHE_SHELL, CACHE_FONTS, CACHE_DATA];
 var FICHIERS_APP_SHELL = [
   "./",
   "index.html",
-  "illustrations.js"
+  "illustrations.js",
+  "manifest.json",
+  "icones/apple-touch-icon.png",
+  "icones/favicon.png",
+  "icones/icon-192.png",
+  "icones/icon-512.png",
+  "icones/icon-maskable-192.png",
+  "icones/icon-maskable-512.png"
 ];
 
 self.addEventListener("install", function(evenement){

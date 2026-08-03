@@ -1,0 +1,14 @@
+{
+  "name": "Notre grand tour d'Italie — Salò 2026",
+  "short_name": "Salò",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#F3F1EA",
+  "theme_color": "#2A7D80",
+  "icons": [
+    { "src": "icones/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icones/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icones/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icones/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

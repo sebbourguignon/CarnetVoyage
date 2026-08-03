@@ -2280,6 +2280,71 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     rafraichirRegarder();
   }
 
+  /* --- migration ponctuelle depuis les sauvegardes locales d'Italie2026 --
+     Même domaine (salo2026.netlify.app) : les clés localStorage
+     "carnet-regarder-v1" et "carnet-quiz-v1" de l'ancien carnet autonome
+     restent présentes dans le navigateur après le passage à CarnetVoyage.
+     La chasse au trésor partage déjà exactement le même schéma d'id
+     ("<ancre>-r<index>", voir ENTREES_REGARDER ci-dessus) : fusion
+     directe. Le quiz, lui, indexait par "<ancre>-q<index>" côté
+     Italie2026 contre l'uuid de la question ici — l'index de q dans
+     j.quiz (préservé par la resynchronisation de contenu, voir
+     outils/mettre-a-jour-voyage.js) sert de pont entre les deux.
+     Ne s'exécute qu'une fois connecté (personne à qui rattacher la
+     progression avant), ne complète que les trous (jamais n'écrase une
+     réponse ou une coche déjà présente côté CarnetVoyage), et se marque
+     faite pour ne jamais rejouer sur cet appareil. */
+  var STOCKAGE_MIGRATION_ITALIE2026 = slugVoyage + "-carnet-migration-italie2026-v1";
+  function migrerDepuisItalie2026(){
+    if(!modeFamille || !utilisateurId) return;
+    try{
+      if(window.localStorage.getItem(STOCKAGE_MIGRATION_ITALIE2026) === "1") return;
+    }catch(e){ return; }
+
+    var brutRegarder, brutQuiz;
+    try{
+      brutRegarder = window.localStorage.getItem("carnet-regarder-v1");
+      brutQuiz = window.localStorage.getItem("carnet-quiz-v1");
+    }catch(e){ return; }
+
+    var aMigre = false;
+
+    if(brutRegarder){
+      var legacyRegarder;
+      try{ legacyRegarder = JSON.parse(brutRegarder); }catch(e){ legacyRegarder = null; }
+      if(legacyRegarder){
+        Object.keys(legacyRegarder).forEach(function(id){
+          if(legacyRegarder[id] && !etatRegarder[id]){ etatRegarder[id] = true; aMigre = true; }
+        });
+      }
+    }
+
+    if(brutQuiz){
+      var legacyQuiz;
+      try{ legacyQuiz = JSON.parse(brutQuiz); }catch(e){ legacyQuiz = null; }
+      if(legacyQuiz){
+        JOURS.forEach(function(j){
+          (j.quiz || []).forEach(function(q, i){
+            var e = legacyQuiz[j.id + "-q" + i];
+            if(e && e.reponse != null && !etatQuiz[q.id]){
+              etatQuiz[q.id] = { reponse: e.reponse, corrige: false };
+              aMigre = true;
+            }
+          });
+        });
+      }
+    }
+
+    if(aMigre){
+      sauvegarderEtatRegarder();
+      sauvegarderEtatQuiz();
+      synchroniserObservations();
+      synchroniserReponsesQuiz();
+    }
+    try{ window.localStorage.setItem(STOCKAGE_MIGRATION_ITALIE2026, "1"); }catch(e){}
+  }
+  migrerDepuisItalie2026();
+
   /* un même jour peut être affiché deux fois à la fois (onglet Aujourd'hui
      et vue détail) : on resynchronise tous les rendus visibles plutôt que
      de reconstruire quoi que ce soit. */
