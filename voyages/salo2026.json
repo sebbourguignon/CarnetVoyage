@@ -158,7 +158,6 @@
         "<b>Confluence</b> — architecture contemporaine et bord de l'eau",
         "<b>Mur des Canuts</b> à la Croix-Rousse"
       ],
-      "plan_b": "Si le départ dérape ou si l'A6 est saturée : on abandonne Fourvière, dîner simple, coucher tôt. La journée de demain est plus importante.",
       "notes": [
         {
           "ton": "alerte",
@@ -372,7 +371,6 @@
         "<b>Basilica di Superga</b> — tramway à crémaillère, panorama sur toute la chaîne alpine",
         "<b>Museo Egizio</b> — le deuxième au monde après Le Caire. Chien refusé, à faire en se relayant"
       ],
-      "plan_b": "Le 1<sup>er</sup> août est le pic du chassé-croisé italien. Si le tunnel bouchonne, on saute Turin centre et on fait la Sacra di San Michele en arrivant — plus court, plus spectaculaire.",
       "notes": [
         {
           "ton": "alerte",
@@ -585,7 +583,6 @@
         "<b>Lido di Salò</b> — la plage municipale, au bout de la promenade",
         "Repérage pratique : pharmacie, boulangerie, station-service, parking"
       ],
-      "plan_b": "Journée volontairement molle. Si vous arrivez tard, tout ce qui compte c'est les courses et une bonne nuit — le vrai départ, c'est demain.",
       "notes": [],
       "chapitre": null,
       "ordre": 2,
@@ -792,7 +789,6 @@
         "<b>MuSa</b>, musée de Salò — l'histoire de la République de Salò, sobre et bien fait",
         "<b>Villa Alba</b> et son parc, à Gardone"
       ],
-      "plan_b": "S'il fait déjà 36° : Vittoriale le matin uniquement, puis journée eau. Le jardin Heller se reporte facilement.",
       "notes": [
         {
           "ton": "alerte",
@@ -1030,7 +1026,6 @@
         "<b>Ponte Pietra</b> — le pont romain, à traverser à pied au coucher du soleil",
         "<b>Duomo</b> et son <i>Assomption</i> du Titien"
       ],
-      "plan_b": "<b>Canicule</b> : Vérone le matin uniquement, puis remontée dans les <b>collines de la Valpolicella</b> l'après-midi — vignes en terrasses, villas vénitiennes, dégustation d'Amarone. Il y fait 4-5° de moins et le paysage est superbe.",
       "notes": [
         {
           "ton": "alerte",
@@ -1271,7 +1266,6 @@
         "<b>Castel Drena</b> et les <b>Marmitte dei Giganti</b> — marmites glaciaires",
         "<b>Torbole</b> — le spot de planche à voile du haut lac, spectacle garanti l'après-midi quand l'Ora se lève"
       ],
-      "plan_b": "Si le Ponale est trop exposé : baignade au <b>lac de Tenno</b> ou de <b>Ledro</b>, tous deux nettement plus frais que le Garda. Aucune perte.",
       "notes": [
         {
           "ton": "alerte",
@@ -1505,7 +1499,6 @@
         "<b>Rocca di Vignola</b> — château du XV siècle, entrée libre, chapelle à fresques. 30 min, sur la route entre Maranello et Modène",
         "<b>Casa Museo Pavarotti</b> — sa villa laissée en l'état. Un contrepoint bienvenu après six heures de voitures"
       ],
-      "plan_b": "Si le rythme dérape ou s'il fait 38° : <b>on saute l'acetaia et Castelvetro</b>. Arrivée à Modène centre vers 15 h 30, journée détendue, retour à Salò pour 20 h 30.",
       "notes": [
         {
           "ton": "alerte",
@@ -1753,7 +1746,6 @@
         "<b>Dégustation</b> de Valtènesi (le rosé local, le Chiaretto) ou de Lugana",
         "<b>Castello di Padenghe</b> — enceinte médiévale habitée, gratuite"
       ],
-      "plan_b": "Journée piscine et lac pure, sans bouger. Mais gardez le repérage du soir : c'est cinq jours avant l'éclipse, et c'est ce qui fera la différence entre voir le spectacle et le rater derrière une colline.",
       "notes": [
         {
           "ton": "soleil",
@@ -1949,8 +1941,12 @@
         "<b>Lago di Tovel</b> — plus sauvage, plus loin, sublime",
         "<b>Madonna di Campiglio</b> pour un café et une promenade en station"
       ],
-      "plan_b": "<b>Orage d'après-midi</b> — très fréquent en montagne en août. Si le ciel se charge, on redescend sur Molveno ou on rentre plus tôt. Ne jamais s'entêter dans une vallée fermée.",
       "notes": [
+        {
+          "ton": "alerte",
+          "titre": "Orage de montagne",
+          "texte": "Très fréquent en août en début d'après-midi. Si le ciel se charge, on redescend sur Molveno ou on rentre — on ne s'entête jamais dans une vallée fermée."
+        },
         {
           "ton": "alerte",
           "texte": "10 à 15° de moins qu'au bord du lac : prendre une petite laine, même en août. Chaussures fermées. {{chien}}",
@@ -2165,7 +2161,6 @@
         "<b>Navigazione Lago di Garda</b> — les bateaux publics vers Sirmione, Gardone, Maderno. Les chiens y sont admis",
         "<b>Toscolano-Maderno</b> et sa <b>Valle delle Cartiere</b> — vallée des anciennes papeteries, ombragée et fraîche, méconnue"
       ],
-      "plan_b": "Journée plage pure : Lido di Salò le matin, Baia del Vento l'après-midi. C'est la journée la plus facile à sacrifier, et la plus facile à étirer.",
       "notes": [
         {
           "ton": "alerte",
@@ -2379,7 +2374,6 @@
         "<b>Crémone</b>, sur la route du retour — Museo del Violino (Stradivari, Amati, Guarneri, avec auditions d'instruments) et le Torrazzo, plus haut campanile en briques d'Europe",
         "<b>Une fromagerie Parmigiano Reggiano</b> — magnifique, mais ça se visite vers 8 h du matin. Incompatible avec le reste de la journée"
       ],
-      "plan_b": "Si le Labirinto est complet ou fermé : <b>Crémone</b> le matin à la place (elle est littéralement sur la route), et Parme l'après-midi comme prévu. Vous ne perdez que 20 minutes de trajet.",
       "notes": [
         {
           "ton": "alerte",
@@ -2641,7 +2635,6 @@
         "<b>Rocca d'Anfo</b> — immense forteresse napoléonienne à flanc de montagne, au-dessus du lac d'Idro. Visite guidée uniquement",
         "<b>Lago d'Idro</b> — plus sauvage et bien moins fréquenté que le Garda"
       ],
-      "plan_b": "S'il fait trop chaud pour une ville : on saute Brescia et on passe la journée entière en Franciacorta et aux Torbiere. C'est frais, vert, et au bord de l'eau.",
       "notes": [
         {
           "ton": "alerte",
@@ -2891,8 +2884,12 @@
         "<b>Rocca di Manerba</b> (20 min) — promontoire dégagé à 360°, vue sur le lac au sud-est et sur la plaine de Brescia à l'ouest. Accessible avec le chien. Repéré le 7 août",
         "<b>Rocca di Lonato</b> (30 min) — <b>mon favori sur le papier</b> : plus haut, forteresse dominant directement la plaine du Pô, horizon ouest le plus dégagé de tout le secteur. Accès en soirée à confirmer"
       ],
-      "plan_b": "<b>Le vrai risque, c'est la météo</b> — la plaine du Pô est sujette aux violents orages de chaleur en soirée d'été. Surveillez les prévisions 48 h avant. Si l'ouest est bouché au ras du sol, le repli est de <b>monter en altitude</b> — Tremosine ou le Monte Baldo — pour passer au-dessus de la couche basse. Décision à prendre le matin même, pas à 19 h.",
       "notes": [
+        {
+          "ton": "alerte",
+          "titre": "Météo — décision le matin",
+          "texte": "La plaine du Pô produit de violents orages de chaleur en soirée d'été, et le Soleil sera à 4-6° sur l'horizon : une couche basse à l'ouest suffit à tout masquer. Si les prévisions sont mauvaises, le repli est de monter en altitude — Tremosine ou le Monte Baldo — pour passer au-dessus. À trancher le matin même, pas à 19 h."
+        },
         {
           "ton": "soleil",
           "texte": "Lunettes certifiées <b>ISO 12312-2</b> pour tout le monde, à commander maintenant : les stocks fondent à l'approche de la date. <b>Filtre solaire indispensable</b> pour tout appareil photo ou téléphone — sans filtre adapté, le capteur peut être endommagé définitivement. Et vérifiez l'azimut exact du maximum avec une application d'éclipse : avec 4° de hauteur, une colline de rien du tout à trois kilomètres vous fait tout rater.",
@@ -3105,7 +3102,6 @@
         "<b>Fondazione Prada</b> — architecture contemporaine, la Tour et le Bar Luce de Wes Anderson",
         "<b>Cenacolo Vinciano</b> (<i>La Cène</i>) — <b>réservation des mois à l'avance, très probablement complet</b>. À tenter, mais n'y comptez pas"
       ],
-      "plan_b": "Si Milan vous semble trop lourd le jour venu : <b>Mantoue</b> (1 h 15) est un remplacement de très haut niveau — UNESCO, Palazzo Ducale et la <i>Camera degli Sposi</i> de Mantegna, Palazzo Te et la Sala dei Giganti, le tout entouré de trois lacs.",
       "notes": [
         {
           "ton": "alerte",
@@ -3368,8 +3364,12 @@
         "<b>Punta Larici</b> — randonnée panoramique au-dessus de Riva, l'une des plus belles vues du lac",
         "<b>Monte Baldo</b> par le téléphérique de Malcesine — cabines rotatives, 1 760 m, panorama sur les Dolomites"
       ],
-      "plan_b": "La <b>Strada della Forra</b> est parfois fermée, en sens alterné, ou interdite aux véhicules larges — <b>vérifiez avant de partir</b>. Repli : montée à <b>Tignale</b> par la route normale, avec le Santuario di Montecastello. Presque aussi beau, sans le stress.",
       "notes": [
+        {
+          "ton": "alerte",
+          "titre": "Si la Forra est fermée",
+          "texte": "Elle est parfois fermée, en alternat, ou interdite aux véhicules larges. Repli : montée à Tignale par la route normale, avec le Santuario di Montecastello. Presque aussi beau, sans le stress."
+        },
         {
           "ton": "alerte",
           "texte": "Journée entièrement en extérieur. Attention aux dénivelés en plein soleil sur le sentier de Limone. {{chien}}",
@@ -3594,7 +3594,6 @@
         "<b>Sentiero delle Cascate</b> à Vobarno — court, ombragé, avec des vasques",
         "Rester strictement à Salò : lungolago tôt le matin, puis maison"
       ],
-      "plan_b": "Ne pas bouger du tout. Sincèrement, c'est une option valable ce jour-là. Vous êtes au bord d'un des plus beaux lacs d'Europe : profitez-en pendant que les autres sont dans les bouchons.",
       "notes": [
         {
           "ton": "alerte",
@@ -3799,7 +3798,6 @@
         "<b>Città Bassa</b> et le Sentierone — la ville basse, Liberty et élégante",
         "<b>Orto Botanico</b> — petit jardin suspendu avec vue, gratuit"
       ],
-      "plan_b": "Deux replis, selon l'humeur du jour. <b>Plus court</b> : <b>Mantoue</b> (1 h 15) — UNESCO, Palazzo Ducale, Palazzo Te, trois lacs autour de la ville, tout est plat. <b>Ou rien du tout</b> : journée lac, valises tranquilles, dîner d'adieu à Salò. Vous ne perdez aucune réservation dans les trois cas.",
       "notes": [
         {
           "ton": "alerte",
@@ -4049,7 +4047,6 @@
         "<b>Cuneo</b> — arcades et centre piémontais, pause plus rapide",
         "Aire d'autoroute pure si vous voulez simplement arriver"
       ],
-      "plan_b": "Si la fatigue prend le dessus : coupez à Savone ou San Remo pour la nuit, et finissez sur Valbonne le lendemain matin. Vous perdriez la matinée à Valbonne, rien de plus.",
       "notes": [
         {
           "ton": "soleil",
@@ -4240,7 +4237,6 @@
         "<b>Aigues-Mortes</b> — remparts médiévaux intacts au milieu des salins, détour d'environ 30 min",
         "<b>Nîmes</b> — arènes romaines et Maison Carrée, sur la route"
       ],
-      "plan_b": "Si vous voulez arriver tôt : départ à 9 h de Valbonne sans traîner, aucun arrêt, arrivée pour 14 h. Le Pont du Gard se refait facilement depuis Soumont dans les jours suivants (1 h 15).",
       "notes": [
         {
           "ton": "soleil",
@@ -4439,7 +4435,6 @@
         "<b>Clermont-l'Hérault</b> et son marché",
         "<b>Mont Liausson</b> — la montée qui domine tout le lac, 1 h 30 aller-retour"
       ],
-      "plan_b": "S'il fait très chaud : Mourèze tôt le matin (les rochers donnent de l'ombre), puis Salagou en fin de journée uniquement. On inverse simplement l'ordre.",
       "notes": [
         {
           "ton": "alerte",
@@ -4648,7 +4643,6 @@
         "<b>Lodève</b> — cathédrale Saint-Fulcran, musée de Lodève",
         "<b>Gorges de la Vis</b> — baignade plus sauvage et plus fraîche"
       ],
-      "plan_b": "Version courte : Saint-Guilhem le matin, baignade au Pont du Diable l'après-midi, et on rentre tôt préparer la route. La journée de demain fait huit heures.",
       "notes": [
         {
           "ton": "alerte",
@@ -4855,7 +4849,6 @@
         "<b>Baignade au Salagou</b> — si la piscine ne suffit pas, l'eau du lac est chaude en fin d'août",
         "<b>Cirque de Navacelles</b> — 1 h de route, spectaculaire, pour ceux qui n'en ont pas assez"
       ],
-      "plan_b": "Aucun. C'est la seule journée du séjour où ne rien faire est le plan principal.",
       "notes": [
         {
           "ton": "alerte",
@@ -5011,7 +5004,6 @@
         "<b>Abbaye de Valmagne</b> — cistercienne, avec ses foudres en chêne dans la nef, à 40 min",
         "<b>Une dernière baignade au Salagou</b>, au coucher du soleil"
       ],
-      "plan_b": "Ne rien faire du tout. La seule chose qui compte aujourd'hui, ce sont les valises et le plein d'essence.",
       "notes": [
         {
           "ton": "alerte",
@@ -5166,7 +5158,6 @@
         "<b>Volcans d'Auvergne</b> — le puy de Dôme se voit depuis l'autoroute, un détour est possible mais coûte 2 h",
         "<b>Bourges</b> — cathédrale UNESCO, si vous coupez par l'A71"
       ],
-      "plan_b": "Si la journée s'étire : coupez à Nevers ou Orléans pour un dîner long plutôt que de forcer. Un vendredi soir de retour de vacances, l'A10 à l'approche de Paris peut ajouter une heure sèche.",
       "notes": [
         {
           "ton": "alerte",

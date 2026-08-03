@@ -621,7 +621,7 @@ h1 em{font-style:italic;color:var(--lago)}
 .accueil-eclipse-sub b{color:var(--ink)}
 .accueil-eclipse:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
-/* ---------- outils de l'onglet Agenda (mode Plans B, recherche) ---------- */
+/* ---------- outils de l'onglet Agenda (recherche) ---------- */
 .jours-outils{display:flex;flex-direction:column;gap:12px;margin:22px 0 0}
 .jours-outils:empty{margin:0}
 .recherche-bar{
@@ -650,45 +650,6 @@ h1 em{font-style:italic;color:var(--lago)}
   margin:8px 0 0;font-family:var(--font-mono);font-size:10px;
   letter-spacing:.06em;text-transform:uppercase;color:var(--rosso);
 }
-.planb-toggle{
-  align-self:flex-start;
-  display:inline-flex;align-items:center;gap:7px;
-  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;
-  text-transform:uppercase;font-weight:600;
-  padding:10px 15px;border:1px solid var(--rosso);border-radius:999px;
-  background:transparent;color:var(--rosso);cursor:pointer;
-}
-.planb-toggle[aria-pressed="true"]{background:var(--rosso);color:#fff}
-.planb-toggle:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
-.detail-toolbar{
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:10px;
-}
-.detail-toolbar .back{margin:22px 0 6px}
-
-/* Plan B mis en avant : quand le mode est actif, le bloc remonte juste
-   sous le bandeau de tête, avec un traitement plus appuyé qu'en place
-   normale (bordure pleine + fond teinté au lieu du simple filet). */
-.planb-avant{
-  border:2px solid var(--rosso);background:rgba(178,58,46,.06);
-  padding:16px 18px;margin:0 0 24px;
-}
-.planb-avant .eyebrow-planb{
-  display:flex;align-items:center;gap:7px;
-  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--rosso);font-weight:700;margin:0 0 10px;
-}
-.planb-avant .planb{border:0;background:none;padding:0;color:var(--ink)}
-
-/* Plan B dans la carte de la liste : présent dans le DOM, révélé
-   seulement quand le mode est actif (pas de re-rendu de la liste). */
-.card-planb{
-  display:none;margin:12px 0 0;padding-top:12px;
-  border-top:1px dashed var(--rule);font-size:.88rem;color:var(--ink-soft);
-}
-.card-planb b{color:var(--rosso)}
-body.mode-planb .card-planb{display:block}
-
 /* ---------- frise du rythme ---------- */
 .spine-block{padding:26px 0 20px;border-bottom:1px solid var(--rule)}
 .spine-label{
@@ -1527,12 +1488,6 @@ body.mode-public .regarder-item{cursor:default}
 .famille-pw-valider:disabled{opacity:.6;cursor:default}
 .famille-pw-valider:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
-.planb{
-  background:var(--card);border-left:2px solid var(--pietra);
-  padding:12px 16px;font-size:.92rem;color:var(--ink-soft);
-}
-.planb b{color:var(--ink)}
-
 .note{
   border-left:2px solid var(--rosso);padding:11px 16px;
   font-size:.88rem;color:var(--ink-soft);background:rgba(178,58,46,.045);
@@ -1984,9 +1939,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     options:  icone('<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/>'),
     quiz:     icone('<circle cx="12" cy="12" r="8.5"/><path d="M9.3 9.2a2.9 2.9 0 1 1 4.1 2.6c-1 .5-1.2 .9-1.2 1.9"/><circle cx="12" cy="16.9" r="1" fill="currentColor" stroke="none"/>'),
     regarder: icone('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.6"/>'),
-    planb:    icone('<path d="M12 4v6"/><circle cx="12" cy="4" r="1.6"/>' +
-                    '<path d="M12 10c0 3-4 3-4 6v2M12 10c0 3 4 3 4 6v2"/>' +
-                    '<circle cx="8" cy="19.5" r="1.6"/><circle cx="16" cy="19.5" r="1.6"/>'),
     attention: icone('<path d="M12 3.5 21 19.5H3Z" stroke-linejoin="round"/><line x1="12" y1="9.5" x2="12" y2="14"/><circle cx="12" cy="16.8" r=".9" fill="currentColor" stroke="none"/>'),
     carte:    icone('<path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 19 9.5C19 14.5 12 21 12 21Z"/><circle cx="12" cy="9.3" r="2.2"/>'),
     externe:  icone('<path d="M14 4.5h5.5V10"/><path d="M19.5 4.5 10.5 13.5"/><path d="M18 13.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5.5"/>'),
@@ -3195,12 +3147,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     art.appendChild(hero);
 
     var body = el("div", "body");
-    if(estModePlanB() && j.planB){
-      var bAvant = el("div", "planb-avant");
-      bAvant.appendChild(el("p", "eyebrow-planb", ICONES.planb + " Mode Plans B"));
-      bAvant.appendChild(el("div", "planb", j.planB));
-      body.appendChild(bAvant);
-    }
     body.appendChild(el("p", "tagline", j.accroche));
 
     var synth = construireBandeauSynthese(j, body);
@@ -3263,13 +3209,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       body.appendChild(construireBlocQuiz(j));
     }
 
-    if(j.planB && !estModePlanB()){
-      var bB = el("div", "block");
-      bB.appendChild(el("h3", null, ICONES.planb + " Plan B"));
-      bB.appendChild(el("div", "planb", j.planB));
-      body.appendChild(bB);
-    }
-
     if(j.notes && j.notes.length){
       var bNotes = el("div", "block");
       bNotes.appendChild(el("h3", null, ICONES.attention + " Points d'attention"));
@@ -3309,11 +3248,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     meta.appendChild(el("span", "cdist", j.rail1 + " · " + j.rail2));
     a.appendChild(meta);
 
-    /* toujours dans le DOM, révélé par .mode-planb sur <body> (voir
-       basculerModePlanB) : pas besoin de reconstruire la liste au
-       moment de basculer le mode. */
-    if(j.planB) a.appendChild(el("p", "card-planb", "<b>Plan B —</b> " + j.planB));
-
     return a;
   }
 
@@ -3321,32 +3255,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     var h = el("header", "panel-head");
     h.appendChild(el("h2", null, titre));
     return h;
-  }
-
-  /* --- mode Plans B : état simple en mémoire, pas conservé entre deux
-     visites. Deux boutons existent (onglet Agenda, vue détail) et
-     partagent ce même état ; basculer republie la vue détail si elle
-     est ouverte, pour que Plan B change de place immédiatement. La
-     liste, elle, n'a pas besoin d'être reconstruite : sa carte-planb
-     est déjà dans le DOM, seule une classe sur <body> la révèle. ---- */
-  var modePlanB = false;
-  function estModePlanB(){ return modePlanB; }
-  function construireBoutonPlanB(){
-    var b = el("button", "planb-toggle", ICONES.planb + " Mode Plans B");
-    b.type = "button";
-    b.setAttribute("aria-pressed", modePlanB ? "true" : "false");
-    b.addEventListener("click", basculerModePlanB);
-    return b;
-  }
-  function basculerModePlanB(){
-    modePlanB = !modePlanB;
-    document.body.classList.toggle("mode-planb", modePlanB);
-    var boutonJours = document.getElementById("planb-toggle-jours");
-    if(boutonJours) boutonJours.setAttribute("aria-pressed", modePlanB ? "true" : "false");
-    if(detailEl.classList.contains("open")){
-      var m = /^jour-(\d{4})$/.exec((location.hash || "").slice(1));
-      if(m) ouvrirDetail("d-" + m[1]);
-    }
   }
 
   /* --- lien Plans à partir d'une adresse libre --------------------------- */
@@ -4269,7 +4177,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   var LIBELLES_SECTION_RECHERCHE = {
     titre: "Titre", accroche: "Accroche", fil: "Fil", options: "Options",
     lieux: "Sur place", regarder: "À regarder", pratique: "Pratique", manger: "Où manger",
-    notes: "Notes", planB: "Plan B"
+    notes: "Notes"
   };
   function construireIndexJour(j){
     var sections = [];
@@ -4290,7 +4198,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       j.manger.plat
     ] : []);
     ajoute("notes", (j.notes || []).map(function(n){ return n.titre + " " + n.texte; }));
-    ajoute("planB", [j.planB]);
     return sections;
   }
   var INDEX_PAR_ID = {};
@@ -4321,11 +4228,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     b.addEventListener("click", function(){ location.hash = "#jour-" + idCourt(j); });
     spine.appendChild(b);
   });
-
-  /* --- outils de l'onglet Agenda : bouton mode Plans B ------------------- */
-  var boutonPlanBJours = construireBoutonPlanB();
-  boutonPlanBJours.id = "planb-toggle-jours";
-  document.getElementById("jours-outils").appendChild(boutonPlanBJours);
 
   /* --- filtres (agissent sur les cartes et les séparateurs de chapitre) -- */
   var bar = document.getElementById("filters");
@@ -5644,10 +5546,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     back.type = "button";
     back.setAttribute("aria-label", "Retour à la liste des jours");
     back.addEventListener("click", function(){ history.back(); });
-    var toolbar = el("div", "detail-toolbar");
-    toolbar.appendChild(back);
-    toolbar.appendChild(construireBoutonPlanB());
-    detailInner.appendChild(toolbar);
+    detailInner.appendChild(back);
     detailInner.appendChild(construireContenuJour(j));
     remplirNavSticky(j);
     navSticky.hidden = false;
@@ -5936,7 +5835,6 @@ function appliquerTheme(theme){
         .map(function(l){ return { nom: l.nom, quoi: l.quoi, pratique: l.pratique, requete: l.requete }; }),
       optionsTitre: ligne.options_titre,
       options: ligne.options || [],
-      planB: ligne.plan_b,
       notes: ligne.notes || [],
       /* `chapitre` était un objet {numero, titre} dans donnees.js ; le
          schéma SQL ne stocke qu'un texte libre. On le reprend tel quel

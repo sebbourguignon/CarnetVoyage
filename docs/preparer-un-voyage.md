@@ -102,9 +102,9 @@ valide, à retirer dans le livrable final) :
       ],
       "options_titre": "Si vous avez plus de temps",
       "options": ["<b>Une alternative</b> — pourquoi elle vaut le détour"],
-      "plan_b": "Le repli si la journée dérape, en un paragraphe.",
       "notes": [
-        { "ton": "alerte", "titre": "À anticiper", "texte": "Ce qu'il faut réserver ou prévoir." }
+        { "ton": "alerte", "titre": "À anticiper", "texte": "Ce qu'il faut réserver ou prévoir." },
+        { "ton": "alerte", "titre": "Si ça tourne mal", "texte": "Le repli si la journée dérape (météo, fermeture, imprévu) — une note comme une autre, pas un champ séparé." }
       ],
       "chapitre": null,                      // texte, ou null/absent si pas de rupture de chapitre ici
       "ordre": 0,
@@ -183,8 +183,7 @@ Détail champ par champ ci-dessous.
 | `fil` | tableau | `[{"h":"9 h 00", "texte":"..."}]` — déroulé horodaté |
 | `options_titre` | texte, facultatif | ex. `"Si vous avez plus de temps"` |
 | `options` | tableau de texte | alternatives, HTML simple autorisé |
-| `plan_b` | texte | le repli, un seul paragraphe |
-| `notes` | tableau | `[{"ton":"alerte"|"soleil", "titre":"...", "texte":"..."}]` |
+| `notes` | tableau | `[{"ton":"alerte"|"soleil", "titre":"...", "texte":"..."}]` — le repli en cas d'imprévu (météo, fermeture) est une note `alerte` comme une autre, pas un champ séparé |
 | `chapitre` | texte, facultatif | insère un séparateur de chapitre avant cette journée |
 | `ordre` | entier | position dans le voyage (0, 1, 2...) |
 | `pratique` | objet, facultatif | `{"parking":"...", "ztl":"...", "reserver":"...", "emporter":"...", "chien":"..."}` — chaque clé facultative |

@@ -66,7 +66,7 @@ dépôt.
 
 Un objet à trois clés : `voyage`, `journees` (tableau), `badges` (tableau).
 Le mapping exact vers les tables Supabase est dans
-`supabase/migrations/0001_init.sql` à `0011_theme_voyage.sql` — la liste
+`supabase/migrations/0001_init.sql` à `0012_retire_plan_b.sql` — la liste
 ci-dessous en est le résumé côté rédaction.
 
 ### `voyage` (objet)
@@ -100,7 +100,6 @@ Repris quasi à l'identique du format `JOURS` d'Italie2026 (voir son
 | `titre` / `accroche` | titre de journée et intention |
 | `fil` | `[{h, texte}]` — déroulé horodaté |
 | `options_titre` / `options` | alternatives |
-| `plan_b` | repli, un paragraphe |
 | `notes` | `[{ton, titre, texte}]`, `ton` = `alerte` ou `soleil` |
 | `chapitre` | facultatif, texte de séparateur |
 | `ordre` | position dans le voyage (entier, définit le tri) |
