@@ -51,6 +51,18 @@ button:disabled{opacity:.5;cursor:default}
 .statut-corrige{font-size:.78rem;color:var(--oliva);font-weight:600}
 .statut-attente{font-size:.78rem;color:var(--ink-soft)}
 .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.jours{display:flex;flex-direction:column;gap:8px}
+.jour-bouton{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  width:100%;text-align:left;background:var(--paper-2);border:1.5px solid var(--rule);
+  border-radius:8px;padding:12px 14px;cursor:pointer;font-family:inherit;
+}
+.jour-bouton:hover{border-color:var(--ink)}
+.jour-bouton.actif{border-color:var(--ink);background:var(--paper)}
+.jour-titre{font-weight:600}
+.jour-statut-corrige{color:var(--oliva)}
+.jour-statut-attente{color:var(--ink-soft)}
+.jour-statut-vide{color:var(--ink-soft);font-style:italic}
 </style>
 </head>
 <body>
@@ -165,19 +177,24 @@ button:disabled{opacity:.5;cursor:default}
               return;
             }
 
-            supabase.from("journees").select("ancre, titre, quiz_questions(id, question, choix, reponse_chiffree, ordre)")
+            supabase.from("journees").select("id, date, titre, ordre, quiz_questions(id, question, choix, reponse_chiffree, ordre)")
               .eq("voyage_id", voyage.id).order("ordre", { ascending: true })
               .then(function(resJournees){
                 if(resJournees.error){ afficherErreur("Chargement du quiz impossible : " + resJournees.error.message); return; }
 
-                var questions = [];
-                (resJournees.data || []).forEach(function(j){
-                  (j.quiz_questions || []).slice().sort(function(a, b){ return a.ordre - b.ordre; }).forEach(function(q){
-                    questions.push({ id: q.id, journee: j.titre, question: q.question, choix: q.choix, reponseChiffree: q.reponse_chiffree });
+                var jours = (resJournees.data || [])
+                  .filter(function(j){ return j.quiz_questions && j.quiz_questions.length; })
+                  .map(function(j){
+                    return {
+                      id: j.id,
+                      date: j.date,
+                      titre: j.titre,
+                      questions: j.quiz_questions.slice().sort(function(a, b){ return a.ordre - b.ordre; })
+                        .map(function(q){ return { id: q.id, question: q.question, choix: q.choix, reponseChiffree: q.reponse_chiffree }; })
+                    };
                   });
-                });
 
-                if(!questions.length){
+                if(!jours.length){
                   afficherErreur("Aucune question de quiz pour ce voyage.");
                   return;
                 }
@@ -186,8 +203,8 @@ button:disabled{opacity:.5;cursor:default}
                   .eq("voyage_id", voyage.id)
                   .then(function(resProgression){
                     if(resProgression.error){ afficherErreur("Chargement des réponses impossible : " + resProgression.error.message); return; }
-                    sousTitre.textContent = voyage.titre + " — " + questions.length + " question" + (questions.length > 1 ? "s" : "");
-                    afficherEcranCorrection(voyage, membres, questions, resProgression.data || [], utilisateurId);
+                    sousTitre.textContent = voyage.titre + " — correction par journée";
+                    afficherEcranCorrection(voyage, membres, jours, resProgression.data || [], utilisateurId);
                   });
               });
           });
@@ -201,61 +218,124 @@ button:disabled{opacity:.5;cursor:default}
     return utilisateurId.slice(0, 8) + "…";
   }
 
-  function afficherEcranCorrection(voyage, membres, questions, progressions, monId){
+  function formaterDate(date){
+    try{ return new Date(date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }); }
+    catch(e){ return date; }
+  }
+
+  /* statut d'une journée, calculé depuis les progressions déjà connues :
+     - vide : personne n'a encore répondu à une question de ce jour
+     - corrigée : tous ceux qui ont répondu ont un résultat enregistré
+     - en attente : au moins une réponse posée sans résultat correspondant */
+  function statutJour(jour, progressions){
+    var aUneReponse = false, toutCorrige = true;
+    progressions.forEach(function(prog){
+      jour.questions.forEach(function(q){
+        var etat = prog.quiz_etat || {};
+        var resultats = prog.quiz_resultats || {};
+        if(etat[q.id] != null){
+          aUneReponse = true;
+          if(resultats[q.id] == null) toutCorrige = false;
+        }
+      });
+    });
+    if(!aUneReponse) return "vide";
+    return toutCorrige ? "corrige" : "attente";
+  }
+
+  function afficherEcranCorrection(voyage, membres, jours, progressions, monId){
     zone.innerHTML = "";
 
-    var carteMdp = el("div", "carte");
-    carteMdp.appendChild(el("label", null, "Mot de passe du quiz"));
+    var carteJours = el("div", "carte");
+    carteJours.appendChild(el("label", null, "Journée à corriger"));
+    var listeJours = el("div", "jours");
+    carteJours.appendChild(listeJours);
+    zone.appendChild(carteJours);
+
+    var carteJour = el("div", "carte");
+    carteJour.style.display = "none";
+    zone.appendChild(carteJour);
+
+    var boutonsJours = {};
+    jours.forEach(function(jour){
+      var statut = statutJour(jour, progressions);
+      var bouton = document.createElement("button");
+      bouton.type = "button";
+      bouton.className = "jour-bouton";
+      var gauche = el("span", "jour-titre", formaterDate(jour.date) + " — " + jour.titre);
+      var droite = el("span", "jour-statut-" + statut,
+        statut === "vide" ? "personne n'a répondu" : statut === "corrige" ? "✓ corrigée" : "en attente de correction");
+      bouton.appendChild(gauche);
+      bouton.appendChild(droite);
+      bouton.addEventListener("click", function(){
+        Object.keys(boutonsJours).forEach(function(id){ boutonsJours[id].classList.toggle("actif", id === jour.id); });
+        afficherCorrectionJour(jour, voyage, membres, progressions, monId, carteJour);
+      });
+      boutonsJours[jour.id] = bouton;
+      listeJours.appendChild(bouton);
+    });
+  }
+
+  function afficherCorrectionJour(jour, voyage, membres, progressions, monId, carteJour){
+    carteJour.style.display = "";
+    carteJour.innerHTML = "";
+    carteJour.appendChild(el("h3", null, formaterDate(jour.date) + " — " + jour.titre));
+
     var champMdp = document.createElement("input");
     champMdp.type = "password"; champMdp.autocomplete = "off";
-    carteMdp.appendChild(champMdp);
-    var boutonDechiffrer = el("button", null, "Déchiffrer et prévisualiser");
+    carteJour.appendChild(el("label", null, "Mot de passe du quiz"));
+    carteJour.appendChild(champMdp);
+    var boutonDechiffrer = el("button", null, "Déchiffrer et prévisualiser cette journée");
     var erreurMdp = el("p", "erreur");
-    carteMdp.appendChild(boutonDechiffrer);
-    carteMdp.appendChild(erreurMdp);
-    zone.appendChild(carteMdp);
+    carteJour.appendChild(boutonDechiffrer);
+    carteJour.appendChild(erreurMdp);
 
-    var carteResultats = el("div", "carte");
-    carteResultats.style.display = "none";
-    zone.appendChild(carteResultats);
+    var carteResultats = el("div");
+    carteJour.appendChild(carteResultats);
 
     boutonDechiffrer.addEventListener("click", function(){
       var motDePasse = champMdp.value;
       if(!motDePasse){ erreurMdp.textContent = "Entrez un mot de passe."; return; }
       erreurMdp.textContent = "";
 
-      var resultats = {}; // qid -> indexCorrect
-      questions.forEach(function(q){ resultats[q.id] = dechiffrer(q.reponseChiffree, motDePasse); });
+      var resultatsJour = {}; // qid -> indexCorrect, uniquement les questions de cette journée
+      jour.questions.forEach(function(q){ resultatsJour[q.id] = dechiffrer(q.reponseChiffree, motDePasse); });
 
-      carteResultats.style.display = "";
       carteResultats.innerHTML = "";
       carteResultats.appendChild(el("p", "info",
         "Vérifiez que les bonnes réponses ci-dessous semblent cohérentes avant de valider — un mauvais mot de passe produit des réponses au hasard, sans erreur visible ici."));
 
-      var scoresParMembre = {}; // utilisateur_id -> { score, resultats }
+      var envoisParMembre = {}; // utilisateur_id -> { scoreTotal, resultatsJour }
       membres.forEach(function(m){
         var prog = progressions.filter(function(p){ return p.utilisateur_id === m.utilisateur_id; })[0];
         var etat = (prog && prog.quiz_etat) || {};
-        var aRepondu = questions.some(function(q){ return etat[q.id] != null; });
-        if(!aRepondu) return; // pas encore joué, rien à corriger
+        var resultatsConnus = (prog && prog.quiz_resultats) || {};
+        var aRepondu = jour.questions.some(function(q){ return etat[q.id] != null; });
+        if(!aRepondu) return; // pas encore joué ce jour-là, rien à corriger
+
+        /* score total = questions déjà corrigées lors de journées précédentes
+           (resultatsConnus) + celles de ce jour qu'on s'apprête à corriger —
+           corriger_quiz écrase quiz_score, donc il faut toujours envoyer le
+           total complet, pas seulement les points de cette journée. */
+        var resultatsFusionnes = Object.assign({}, resultatsConnus, resultatsJour);
 
         var blocMembre = el("div", "membre");
         var tete = el("div", "membre-tete");
         tete.appendChild(el("span", "membre-nom", nomMembre(membres, m.utilisateur_id) + (m.utilisateur_id === monId ? " (vous)" : "")));
-        var score = 0, repondues = 0;
-        questions.forEach(function(q){
-          var reponse = etat[q.id] ? etat[q.id].reponse : null;
-          if(reponse == null) return;
-          repondues++;
-          if(resultats[q.id] != null && reponse === resultats[q.id]) score += POINTS_PAR_BONNE_REPONSE_QUIZ;
+        var scoreTotal = 0;
+        Object.keys(etat).forEach(function(qid){
+          if(etat[qid] && etat[qid].reponse != null && resultatsFusionnes[qid] != null && etat[qid].reponse === resultatsFusionnes[qid]){
+            scoreTotal += POINTS_PAR_BONNE_REPONSE_QUIZ;
+          }
         });
-        tete.appendChild(el("span", "membre-score", score + " pts · " + repondues + "/" + questions.length + " répondues"));
+        var repondues = jour.questions.filter(function(q){ return etat[q.id] != null; }).length;
+        tete.appendChild(el("span", "membre-score", scoreTotal + " pts au total · " + repondues + "/" + jour.questions.length + " répondues aujourd'hui"));
         blocMembre.appendChild(tete);
 
-        questions.forEach(function(q){
+        jour.questions.forEach(function(q){
           var reponse = etat[q.id] ? etat[q.id].reponse : null;
           var ligne = el("div", "question-ligne");
-          var indexCorrect = resultats[q.id];
+          var indexCorrect = resultatsJour[q.id];
           var texteCorrect = (indexCorrect != null && q.choix[indexCorrect]) ? q.choix[indexCorrect] : "?";
           if(reponse == null){
             ligne.appendChild(el("span", "puce", "·"));
@@ -271,26 +351,26 @@ button:disabled{opacity:.5;cursor:default}
         });
 
         carteResultats.appendChild(blocMembre);
-        scoresParMembre[m.utilisateur_id] = { score: score, resultats: resultats };
+        envoisParMembre[m.utilisateur_id] = { scoreTotal: scoreTotal, resultatsJour: resultatsJour };
       });
 
-      if(!Object.keys(scoresParMembre).length){
-        carteResultats.appendChild(el("p", "info", "Personne n'a encore répondu au quiz."));
+      if(!Object.keys(envoisParMembre).length){
+        carteResultats.appendChild(el("p", "info", "Personne n'a encore répondu au quiz de cette journée."));
         return;
       }
 
       var actions = el("div", "actions");
-      var boutonValider = el("button", null, "Valider et enregistrer les corrections");
+      var boutonValider = el("button", null, "Valider la correction de cette journée");
       var messageValidation = el("p", "info");
       boutonValider.addEventListener("click", function(){
         boutonValider.disabled = true;
-        var appels = Object.keys(scoresParMembre).map(function(uid){
-          var s = scoresParMembre[uid];
+        var appels = Object.keys(envoisParMembre).map(function(uid){
+          var s = envoisParMembre[uid];
           return supabase.rpc("corriger_quiz", {
             cible_utilisateur_id: uid,
             cible_voyage_id: voyage.id,
-            nouveau_score: s.score,
-            nouveaux_resultats: s.resultats
+            nouveau_score: s.scoreTotal,
+            nouveaux_resultats: s.resultatsJour
           }).then(function(res){ return { uid: uid, error: res.error }; });
         });
         Promise.all(appels).then(function(resultatsAppels){
@@ -300,7 +380,7 @@ button:disabled{opacity:.5;cursor:default}
               echecs.map(function(e){ return nomMembre(membres, e.uid) + " (" + e.error.message + ")"; }).join(", ");
             messageValidation.className = "erreur";
           } else {
-            messageValidation.textContent = "Corrections enregistrées pour " + resultatsAppels.length + " membre(s). Chaque appareil verra sa correction à son prochain chargement.";
+            messageValidation.textContent = "Corrections enregistrées pour " + resultatsAppels.length + " membre(s) sur cette journée. Chaque appareil verra sa correction à son prochain chargement.";
             messageValidation.className = "info";
           }
           boutonValider.disabled = false;
