@@ -275,6 +275,10 @@ button:disabled{opacity:.5;cursor:default}
       bouton.addEventListener("click", function(){
         Object.keys(boutonsJours).forEach(function(id){ boutonsJours[id].classList.toggle("actif", id === jour.id); });
         afficherCorrectionJour(jour, voyage, membres, progressions, monId, carteJour);
+        /* la liste des journées peut être longue (un voyage entier) : sans
+           ça, la carte de détail apparaît hors écran en dessous et donne
+           l'impression que rien ne s'est passé au clic. */
+        carteJour.scrollIntoView({ behavior: "smooth", block: "start" });
       });
       boutonsJours[jour.id] = bouton;
       listeJours.appendChild(bouton);
