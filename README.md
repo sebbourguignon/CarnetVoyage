@@ -20,9 +20,6 @@ app/        → le moteur de rendu (gabarit, styles, filtres, frise, chasse
               la réponse + les assets pour l'usage hors-connexion (à écrire).
               Un thème CSS + un fichier d'illustrations par voyage sont
               chargés dynamiquement selon le slug (à écrire).
-admin/      → un seul écran réel : la correction du quiz à distance (voir
-              plus bas). Pas de CRUD, pas de formulaires de saisie de
-              contenu — ça se fait en conversation avec Claude, pas ici.
 voyages/    → un fichier JSON par voyage (ex. salo2026.json), sauvegarde
               lisible du contenu publié en base. Resynchronisé après
               chaque édition ciblée pour ne jamais devenir périmé.
@@ -93,13 +90,14 @@ compte de son auteur. Le mécanisme de chiffrement de la bonne réponse
 d'Italie2026 — il sert à empêcher un enfant de lire la réponse dans le
 code, pas à sécuriser la transmission.
 
-Un membre famille peut ouvrir un écran de correction (dans `admin/`,
-seule vraie page de cet dossier) : il entre le mot de passe du quiz,
-déchiffre côté client les réponses de tous les membres du voyage, calcule
-les scores, puis appelle la fonction SQL `corriger_quiz(...)` qui écrit le
-résultat dans `progression` (et seulement le résultat — jamais les réponses
-brutes des autres, par construction de la fonction). Chaque appareil voit
-sa correction dès son prochain chargement.
+Un membre famille au rôle `admin` (table `membres_famille`) voit apparaître
+un onglet Admin dans la barre du bas de `app/` : il y retrouve la liste des
+journées, les réponses de chaque membre lues via `quiz_reponses` (RLS
+réservée aux admins), puis valide par personne — ce qui appelle la fonction
+SQL `corriger_quiz(...)` qui écrit le résultat dans `progression` (et
+seulement le résultat — jamais les réponses brutes des autres, par
+construction de la fonction). Chaque appareil voit sa correction dès son
+prochain chargement.
 
 ## État actuel
 
@@ -111,7 +109,7 @@ fetch Supabase (`demarrerCarnet`). Reste à faire :
    (`donnees.js` → `voyages/salo2026.json` → publication), pour valider le
    modèle sur des données réelles
 2. Écrire `outils/exporter-voyage.js`
-3. Écran de correction du quiz dans `admin/`
+3. Onglet Admin (correction du quiz) dans `app/`
 4. Authentification famille (comptes + `membres_famille`) côté `app/`
 5. Thème + illustrations chargés dynamiquement par slug
 6. Service worker (cache-first sur le contenu du voyage actif)
