@@ -11,9 +11,9 @@ jamais vu ce projet sache quoi produire sans redécouvrir le schéma à tâtons.
 
 Si la préparation du contenu se fait ailleurs que dans Claude Code (chat
 web, autre assistant), utiliser plutôt `docs/preparer-un-voyage.md` — un
-brief autonome, sans dépendance au dépôt — et `voyages/_modele.md` comme
-squelette JSON à copier. Ce `CLAUDE.md` reste la référence quand on
-travaille directement dans le dépôt.
+brief autonome, sans dépendance au dépôt, à coller tel quel. Ce
+`CLAUDE.md` reste la référence quand on travaille directement dans le
+dépôt.
 
 ## Principes hérités (non négociables)
 
