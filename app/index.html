@@ -5380,7 +5380,17 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     });
   });
 
-  // TODO service worker (étape séparée) — pas de mode hors-ligne dans cette passe.
+  /* Service worker : cache l'app shell, les polices et les dernières
+     données Supabase chargées, pour que le carnet reste consultable sans
+     réseau sur le terrain (voir sw.js pour le détail des stratégies).
+     Chemin relatif : le scope suit l'endroit où app/ est servi. */
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("sw.js").catch(function(err){
+        console.error("Échec d'enregistrement du service worker :", err);
+      });
+    });
+  }
 })();
 </script>
 </body>
