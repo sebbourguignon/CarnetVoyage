@@ -481,11 +481,17 @@ h1 em{font-style:italic;color:var(--lago)}
 .classement-marche.rang-1{border-top-color:var(--sole);order:2}
 .classement-marche.rang-2{border-top-color:var(--pietra);order:1}
 .classement-marche.rang-3{border-top-color:#8a5a3a;order:3}
+/* médaille : même vocabulaire de trait que les badges de la chasse
+   (iconeBadgeTrait, stroke=currentColor 1.5-1.6) plutôt qu'un numéro
+   Bodoni nu — la couleur du rang vient de currentColor, posée ici. */
 .classement-marche-rang{
-  font-family:"Bodoni Moda",Georgia,serif;font-size:1.6rem;font-weight:700;
-  color:var(--ink-soft);line-height:1;margin:0 0 6px;
+  width:44px;height:54px;margin:0 auto 6px;color:var(--pietra);
 }
-.classement-marche.rang-1 .classement-marche-rang{color:var(--sole);font-size:2.1rem}
+.classement-marche.rang-1 .classement-marche-rang{width:58px;height:70px;color:var(--sole)}
+.classement-marche.rang-3 .classement-marche-rang{color:#8a5a3a}
+.classement-marche-rang svg{display:block;width:100%;height:100%}
+.classement-marche-laurier{width:26px;height:26px;margin:0 auto 2px;color:var(--sole)}
+.classement-marche-laurier svg{display:block;width:100%;height:100%}
 .classement-marche-nom{font-weight:600;font-size:.9rem;margin:0 0 3px;overflow-wrap:anywhere}
 .classement-marche-pts{
   font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--ink-soft);margin:0;
@@ -4644,6 +4650,21 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       return badgeObtenu(b, cochees);
     }).length;
   }
+  /* médaille de podium : même grammaire de dessin que iconeBadgeTrait
+     (trait épaisseur 1.5-1.6, currentColor, extrémités arrondies) — un
+     disque et un ruban à deux pans, le rang gravé au centre en Bodoni
+     plutôt qu'en chiffre plaqué à côté, pour rester dans le vocabulaire
+     de traits déjà posé par les badges de la chasse et la barre d'onglets,
+     comme demandé plutôt qu'un simple nombre nu. */
+  function iconeClassementMedaille(rang){
+    return '<svg viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="1.5" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M8.5 15.5 L5.3 28 L12 23.3 L18.7 28 L15.5 15.5"/>' +
+      '<circle cx="12" cy="9.5" r="8"/>' +
+      '<text x="12" y="13" text-anchor="middle" font-family="\'Bodoni Moda\',Georgia,serif" ' +
+      'font-size="9.5" fill="currentColor" stroke="none">' + rang + '</text>' +
+      '</svg>';
+  }
   function construireBlocClassement(){
     var bloc = el("div", "block classement");
     bloc.appendChild(el("h3", null, ICONES.badge + " Classement de la famille"));
@@ -4687,11 +4708,11 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         return;
       }
 
-      var MEDAILLES = ["1", "2", "3"];
       var podium = el("div", "classement-podium");
       lignes.slice(0, 3).forEach(function(ligne, i){
         var marche = el("div", "classement-marche rang-" + (i + 1));
-        marche.appendChild(el("p", "classement-marche-rang", MEDAILLES[i]));
+        if(i === 0) marche.appendChild(el("div", "classement-marche-laurier", ICONES_BADGE.laurier()));
+        marche.appendChild(el("div", "classement-marche-rang", iconeClassementMedaille(i + 1)));
         marche.appendChild(el("p", "classement-marche-nom", ligne.nom + (ligne.id === utilisateurId ? " (vous)" : "")));
         marche.appendChild(el("p", "classement-marche-pts", ligne.total + " pts"));
         podium.appendChild(marche);
