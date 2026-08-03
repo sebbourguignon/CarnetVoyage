@@ -60,6 +60,13 @@
 <style>
 /* ---------- jetons ---------- */
 :root{
+  /* polices par défaut (thème Officina Bodoniana, salo2026) — un autre
+     voyage peut les surcharger via la colonne voyages.theme, voir
+     appliquerTheme() plus bas. */
+  --font-display:"Bodoni Moda",Georgia,serif;
+  --font-body:"IBM Plex Sans",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",monospace;
+
   --paper:#F3F1EA;
   --paper-deep:#E9E6DD;
   --card:#DDD7C7;
@@ -120,7 +127,7 @@ body{
   margin:0;
   background:var(--paper);
   color:var(--ink);
-  font-family:"IBM Plex Sans",system-ui,sans-serif;
+  font-family:var(--font-body);
   font-weight:400;
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
@@ -145,12 +152,12 @@ body{
 /* ---------- en-tête ---------- */
 .masthead{padding:54px 0 26px;border-bottom:2px solid var(--ink)}
 .eyebrow{
-  font-family:"IBM Plex Mono",monospace;
+  font-family:var(--font-mono);
   font-size:11px;letter-spacing:.22em;text-transform:uppercase;
   color:var(--rosso);font-weight:600;margin:0 0 16px;
 }
 h1{
-  font-family:"Bodoni Moda",Georgia,serif;
+  font-family:var(--font-display);
   font-weight:600;
   font-size:clamp(2.6rem,7vw,4.6rem);
   line-height:.95;letter-spacing:-.01em;
@@ -158,7 +165,7 @@ h1{
 }
 h1 em{font-style:italic;color:var(--lago)}
 .sub{
-  font-family:"IBM Plex Mono",monospace;
+  font-family:var(--font-mono);
   font-size:12.5px;letter-spacing:.06em;color:var(--ink-soft);
   margin:14px 0 0;
 }
@@ -166,13 +173,13 @@ h1 em{font-style:italic;color:var(--lago)}
 /* ---------- en-tête des onglets secondaires ---------- */
 .panel-head{padding:38px 0 22px;border-bottom:2px solid var(--ink)}
 .panel-head h2{
-  font-family:"Bodoni Moda",Georgia,serif;
+  font-family:var(--font-display);
   font-weight:600;font-size:clamp(2.1rem,6vw,3rem);
   line-height:.98;letter-spacing:-.01em;margin:0;
 }
 .countdown{margin:26px 0 4px}
 .countdown-big{
-  font-family:"Bodoni Moda",Georgia,serif;
+  font-family:var(--font-display);
   font-weight:600;font-size:clamp(1.75rem,5.5vw,2.3rem);
   line-height:1.05;letter-spacing:-.008em;margin:0;
 }
@@ -204,16 +211,16 @@ h1 em{font-style:italic;color:var(--lago)}
   position:absolute;z-index:1;left:0;right:0;top:0;padding:22px 22px 20px;color:#fff;
 }
 .accueil-hero-titre{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;
+  font-family:var(--font-display);font-weight:600;
   font-size:clamp(1.9rem,6vw,2.8rem);line-height:1;letter-spacing:-.008em;margin:0 0 8px;
 }
 .accueil-hero-titre em{font-style:italic;opacity:.85}
 .accueil-hero-dates{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;
   color:rgba(255,255,255,.78);margin:0 0 10px;
 }
 .accueil-hero-compte{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;
+  font-family:var(--font-display);font-weight:600;
   font-size:clamp(1.2rem,3.6vw,1.5rem);line-height:1.1;margin:0;
 }
 
@@ -251,12 +258,12 @@ h1 em{font-style:italic;color:var(--lago)}
    si on ne l'annule pas : c'est elle, pas le gap du flex, qui écartait
    la valeur de son libellé. */
 .accueil-chiffre .n{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;
+  font-family:var(--font-display);font-weight:600;
   font-size:clamp(1.5rem,5vw,2rem);line-height:1;letter-spacing:-.008em;color:var(--ink);
   margin:0;
 }
 .accueil-chiffre .l{
-  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.09em;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.09em;
   text-transform:uppercase;color:var(--pietra);
   margin:0;
 }
@@ -292,12 +299,12 @@ h1 em{font-style:italic;color:var(--lago)}
 .itin-label:hover .itin-label-nom,.itin-label:focus-visible .itin-label-nom{color:var(--rosso)}
 .itin-label:focus-visible{outline:2px solid var(--rosso);outline-offset:2px;border-radius:8px}
 .itin-label-nom{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;font-size:13px;
+  font-family:var(--font-display);font-weight:600;font-size:13px;
   line-height:1.25;white-space:nowrap;
 }
 .itin-label.majeur .itin-label-nom{font-size:17px;font-weight:700;color:var(--lago)}
 .itin-label-duree{
-  display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;
+  display:block;font-family:var(--font-mono);font-size:11px;
   color:var(--pietra);letter-spacing:.02em;white-space:nowrap;
 }
 @media(min-width:481px){
@@ -325,7 +332,7 @@ h1 em{font-style:italic;color:var(--lago)}
 .itineraire-bouton{
   display:inline-flex;align-items:center;justify-content:center;gap:9px;
   min-height:44px;width:100%;padding:11px 20px;
-  font-family:"IBM Plex Mono",monospace;font-size:.84rem;font-weight:600;letter-spacing:.02em;
+  font-family:var(--font-mono);font-size:.84rem;font-weight:600;letter-spacing:.02em;
   color:var(--ink);text-decoration:none;
   border:1.5px solid var(--cat-route);border-radius:999px;background:transparent;
 }
@@ -342,7 +349,7 @@ h1 em{font-style:italic;color:var(--lago)}
   background:rgba(178,58,46,.045);
 }
 .accueil-etape .t{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--rosso);font-weight:700;margin:0 0 5px;
 }
 .accueil-etape p{margin:0;color:var(--ink);font-size:.95rem;line-height:1.5}
@@ -360,21 +367,21 @@ h1 em{font-style:italic;color:var(--lago)}
   background:color-mix(in srgb, var(--oliva) 7%, var(--paper) 93%);
 }
 .accueil-chasse-resume-tete{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--oliva);font-weight:700;margin:0 0 3px;
 }
 .accueil-chasse-resume:hover .accueil-chasse-resume-tete{color:var(--rosso)}
 .accueil-chasse-resume-score{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;
+  font-family:var(--font-display);font-weight:600;
   font-size:clamp(2.1rem,8vw,2.7rem);line-height:1;margin:0 0 2px;color:var(--ink);
 }
 .accueil-chasse-resume-score .sur{
-  font-family:"IBM Plex Mono",monospace;font-size:.32em;letter-spacing:.03em;
+  font-family:var(--font-mono);font-size:.32em;letter-spacing:.03em;
   color:var(--pietra);font-weight:500;margin-left:5px;
 }
 .accueil-chasse-resume-detail{
   margin:0 0 4px;font-size:.78rem;letter-spacing:.02em;
-  font-family:"IBM Plex Mono",monospace;color:var(--ink-soft);
+  font-family:var(--font-mono);color:var(--ink-soft);
 }
 /* jauge : piste toujours visible (fond teinté plus soutenu que le bloc,
    pas juste un filet) pour rester lisible à 0 %. La plupart des badges se
@@ -390,7 +397,7 @@ h1 em{font-style:italic;color:var(--lago)}
 }
 .accueil-chasse-resume-prochain{margin:0 0 4px}
 .accueil-chasse-resume-prochain-label{
-  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.09em;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.09em;
   text-transform:uppercase;color:var(--pietra);margin:0 0 2px;
 }
 .accueil-chasse-resume-prochain-corps{display:flex;align-items:flex-start;gap:8px}
@@ -403,7 +410,7 @@ h1 em{font-style:italic;color:var(--lago)}
 .accueil-chasse-resume-prochain-texte{
   display:flex;flex-wrap:wrap;align-items:baseline;column-gap:6px;row-gap:0;
   min-width:0;line-height:1.3;
-  font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft);
+  font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft);
 }
 .accueil-chasse-resume-prochain-nom{margin:0;font-size:.92rem;font-weight:600;color:var(--ink)}
 .accueil-chasse-resume-prochain-reste{margin:0}
@@ -419,7 +426,7 @@ h1 em{font-style:italic;color:var(--lago)}
 .accueil-chasse-resume-badge-icone svg{width:12px;height:12px}
 .accueil-chasse-resume-badge-icone.obtenu{border-color:var(--oliva);color:var(--oliva)}
 .accueil-chasse-resume-badges-texte{
-  font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--ink-soft);
+  font-family:var(--font-mono);font-size:.76rem;color:var(--ink-soft);
 }
 .accueil-chasse-resume:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 
@@ -429,19 +436,19 @@ h1 em{font-style:italic;color:var(--lago)}
 .accueil-chasse-tete{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 14px;margin:0 0 10px}
 .accueil-chasse-label{
   display:flex;align-items:center;gap:6px;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--lago);font-weight:700;margin:0;
 }
 .accueil-chasse-score{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;
+  font-family:var(--font-display);font-weight:600;
   font-size:clamp(1.6rem,5vw,2.1rem);line-height:1;margin:0 0 4px;color:var(--ink);
 }
 .accueil-chasse-score .unite{
-  font-family:"IBM Plex Mono",monospace;font-size:.5em;letter-spacing:.06em;
+  font-family:var(--font-mono);font-size:.5em;letter-spacing:.06em;
   text-transform:uppercase;color:var(--ink-soft);font-weight:500;
 }
 .accueil-chasse-score .sur{
-  font-family:"IBM Plex Mono",monospace;font-size:.46em;color:var(--pietra);font-weight:500;margin-left:2px;
+  font-family:var(--font-mono);font-size:.46em;color:var(--pietra);font-weight:500;margin-left:2px;
 }
 .accueil-chasse-sub{margin:0;font-size:.86rem;color:var(--ink-soft)}
 /* badges : liste de cartes, pas des pastilles muettes — le resume reste
@@ -462,7 +469,7 @@ h1 em{font-style:italic;color:var(--lago)}
 .chasse-badge.obtenu .chasse-badge-icone{border-color:var(--sole);color:var(--sole)}
 .chasse-badge-texte{flex:1 1 auto;min-width:0}
 .chasse-badge-nom{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;font-size:.98rem;
+  font-family:var(--font-display);font-weight:600;font-size:.98rem;
   line-height:1.2;margin:0 0 3px;color:var(--pietra);
 }
 .chasse-badge.obtenu .chasse-badge-nom{color:var(--ink)}
@@ -494,7 +501,7 @@ h1 em{font-style:italic;color:var(--lago)}
 .classement-marche-laurier svg{display:block;width:100%;height:100%}
 .classement-marche-nom{font-weight:600;font-size:.9rem;margin:0 0 3px;overflow-wrap:anywhere}
 .classement-marche-pts{
-  font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--ink-soft);margin:0;
+  font-family:var(--font-mono);font-size:.8rem;color:var(--ink-soft);margin:0;
 }
 .classement-liste{margin:0}
 .classement-ligne{
@@ -504,12 +511,12 @@ h1 em{font-style:italic;color:var(--lago)}
 .classement-ligne:first-child{border-top:0}
 .classement-ligne-rang{
   flex:0 0 auto;width:22px;text-align:right;
-  font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--pietra);
+  font-family:var(--font-mono);font-size:.82rem;color:var(--pietra);
 }
 .classement-ligne-nom{flex:1 1 auto;min-width:0;font-size:.92rem;overflow-wrap:anywhere}
 .classement-ligne.moi .classement-ligne-nom{font-weight:600;color:var(--rosso)}
 .classement-ligne-pts{
-  flex:0 0 auto;font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--ink-soft);
+  flex:0 0 auto;font-family:var(--font-mono);font-size:.82rem;color:var(--ink-soft);
 }
 .classement-detail{font-size:.78rem;color:var(--ink-soft);margin:2px 0 0}
 
@@ -526,18 +533,18 @@ h1 em{font-style:italic;color:var(--lago)}
 }
 .chasse-jour-tete-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
 .chasse-jour-date{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--pietra);
 }
 .chasse-jour-titre{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;font-size:1.05rem;
+  font-family:var(--font-display);font-weight:600;font-size:1.05rem;
   color:var(--ink);line-height:1.2;
 }
 .chasse-jour-head:hover .chasse-jour-titre{color:var(--rosso)}
 .chasse-jour-head:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .chasse-jour-tete-etat{flex:0 0 auto;display:flex;align-items:center;gap:8px}
 .chasse-jour-progres{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.04em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;
   color:var(--ink-soft);white-space:nowrap;
 }
 .chasse-jour-chevron{
@@ -565,14 +572,14 @@ h1 em{font-style:italic;color:var(--lago)}
    disparaissent d'eux-mêmes (voir .regarder-item.checked ci-dessous),
    pas besoin de reconstruire le bloc à chaque coche. */
 .chasse-aujourdhui-reste{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--rosso);margin:0 0 16px;
 }
 .chasse-aujourdhui .regarder-item.checked{display:none}
 
 .chasse-partage{
   flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
-  font-family:"IBM Plex Mono",monospace;font-size:.76rem;font-weight:600;
+  font-family:var(--font-mono);font-size:.76rem;font-weight:600;
   padding:8px 12px;border:1px solid var(--rule);border-radius:999px;
   background:transparent;color:var(--ink-soft);cursor:pointer;white-space:nowrap;
 }
@@ -602,11 +609,11 @@ h1 em{font-style:italic;color:var(--lago)}
   margin:0 0 30px;padding:18px 20px 4px;border:1px solid var(--cat-evenement);
 }
 .accueil-eclipse-label{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--sole);font-weight:700;margin:0 0 6px;
 }
 .accueil-eclipse-compte{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:600;
+  font-family:var(--font-display);font-weight:600;
   font-size:clamp(1.3rem,4vw,1.7rem);line-height:1.1;margin:0;color:var(--ink);
 }
 .accueil-eclipse .eclipse-disc{margin:10px 0 4px}
@@ -625,7 +632,7 @@ h1 em{font-style:italic;color:var(--lago)}
 .recherche-icone{flex:0 0 auto;width:17px;height:17px;color:var(--pietra)}
 .recherche-input{
   flex:1 1 auto;min-width:0;border:0;background:none;outline:0;padding:2px 0;
-  font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:.98rem;color:var(--ink);
+  font-family:var(--font-body);font-size:.98rem;color:var(--ink);
 }
 .recherche-input::placeholder{color:var(--pietra)}
 .recherche-input::-webkit-search-cancel-button{display:none}
@@ -636,17 +643,17 @@ h1 em{font-style:italic;color:var(--lago)}
 }
 .recherche-clear:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .recherche-compte{
-  margin:0;padding:0 2px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  margin:0;padding:0 2px;font-family:var(--font-mono);font-size:10.5px;
   letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);
 }
 .card-match{
-  margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;
+  margin:8px 0 0;font-family:var(--font-mono);font-size:10px;
   letter-spacing:.06em;text-transform:uppercase;color:var(--rosso);
 }
 .planb-toggle{
   align-self:flex-start;
   display:inline-flex;align-items:center;gap:7px;
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;
   text-transform:uppercase;font-weight:600;
   padding:10px 15px;border:1px solid var(--rosso);border-radius:999px;
   background:transparent;color:var(--rosso);cursor:pointer;
@@ -668,7 +675,7 @@ h1 em{font-style:italic;color:var(--lago)}
 }
 .planb-avant .eyebrow-planb{
   display:flex;align-items:center;gap:7px;
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--rosso);font-weight:700;margin:0 0 10px;
 }
 .planb-avant .planb{border:0;background:none;padding:0;color:var(--ink)}
@@ -685,7 +692,7 @@ body.mode-planb .card-planb{display:block}
 /* ---------- frise du rythme ---------- */
 .spine-block{padding:26px 0 20px;border-bottom:1px solid var(--rule)}
 .spine-label{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  font-family:var(--font-mono);font-size:10.5px;
   letter-spacing:.2em;text-transform:uppercase;color:var(--pietra);
   margin:0 0 12px;
 }
@@ -713,7 +720,7 @@ body.mode-planb .card-planb{display:block}
 .tick[data-kind="lac"] .bar{background:var(--lago-mid)}
 .tick[data-kind="evenement"] .bar{background:var(--sole);opacity:.9}
 .tick .num{
-  font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--pietra);
+  font-family:var(--font-mono);font-size:9.5px;color:var(--pietra);
   position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);
 }
 .tick.star .bar{box-shadow:inset 0 0 0 1.5px var(--ink)}
@@ -728,7 +735,7 @@ body.mode-planb .card-planb{display:block}
 .filters::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:14px;
   background:linear-gradient(var(--paper),rgba(243,241,234,0));pointer-events:none}
 .filters button{
-  font-family:"IBM Plex Mono",monospace;
+  font-family:var(--font-mono);
   font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
   padding:7px 13px;margin-bottom:14px;
   border:1px solid var(--rule);border-radius:999px;
@@ -742,7 +749,7 @@ body.mode-planb .card-planb{display:block}
 /* ---------- liste des journées ---------- */
 .pinned{padding:22px 0 4px;border-bottom:1px solid var(--rule)}
 .pinned-label{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  font-family:var(--font-mono);font-size:10.5px;
   letter-spacing:.2em;text-transform:uppercase;color:var(--rosso);
   margin:0 0 10px;font-weight:600;
 }
@@ -761,7 +768,7 @@ body.mode-planb .card-planb{display:block}
 .card[data-kind="evenement"]{border-left-color:var(--cat-evenement)}
 .card:focus-visible{outline:2px solid var(--rosso);outline-offset:-2px}
 .card .cdate{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  font-family:var(--font-mono);font-size:10.5px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--pietra);margin:0 0 6px;
 }
 /* repère "aujourd'hui" dans la liste : pastille discrète accolée à la
@@ -779,7 +786,7 @@ body.mode-planb .card-planb{display:block}
 }
 .card-anniversaire-badge .iico{width:11px;height:11px}
 .card h3{
-  font-family:"Bodoni Moda",Georgia,serif;
+  font-family:var(--font-display);
   font-size:clamp(1.3rem,3.6vw,1.6rem);line-height:1.15;
   font-weight:600;letter-spacing:-.006em;margin:0 0 5px;
 }
@@ -788,13 +795,13 @@ body.mode-planb .card-planb{display:block}
 .card .ctag{color:var(--ink-soft);font-size:.92rem;font-style:italic;margin:0 0 10px}
 .card .cmeta{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .card .cdist{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-soft);
+  font-family:var(--font-mono);font-size:10.5px;color:var(--ink-soft);
 }
 .pinned .card{border-bottom:0;padding-top:0}
 
 .kind{
   display:inline-block;
-  font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  font-family:var(--font-mono);font-size:9.5px;
   letter-spacing:.16em;text-transform:uppercase;
   padding:3px 7px;border-radius:2px;color:#fff;
 }
@@ -807,23 +814,23 @@ body.mode-planb .card-planb{display:block}
 .chapter{margin:22px 0 0;padding:30px 0 4px;border-top:2px solid var(--ink)}
 .chapter.hidden{display:none}
 .chapter p{
-  font-family:"Bodoni Moda",Georgia,serif;
+  font-family:var(--font-display);
   font-size:clamp(3rem,9vw,5rem);line-height:.85;letter-spacing:-.01em;
   color:var(--rosso);margin:0;font-weight:500;
 }
 .chapter h4{
-  font-family:"Bodoni Moda",Georgia,serif;
+  font-family:var(--font-display);
   font-size:1.75rem;line-height:1.15;font-weight:600;margin:8px 0 0;
 }
 
 .panel-foot{
   margin-top:22px;padding-top:18px;
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  font-family:var(--font-mono);font-size:10.5px;
   letter-spacing:.05em;color:var(--pietra);line-height:1.8;
 }
 .reinit-chasse{
   display:block;margin-top:12px;padding:0;border:0;background:none;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.05em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;
   color:var(--pietra);text-decoration:underline;text-underline-offset:2px;cursor:pointer;
 }
 .reinit-chasse:hover{color:var(--rosso)}
@@ -839,15 +846,15 @@ body.mode-planb .card-planb{display:block}
 .reserve-card:focus-visible{outline:2px solid var(--rosso);outline-offset:-2px}
 .reserve-date{display:flex;flex-direction:column;line-height:1}
 .reserve-date .dow,.reserve-date .mois{
-  font-family:"IBM Plex Mono",monospace;font-size:9px;
+  font-family:var(--font-mono);font-size:9px;
   letter-spacing:.13em;text-transform:uppercase;color:var(--pietra);
 }
 .reserve-date .num{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:700;
+  font-family:var(--font-display);font-weight:700;
   font-size:1.9rem;line-height:1;letter-spacing:-.01em;color:var(--ink);margin:2px 0;
 }
 .reserve-body h3{
-  font-family:"Bodoni Moda",Georgia,serif;font-size:1.05rem;font-weight:600;
+  font-family:var(--font-display);font-size:1.05rem;font-weight:600;
   line-height:1.2;margin:0 0 5px;color:var(--ink);
 }
 .reserve-body p{margin:0;font-size:.9rem;color:var(--ink-soft);line-height:1.5}
@@ -855,7 +862,7 @@ body.mode-planb .card-planb{display:block}
 /* journées sans action : repliées, disclosure native, aucun JS de bascule */
 .reserve-collapsed{margin-top:22px;padding-top:16px;border-top:2px solid var(--ink)}
 .reserve-collapsed summary{
-  cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  cursor:pointer;font-family:var(--font-mono);font-size:10.5px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;
   padding:4px 0;
 }
@@ -866,7 +873,7 @@ body.mode-planb .card-planb{display:block}
 /* ---------- urgences : page austère, zones tactiles larges ---------- */
 .urg-section{margin:0 0 34px}
 .urg-section > h3{
-  font-family:"IBM Plex Mono",monospace;
+  font-family:var(--font-mono);
   font-size:12px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--pietra);margin:0 0 14px;font-weight:600;
 }
@@ -876,7 +883,7 @@ body.mode-planb .card-planb{display:block}
 .urg-hero{margin:26px 0 36px;padding:24px 20px;border:2px solid var(--rosso)}
 .urg-hero a{display:block;text-decoration:none}
 .urg-hero .num{
-  display:block;font-family:"Bodoni Moda",Georgia,serif;font-weight:700;
+  display:block;font-family:var(--font-display);font-weight:700;
   font-size:clamp(3.6rem,20vw,5.2rem);line-height:.85;
   color:var(--rosso);letter-spacing:-.01em;
 }
@@ -892,7 +899,7 @@ body.mode-planb .card-planb{display:block}
   text-decoration:none;color:var(--ink);
 }
 .urg-line-head .n{
-  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.4rem;
+  font-family:var(--font-mono);font-weight:600;font-size:1.4rem;
   color:var(--rosso);flex:0 0 auto;white-space:nowrap;
 }
 .urg-line-head.alerte .n{color:var(--rosso)}
@@ -910,7 +917,7 @@ a.urg-line-head:focus-visible{outline:2px solid var(--rosso);outline-offset:-2px
 
 /* numéro en clair, tappable, gros caractères : lisible et recopiable */
 .urg-tel{
-  display:block;font-family:"IBM Plex Mono",monospace;font-weight:600;
+  display:block;font-family:var(--font-mono);font-weight:600;
   font-size:1.3rem;color:var(--rosso);text-decoration:none;
   padding:8px 0;margin:0 0 4px;letter-spacing:.01em;
 }
@@ -919,7 +926,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .urg-card .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
 .urg-card .actions a,.urg-card .actions .action{
   display:inline-flex;align-items:center;
-  font-family:"IBM Plex Mono",monospace;font-size:.88rem;font-weight:600;
+  font-family:var(--font-mono);font-size:.88rem;font-weight:600;
   color:var(--ink);text-decoration:none;border:1px solid var(--rule);
   padding:12px 16px;
 }
@@ -935,10 +942,10 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 }
 .urg-subline .l{font-size:.92rem;font-weight:600}
 .urg-subline .n{
-  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.3rem;
+  font-family:var(--font-mono);font-weight:600;font-size:1.3rem;
   color:var(--rosso);letter-spacing:.01em;
 }
-.urg-subline .h{font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--ink-soft)}
+.urg-subline .h{font-family:var(--font-mono);font-size:.82rem;color:var(--ink-soft)}
 .urg-subline:focus-visible{outline:2px solid var(--rosso);outline-offset:-2px}
 
 /* documents : liste à cocher visuelle, non interactive */
@@ -955,7 +962,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 /* mémo : en pied de panneau, nettement plus discret que les autres sections */
 .urg-memo-wrap{margin-top:4px;padding-top:20px;border-top:2px solid var(--ink)}
 .urg-memo-wrap > h3{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--pietra);margin:0 0 10px;font-weight:600;
 }
 .urg-memo{list-style:none;margin:0;padding:0}
@@ -975,21 +982,21 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .admin-jour-bouton:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .admin-jour-bouton.actif .admin-jour-titre{color:var(--rosso)}
 .admin-jour-titre{font-weight:600;font-size:.96rem}
-.admin-jour-statut-corrige{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--oliva);font-weight:600;flex:none}
-.admin-jour-statut-attente{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--rosso);flex:none}
-.admin-jour-statut-vide{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft);font-style:italic;flex:none}
+.admin-jour-statut-corrige{font-family:var(--font-mono);font-size:.78rem;color:var(--oliva);font-weight:600;flex:none}
+.admin-jour-statut-attente{font-family:var(--font-mono);font-size:.78rem;color:var(--rosso);flex:none}
+.admin-jour-statut-vide{font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft);font-style:italic;flex:none}
 .admin-carte-jour{margin-top:30px;padding-top:24px;border-top:2px solid var(--ink)}
 .admin-carte-jour > h3{font-size:1.08rem;margin:0 0 16px;font-weight:600}
 .admin-recap{margin:0 0 22px}
 .admin-recap > h4{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--pietra);margin:0 0 10px;font-weight:600;
 }
 .admin-membre{padding:16px 0;border-top:1px solid var(--rule-soft)}
 .admin-membre:first-child{border-top:0;padding-top:0}
 .admin-membre-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
 .admin-membre-nom{font-weight:600}
-.admin-membre-score{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft)}
+.admin-membre-score{font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft)}
 .admin-question-ligne{display:flex;gap:8px;font-size:.86rem;padding:5px 0;align-items:baseline;line-height:1.4}
 .admin-question-ligne .admin-puce{flex:none;width:16px}
 .admin-correcte{color:var(--oliva)}
@@ -997,7 +1004,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .admin-sans-reponse{color:var(--ink-soft);font-style:italic}
 .admin-actions{margin-top:12px}
 .admin-bouton{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;
   text-transform:uppercase;font-weight:600;padding:10px 15px;
   border:1px solid var(--rosso);border-radius:999px;background:transparent;
   color:var(--rosso);cursor:pointer;
@@ -1008,7 +1015,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .admin-erreur{color:var(--rosso)}
 .admin-sousonglets{display:flex;gap:8px;margin:20px 0 0}
 .admin-sousonglet{
-  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;
   text-transform:uppercase;font-weight:600;padding:9px 16px;
   border:1px solid var(--rule-soft);border-radius:999px;background:transparent;
   color:var(--ink-soft);cursor:pointer;
@@ -1020,13 +1027,13 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .admin-frequentation{margin-top:0}
 .admin-souszone-titre{font-size:1.08rem;margin:0 0 12px;font-weight:600}
 .admin-freq-soustitre{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--pietra);margin:26px 0 10px;font-weight:600;
 }
 .admin-freq-soustitre:first-of-type{margin-top:0}
 .admin-freq-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .admin-freq-kpi{background:var(--paper-deep);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
-.admin-freq-kpi-valeur{font-family:"IBM Plex Mono",monospace;font-size:1.15rem;font-weight:600;color:var(--ink)}
+.admin-freq-kpi-valeur{font-family:var(--font-mono);font-size:1.15rem;font-weight:600;color:var(--ink)}
 .admin-freq-kpi-label{font-size:.74rem;color:var(--ink-soft)}
 .admin-freq-courbe-fig{margin:0}
 .admin-freq-courbe{display:block;width:100%;height:auto}
@@ -1036,7 +1043,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .admin-freq-barre-ligne:first-child{border-top:0;padding-top:0}
 .admin-freq-barre-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:5px}
 .admin-freq-barre-label{font-weight:600;font-size:.86rem}
-.admin-freq-barre-valeur{font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:var(--ink-soft)}
+.admin-freq-barre-valeur{font-family:var(--font-mono);font-size:.74rem;color:var(--ink-soft)}
 .admin-freq-barre-piste{height:6px;border-radius:999px;background:var(--paper-deep);overflow:hidden}
 .admin-freq-barre-remplissage{height:100%;border-radius:999px}
 
@@ -1069,16 +1076,16 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   display:flex;align-items:baseline;gap:10px;margin:0 0 6px;
 }
 .hero-date .dow,.hero-date .mon{
-  font-family:"IBM Plex Mono",monospace;font-size:11px;
+  font-family:var(--font-mono);font-size:11px;
   letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.75);
 }
 .hero-date .num{
-  font-family:"Bodoni Moda",Georgia,serif;font-weight:700;
+  font-family:var(--font-display);font-weight:700;
   font-size:clamp(2.6rem,11vw,3.4rem);line-height:.9;letter-spacing:-.01em;
   color:#fff;
 }
 .hero-title{
-  font-family:"Bodoni Moda",Georgia,serif;
+  font-family:var(--font-display);
   font-size:clamp(1.6rem,5.5vw,2.1rem);line-height:1.12;
   font-weight:600;letter-spacing:-.008em;margin:0;color:#fff;
 }
@@ -1141,7 +1148,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 }
 .eclipse-disc svg{display:block;width:100%;height:auto}
 .eclipse-disc figcaption{
-  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--pietra);text-align:center;margin-top:8px;
 }
 
@@ -1160,7 +1167,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
      un moignon à côté de la première ligne seulement. */
   display:flex;flex-wrap:wrap;align-items:center;
   column-gap:9px;row-gap:6px;
-  font-family:"Bodoni Moda",Georgia,serif;
+  font-family:var(--font-display);
   font-size:1.15rem;font-weight:600;color:var(--ink);
   letter-spacing:-.006em;line-height:1.25;
   margin:32px 0 12px;
@@ -1190,7 +1197,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 }
 .thread li:last-child{padding-bottom:0}
 .thread .t{
-  font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:500;
+  font-family:var(--font-mono);font-size:11.5px;font-weight:500;
   color:var(--lago);padding-top:3px;letter-spacing:.02em;
 }
 /* ligne verticale du fil horodaté : teintée par la catégorie du jour */
@@ -1218,7 +1225,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 }
 .thread li.now-marker .now-label{
   display:flex;align-items:center;gap:8px;padding-top:3px;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--rosso);font-weight:700;
 }
 .thread li.now-marker .now-label::after{content:"";flex:1 1 auto;height:1px;background:var(--rosso)}
@@ -1227,7 +1234,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .opts li{padding:0 0 7px 20px;position:relative;color:var(--ink-soft)}
 .opts li::before{
   content:"+";position:absolute;left:2px;top:0;
-  font-family:"IBM Plex Mono",monospace;color:var(--oliva);font-weight:600;
+  font-family:var(--font-mono);color:var(--oliva);font-weight:600;
 }
 .opts b{color:var(--ink);font-weight:600}
 
@@ -1239,14 +1246,14 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 }
 .pratique dt{
   display:flex;align-items:center;gap:6px;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ink-soft);
 }
 .pratique dt .iico{flex:0 0 auto}
 .pratique dd{margin:0;color:var(--ink)}
 .pratique-chien{
   display:inline-flex;align-items:center;gap:5px;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;
+  font-family:var(--font-mono);font-size:10px;
   letter-spacing:.08em;text-transform:uppercase;
   padding:3px 9px;border-radius:2px;color:#fff;
 }
@@ -1267,20 +1274,20 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   padding:14px 16px;background:var(--card);border:1px solid var(--rule);
 }
 .manger-repas-label{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px;
 }
 .manger-nom{font-size:.98rem;font-weight:600;color:var(--ink);margin:0}
 .manger-ou{font-size:.8rem;color:var(--ink-soft);margin:3px 0 0}
 .manger-tel{
-  display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:.8rem;
+  display:inline-block;font-family:var(--font-mono);font-size:.8rem;
   color:var(--rosso);text-decoration:none;margin:7px 0 0;
 }
 .manger-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .manger-note{font-size:.84rem;color:var(--ink-soft);line-height:1.5;margin:7px 0 0}
 .manger-plat-label{
   display:flex;align-items:center;gap:6px;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ink-soft);margin:0 0 5px;
 }
 .manger-plat-texte{font-size:.9rem;color:var(--ink);margin:0 0 12px}
@@ -1291,7 +1298,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .carte-liens{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 18px}
 .carte-puce{
   display:inline-flex;align-items:center;gap:6px;
-  font-family:"IBM Plex Mono",monospace;font-size:.82rem;font-weight:600;
+  font-family:var(--font-mono);font-size:.82rem;font-weight:600;
   padding:11px 15px;border:1px solid var(--rule);border-radius:999px;
   color:var(--ink);text-decoration:none;
 }
@@ -1320,7 +1327,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .lieu-maps{
   flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
   min-height:44px;padding:0 6px 0 10px;
-  font-family:"IBM Plex Mono",monospace;font-size:.78rem;font-weight:600;
+  font-family:var(--font-mono);font-size:.78rem;font-weight:600;
   letter-spacing:.02em;color:var(--pietra);text-decoration:none;
 }
 .lieu-maps:hover,.lieu-maps:focus-visible{color:var(--rosso)}
@@ -1355,7 +1362,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .day[data-kind="lac"] .regarder-progress-bar{background:var(--cat-lac)}
 .day[data-kind="evenement"] .regarder-progress-bar{background:var(--cat-evenement)}
 .regarder-progress-label{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ink-soft);margin:0 0 16px;
 }
 
@@ -1384,7 +1391,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .regarder-item.checked .ou{opacity:.6}
 .regarder-item.checked .quoi{color:var(--pietra)}
 .regarder-item .ou{
-  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--lago);margin:0 0 6px;
 }
 .regarder-item .quoi{font-size:1rem;line-height:1.75;color:var(--ink);margin:0}
@@ -1417,7 +1424,7 @@ body.mode-public .regarder-item{cursor:default}
 .quiz-question{font-size:1rem;line-height:1.5;color:var(--ink);margin:0 0 12px;font-weight:500}
 .quiz-choix{display:flex;flex-direction:column;gap:8px}
 .quiz-choix-item{
-  text-align:left;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:.92rem;
+  text-align:left;font-family:var(--font-body);font-size:.92rem;
   line-height:1.4;padding:11px 14px;border:1.5px solid var(--rule);border-radius:8px;
   background:var(--paper);color:var(--ink);cursor:pointer;
 }
@@ -1444,7 +1451,7 @@ body.mode-public .regarder-item{cursor:default}
   display:block;font-size:.86rem;line-height:1.3;color:var(--ink);margin:0 0 3px;
 }
 .quiz-resume{
-  margin:0;font-family:"IBM Plex Mono",monospace;font-size:.78rem;line-height:1.3;letter-spacing:.02em;
+  margin:0;font-family:var(--font-mono);font-size:.78rem;line-height:1.3;letter-spacing:.02em;
 }
 .quiz-resume .mauvaise{color:var(--rosso);text-decoration:line-through;text-decoration-color:rgba(178,58,46,.5)}
 .quiz-resume .bonne{color:var(--oliva);font-weight:600}
@@ -1458,14 +1465,14 @@ body.mode-public .regarder-item{cursor:default}
    mono, petit, discret — posé à côté du titre « Quiz » une fois la
    journée corrigée. */
 .quiz-compteur{
-  font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.03em;
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.03em;
   color:var(--ink-soft);font-weight:400;
 }
 .quiz-pied{
   margin-top:16px;padding-top:14px;border-top:1px dashed var(--rule);
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;
 }
-.quiz-score{margin:0;font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft)}
+.quiz-score{margin:0;font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft)}
 
 /* boîte de mot de passe de l'accès famille — la correction du quiz, elle,
    se fait à distance (admin/) : plus de boîte de mot de passe par journée
@@ -1496,7 +1503,7 @@ body.mode-public .regarder-item{cursor:default}
 .famille-pw-champ:focus-within{border-color:var(--ink)}
 .famille-pw-input{
   flex:1;min-width:0;border:0;background:none;outline:none;
-  font-family:"IBM Plex Mono",monospace;font-size:.95rem;color:var(--ink);padding:11px 0;
+  font-family:var(--font-mono);font-size:.95rem;color:var(--ink);padding:11px 0;
 }
 .famille-pw-oeil{
   flex:none;display:flex;align-items:center;justify-content:center;
@@ -1507,12 +1514,12 @@ body.mode-public .regarder-item{cursor:default}
 .famille-pw-oeil:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .famille-pw-oeil.actif{color:var(--rosso)}
 .famille-pw-erreur{
-  margin:10px 0 0;font-family:"IBM Plex Mono",monospace;font-size:.78rem;
+  margin:10px 0 0;font-family:var(--font-mono);font-size:.78rem;
   color:var(--rosso);
 }
 .famille-pw-actions{display:flex;justify-content:flex-end;margin-top:16px}
 .famille-pw-valider{
-  font-family:"IBM Plex Mono",monospace;font-size:.78rem;letter-spacing:.04em;
+  font-family:var(--font-mono);font-size:.78rem;letter-spacing:.04em;
   padding:9px 14px;border-radius:6px;cursor:pointer;
   background:var(--ink);border:1.5px solid var(--ink);color:var(--paper);
 }
@@ -1537,7 +1544,7 @@ body.mode-public .regarder-item{cursor:default}
 .note.sun b{color:#72591F}
 
 .dog{
-  display:inline-block;font-family:"IBM Plex Mono",monospace;
+  display:inline-block;font-family:var(--font-mono);
   font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--oliva);border:1px solid rgba(103,121,79,.4);
   padding:2px 7px;border-radius:2px;margin-left:8px;vertical-align:2px;
@@ -1555,7 +1562,7 @@ body.mode-public .regarder-item{cursor:default}
 .back{
   display:inline-flex;align-items:center;gap:6px;
   margin:22px 0 6px;padding:8px 4px;
-  font-family:"IBM Plex Mono",monospace;font-size:11px;
+  font-family:var(--font-mono);font-size:11px;
   letter-spacing:.1em;text-transform:uppercase;
   background:none;border:0;color:var(--ink-soft);cursor:pointer;
 }
@@ -1584,7 +1591,7 @@ body.mode-public .regarder-item{cursor:default}
 .day-nav-sticky-link{
   flex:1 1 0;min-width:0;display:flex;align-items:center;gap:5px;
   padding:0 16px;text-decoration:none;color:var(--ink);
-  font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.02em;
+  font-family:var(--font-mono);font-size:12.5px;letter-spacing:.02em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .day-nav-sticky-next{justify-content:flex-end;text-align:right}
@@ -1650,7 +1657,7 @@ body.mode-public .regarder-item{cursor:default}
 }
 .tab-ico svg{width:21px;height:21px;display:block}
 .tab-lbl{
-  font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  font-family:var(--font-mono);font-size:9.5px;
   letter-spacing:.02em;text-transform:uppercase;line-height:1.15;
   white-space:nowrap;
 }
@@ -1693,7 +1700,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
 }
 .colophon-marque svg{display:block;width:100%;height:100%}
 .colophon-texte{
-  margin:0;font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+  margin:0;font-family:var(--font-mono);font-size:9.5px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--pietra);
 }
 .colophon-pt{margin:0 6px}
@@ -5831,6 +5838,31 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 }
 
 /* ==========================================================================
+   THÈME PAR VOYAGE — voyages.theme (jsonb) peut surcharger la palette et
+   les polices par défaut (Officina Bodoniana, déclarées dans le :root de
+   ce fichier). Colonne nullable : un voyage sans thème (salo2026 pour le
+   moment) garde le rendu par défaut à l'identique.
+   Forme attendue : { "polices_google": ["Playfair+Display:wght@600;700"],
+   "css": ":root{--rosso:#7A2E2E;--font-display:'Playfair Display',...}" }
+   Appliqué avant tout rendu pour éviter un flash de la mauvaise police
+   (voir l'appel juste après la lecture de la ligne voyages).
+   ========================================================================== */
+function appliquerTheme(theme){
+  if(!theme) return;
+  (theme.polices_google || []).forEach(function(famille){
+    var lien = document.createElement("link");
+    lien.rel = "stylesheet";
+    lien.href = "https://fonts.googleapis.com/css2?family=" + famille + "&display=swap";
+    document.head.appendChild(lien);
+  });
+  if(theme.css){
+    var style = document.createElement("style");
+    style.textContent = theme.css;
+    document.head.appendChild(style);
+  }
+}
+
+/* ==========================================================================
    CHARGEMENT DES DONNÉES — remplace donnees.js.
    Lit le slug du voyage dans l'URL (?voyage=salo2026), interroge Supabase,
    transforme les lignes en la même forme d'objets JS que l'ancien
@@ -5965,6 +5997,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         afficherErreur("Voyage introuvable pour « " + slug + " ». Vérifiez le paramètre ?voyage= dans l'URL.");
         return;
       }
+      appliquerTheme(voyage.theme);
 
       return supabase
         .from("journees")
