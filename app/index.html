@@ -1283,6 +1283,31 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .lieu-quoi{font-size:.95rem;line-height:1.7;color:var(--ink);margin:0 0 8px}
 .lieu-pratique{font-size:.85rem;line-height:1.6;color:var(--ink-soft);margin:0}
 
+/* photos famille : galerie par jour + bouton d'ajout (voir construireBlocPhotos).
+   Vignettes carrées, esprit planche-contact plutôt que grille Instagram —
+   cohérent avec le reste du carnet qui reste sobre en couleur. */
+.photos-bouton-ajouter{
+  font-family:var(--font-body);font-size:.85rem;font-weight:600;
+  color:var(--rosso);background:none;border:1px solid var(--rosso);
+  border-radius:4px;padding:8px 14px;cursor:pointer;margin-bottom:12px;
+}
+.photos-bouton-ajouter:disabled{opacity:.5;cursor:default}
+.photos-vide{font-size:.85rem;color:var(--ink-soft);margin:0}
+.photos-grille{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;padding:0;
+}
+.photos-item{margin:0;position:relative}
+.photos-item img{
+  width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;
+  background:var(--paper-deep);display:block;
+}
+.photos-item-actions{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.photos-item-bouton{
+  font-family:var(--font-body);font-size:.72rem;color:var(--ink-soft);
+  background:none;border:none;padding:0;cursor:pointer;text-decoration:underline;
+}
+.photos-item.mine img{outline:1px solid var(--rosso)}
+
 /* à regarder : contenu de lecture, pas une liste technique — on lui
    donne de l'air (grand interligne, respiration entre les entrées).
    Chasse au trésor : chaque entrée est cochable (case custom sur un
@@ -1824,7 +1849,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
    tel quel le corps de l'ancienne IIFE, en recevant JOURS/BADGES/CARNET
    en paramètres plutôt qu'en globales.
    ========================================================================== */
-function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin){
+function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin, photosInitiales){
   "use strict";
 
   /* --- constantes de filtres : propriété du moteur de rendu, pas du
@@ -2375,6 +2400,194 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     majBlocChasseTab();
     majResumeChasseAccueil();
     appliquerVisibiliteChasse();
+  }
+
+  /* --- photos famille : ajout, compression cote client, galerie par jour
+     (voir supabase/migrations/0018). Granularite par journee (pas par
+     lieu) : une photo se rattache a j.uuid, l'uuid reel de la ligne
+     journees, distinct de j.id (l'ancre texte utilisee partout ailleurs
+     dans ce fichier comme identifiant d'affichage). Visibilite "perso"
+     par defaut, "partagee" seulement si l'auteur le choisit explicitement
+     -- jamais par defaut, pour ne jamais forcer un partage non consenti
+     dans le futur carnet familial genere en PDF. Reserve aux comptes
+     famille : RLS (migration 0018) refuserait de toute facon l'ecriture
+     a un visiteur non connecte. -------------------------------------- */
+  var PHOTOS_PAR_JOURNEE = {};
+  (photosInitiales || []).forEach(function(p){
+    (PHOTOS_PAR_JOURNEE[p.journee_id] = PHOTOS_PAR_JOURNEE[p.journee_id] || []).push(p);
+  });
+
+  var URLS_SIGNEES_PHOTOS = {};
+  function urlSigneePhoto(storagePath){
+    if(!URLS_SIGNEES_PHOTOS[storagePath]){
+      URLS_SIGNEES_PHOTOS[storagePath] = supabaseClient.storage.from("photos")
+        .createSignedUrl(storagePath, 3600)
+        .then(function(res){ return (res.data && res.data.signedUrl) || null; });
+    }
+    return URLS_SIGNEES_PHOTOS[storagePath];
+  }
+
+  /* redimensionne a 2000px de large max et reencode en JPEG qualite 0.8 --
+     suffisant pour un rendu ecran/impression, divise le poids par 3 a 5
+     par rapport a une photo de telephone non compressee. Necessaire pour
+     rester dans le plan gratuit Supabase (1 Go de Storage, voir
+     conversation de conception) plutot qu'un confort reseau : sans ca,
+     quelques jours de voyage a plusieurs membres suffisent a le saturer. */
+  function compresserPhoto(fichier){
+    return new Promise(function(resolve, reject){
+      var lecteur = new FileReader();
+      lecteur.onerror = reject;
+      lecteur.onload = function(){
+        var img = new Image();
+        img.onerror = reject;
+        img.onload = function(){
+          var ratio = Math.min(1, 2000 / Math.max(img.width, img.height));
+          var canvas = document.createElement("canvas");
+          canvas.width = Math.round(img.width * ratio);
+          canvas.height = Math.round(img.height * ratio);
+          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(function(blob){
+            if(blob) resolve(blob); else reject(new Error("compression impossible"));
+          }, "image/jpeg", 0.8);
+        };
+        img.src = lecteur.result;
+      };
+      lecteur.readAsDataURL(fichier);
+    });
+  }
+
+  function idRandom(){
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){
+      var r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  function televerserPhoto(j, fichier, majBouton){
+    if(!modeFamille || !utilisateurId || !voyageId) return Promise.resolve();
+    if(majBouton) majBouton("Compression…");
+    return compresserPhoto(fichier).then(function(blob){
+      var chemin = voyageId + "/" + utilisateurId + "/" + idRandom() + ".jpg";
+      if(majBouton) majBouton("Envoi…");
+      return supabaseClient.storage.from("photos").upload(chemin, blob, { contentType: "image/jpeg" })
+        .then(function(resUpload){
+          if(resUpload.error) throw resUpload.error;
+          return supabaseClient.from("photos").insert({
+            voyage_id: voyageId,
+            journee_id: j.uuid,
+            membre_id: utilisateurId,
+            storage_path: chemin
+          }).select().single();
+        })
+        .then(function(resInsert){
+          if(resInsert.error) throw resInsert.error;
+          (PHOTOS_PAR_JOURNEE[j.uuid] = PHOTOS_PAR_JOURNEE[j.uuid] || []).push(resInsert.data);
+          rafraichirPhotos(j.id);
+        });
+    }).catch(function(err){
+      console.error("Échec de l'ajout de la photo :", err);
+      window.alert("La photo n'a pas pu être envoyée — réessayez quand le réseau sera meilleur.");
+    }).then(function(){
+      if(majBouton) majBouton(null);
+    });
+  }
+
+  function basculerVisibilitePhoto(photo, j){
+    var nouvelle = photo.visibilite === "partagee" ? "perso" : "partagee";
+    return supabaseClient.from("photos").update({ visibilite: nouvelle }).eq("id", photo.id).then(function(res){
+      if(res.error){ console.error("Échec de mise à jour de la visibilité :", res.error); return; }
+      photo.visibilite = nouvelle;
+      rafraichirPhotos(j.id);
+    });
+  }
+
+  function supprimerPhoto(photo, j){
+    if(!window.confirm("Supprimer cette photo ?")) return Promise.resolve();
+    return supabaseClient.storage.from("photos").remove([photo.storage_path]).then(function(){
+      return supabaseClient.from("photos").delete().eq("id", photo.id);
+    }).then(function(res){
+      if(res.error){ console.error("Échec de suppression de la photo :", res.error); return; }
+      var liste = PHOTOS_PAR_JOURNEE[j.uuid] || [];
+      var idx = liste.indexOf(photo);
+      if(idx > -1) liste.splice(idx, 1);
+      rafraichirPhotos(j.id);
+    });
+  }
+
+  function contenuGaleriePhotos(conteneur, j){
+    conteneur.innerHTML = "";
+    var photos = PHOTOS_PAR_JOURNEE[j.uuid] || [];
+    if(!photos.length){
+      conteneur.appendChild(el("p", "photos-vide", "Aucune photo pour ce jour pour l'instant."));
+      return;
+    }
+    var grille = el("div", "photos-grille");
+    photos.forEach(function(p){
+      var figure = el("figure", "photos-item" + (p.membre_id === utilisateurId ? " mine" : ""));
+      var img = document.createElement("img");
+      img.alt = p.legende || "";
+      img.loading = "lazy";
+      urlSigneePhoto(p.storage_path).then(function(url){ if(url) img.src = url; });
+      figure.appendChild(img);
+      if(p.membre_id === utilisateurId){
+        var actions = el("div", "photos-item-actions");
+        var boutonPartage = el("button", "photos-item-bouton", p.visibilite === "partagee" ? "Partagée ✓" : "Partager");
+        boutonPartage.type = "button";
+        boutonPartage.addEventListener("click", function(){ basculerVisibilitePhoto(p, j); });
+        actions.appendChild(boutonPartage);
+        var boutonSupprimer = el("button", "photos-item-bouton", "Supprimer");
+        boutonSupprimer.type = "button";
+        boutonSupprimer.addEventListener("click", function(){ supprimerPhoto(p, j); });
+        actions.appendChild(boutonSupprimer);
+        figure.appendChild(actions);
+      }
+      grille.appendChild(figure);
+    });
+    conteneur.appendChild(grille);
+  }
+
+  /* un même jour peut être affiché deux fois à la fois (onglet Aujourd'hui
+     et vue détail), même logique que rafraichirRegarder ci-dessus. */
+  function rafraichirPhotos(jourId){
+    var j = trouverJour(jourId);
+    if(!j) return;
+    Array.prototype.forEach.call(document.querySelectorAll(".photos[data-jour-photos='" + jourId + "'] .photos-grille-conteneur"), function(conteneur){
+      contenuGaleriePhotos(conteneur, j);
+    });
+  }
+
+  function construireBlocPhotos(j){
+    if(!modeFamille || !utilisateurId) return null;
+    var bloc = el("div", "block photos");
+    bloc.setAttribute("data-jour-photos", j.id);
+    bloc.appendChild(el("h3", null, "Photos du jour"));
+
+    var input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.className = "photos-input-cache";
+    input.style.display = "none";
+    var boutonAjouter = el("button", "photos-bouton-ajouter", "Ajouter une photo");
+    boutonAjouter.type = "button";
+    boutonAjouter.addEventListener("click", function(){ input.click(); });
+    input.addEventListener("change", function(){
+      if(!input.files || !input.files[0]) return;
+      var fichier = input.files[0];
+      input.value = "";
+      var texteInitial = boutonAjouter.textContent;
+      televerserPhoto(j, fichier, function(etat){
+        boutonAjouter.textContent = etat || texteInitial;
+        boutonAjouter.disabled = !!etat;
+      });
+    });
+    bloc.appendChild(boutonAjouter);
+    bloc.appendChild(input);
+
+    var conteneur = el("div", "photos-grille-conteneur");
+    bloc.appendChild(conteneur);
+    contenuGaleriePhotos(conteneur, j);
+
+    return bloc;
   }
 
   /* --- onglet À réserver : quelles journées ont une action réelle -------
@@ -3442,6 +3655,9 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(modeFamille && j.quiz && j.quiz.length){
       body.appendChild(construireBlocQuiz(j));
     }
+
+    var blocPhotos = construireBlocPhotos(j);
+    if(blocPhotos) body.appendChild(blocPhotos);
 
     if(j.notes && j.notes.length){
       var bNotes = el("div", "block");
@@ -5987,6 +6203,11 @@ function appliquerTheme(theme){
     var d = new Date(ligne.date + "T12:00:00");
     return {
       id: ligne.ancre,
+      /* uuid réel de la ligne journees, distinct de `id` (l'ancre texte) —
+         nécessaire pour toute écriture qui référence journees(id) en FK
+         côté Supabase (ex. photos.journee_id), alors que `id` sert
+         partout ailleurs dans ce fichier comme identifiant d'affichage. */
+      uuid: ligne.id,
       date: ligne.date,
       dow: JOURS_SEMAINE[d.getDay()],
       num: String(d.getDate()),
@@ -6159,10 +6380,21 @@ function appliquerTheme(theme){
                     .eq("voyage_id", voyage.id).maybeSingle()
                 : Promise.resolve({ data: null });
 
-              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille]).then(function(res){
+              /* photos famille (voir supabase/migrations/0018) : les siennes
+                 quelle que soit leur visibilite, plus celles marquees
+                 "partagee" par les autres membres — la policy RLS fait deja
+                 ce tri, select("*") suffit ici. Absent pour un visiteur non
+                 famille (utilisateurId null), comme le reste de ce bloc. */
+              var chargerPhotos = utilisateurId
+                ? supabase.from("photos").select("*")
+                    .eq("voyage_id", voyage.id).order("cree_le", { ascending: true })
+                : Promise.resolve({ data: null });
+
+              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille, chargerPhotos]).then(function(res){
                 var resProgression = res[0];
                 var resRole = res[1];
                 var resUrgencesFamille = res[2];
+                var resPhotos = res[3];
                 var estAdmin = !!(resRole.data && resRole.data.role === "admin");
                 var urgences = Object.assign({}, voyage.urgences || {});
                 if(resUrgencesFamille.data && resUrgencesFamille.data.assurance_auto){
@@ -6173,7 +6405,8 @@ function appliquerTheme(theme){
                    pouvoir s'afficher dedans via le .catch() plus bas — pas
                    sur un noeud déjà détaché du DOM. */
                 demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille,
-                  urgences, voyage.id, utilisateurId, resProgression.data || null, estAdmin);
+                  urgences, voyage.id, utilisateurId, resProgression.data || null, estAdmin,
+                  resPhotos.data || []);
                 zoneChargement.remove();
               });
             });
