@@ -1328,10 +1328,17 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   border:1px solid var(--rule-soft);border-radius:4px;resize:vertical;
   background:var(--paper);
 }
+.carnet-texte-jour-actions{display:flex;gap:14px;align-items:center;margin-top:6px}
 .carnet-texte-jour-reinit{
   font-family:var(--font-body);font-size:.78rem;color:var(--rosso);
-  background:none;border:none;padding:6px 0 0;cursor:pointer;text-decoration:underline;
+  background:none;border:none;padding:0;cursor:pointer;text-decoration:underline;
 }
+.carnet-texte-jour-ia{
+  font-family:var(--font-body);font-size:.78rem;color:var(--ink-soft);
+  background:none;border:1px solid var(--rule-soft);border-radius:3px;
+  padding:4px 10px;cursor:pointer;
+}
+.carnet-texte-jour-ia:disabled{opacity:.5;cursor:default}
 
 .carnet-bouton-generer{
   font-family:var(--font-body);font-size:.9rem;font-weight:600;
@@ -2784,8 +2791,40 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       });
     });
 
+    /* proposition IA (Edge Function "generer-texte-ia", voir
+       supabase/functions) : jamais appliquee automatiquement, juste
+       posee dans le champ -- c'est le blur du textarea qui l'enregistre
+       comme n'importe quelle saisie manuelle. Sur demande explicite
+       seulement (bouton), pas a l'ouverture du bloc : chaque generation
+       consomme un appel facture. */
+    var boutonIA = el("button", "carnet-texte-jour-ia", "Générer avec l'IA");
+    boutonIA.type = "button";
+    boutonIA.addEventListener("click", function(){
+      var texteInitial = boutonIA.textContent;
+      boutonIA.disabled = true;
+      boutonIA.textContent = "Génération…";
+      supabaseClient.functions.invoke("generer-texte-ia", {
+        body: { voyage_id: voyageId, journee_id: j.uuid }
+      }).then(function(res){
+        if(res.error) throw res.error;
+        var texte = res.data && res.data.texte;
+        if(!texte) throw new Error("réponse vide");
+        champ.value = texte;
+        return sauvegarderTexteCarnet(j, texte).then(function(){ boutonReinit.hidden = false; });
+      }).catch(function(err){
+        console.error("Échec de génération IA :", err);
+        window.alert("La génération n'a pas fonctionné — réessayez plus tard, ou écrivez le texte à la main.");
+      }).then(function(){
+        boutonIA.disabled = false;
+        boutonIA.textContent = texteInitial;
+      });
+    });
+
     wrap.appendChild(champ);
-    wrap.appendChild(boutonReinit);
+    var actionsTexte = el("div", "carnet-texte-jour-actions");
+    actionsTexte.appendChild(boutonReinit);
+    actionsTexte.appendChild(boutonIA);
+    wrap.appendChild(actionsTexte);
     return wrap;
   }
 
