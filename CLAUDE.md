@@ -28,6 +28,45 @@ dépôt.
   natifs côté `app/`. Les seuls scripts Node sont dans `outils/`, sans
   dépendance npm (module `https` natif, voir `outils/publier-voyage.js`).
 
+## Environnements (prod / dev)
+
+Deux projets Supabase distincts, jamais un seul partagé entre
+développement et production :
+
+| | Prod | Dev |
+|---|---|---|
+| Projet Supabase | `CarnetVoyage` (`cgxnrgkalhfyfkpesshq`) | `CarnetVoyage Dev` (`ozjbkpgoatagqyrlxdry`) |
+| Déclenché par | domaine `salo2026.netlify.app` uniquement | tout le reste (localhost, previews, autre domaine) — défaut de sécurité |
+| Fichier de clés (scripts `outils/`) | `.env` | `.env.dev` |
+| Migrations appliquées par CI sur | branche `main` | toute autre branche |
+
+Le choix d'environnement côté `app/index.html` se fait au runtime par
+nom d'hôte (`ENVIRONNEMENTS`/`HOTE_PRODUCTION`, dans `chargerEtDemarrer`)
+puisque le projet n'a pas de build — impossible d'utiliser une variable
+d'environnement classique. **Tester en local ou sur une preview touche
+donc automatiquement le projet dev, jamais les données famille.**
+
+Pour un script `outils/` en ligne de commande, préciser l'environnement
+visé explicitement plutôt que de se fier à un fichier `.env` déjà
+chargé dans le shell :
+```bash
+set -a && source .env.dev && set +a   # ou .env pour la prod, en conscience
+node outils/mettre-a-jour-voyage.js voyages/salo2026.json
+```
+
+**CI/CD** (`.github/workflows/supabase-migrations.yml`) : à chaque push
+qui touche `supabase/migrations/`, les migrations non encore jouées sont
+poussées automatiquement — vers dev sur toute branche, vers prod
+uniquement depuis `main`. Le contenu (`voyages/<slug>.json`) n'est *pas*
+poussé par la CI : publier/mettre à jour le contenu reste une action
+volontaire (`outils/publier-voyage.js` ou `mettre-a-jour-voyage.js`),
+avec le bon fichier de clés en tête.
+
+Garder les deux projets en phase pour le **schéma** (une migration
+écrite = à jouer des deux côtés, la CI s'en charge) ; le **contenu**,
+lui, peut légitimement diverger (dev sert à casser des choses sans
+craindre pour les vraies données du voyage).
+
 ## Préparer un nouveau voyage — déroulé en conversation
 
 1. **Contenu** — tu décris le voyage (dates, destinations, contraintes
@@ -46,11 +85,13 @@ dépôt.
    par voyage — elle est déjà paramétrée par couleur CSS, pas par thème.
 4. **Publication** — une fois `voyages/<slug>.json` validé :
    ```bash
-   SUPABASE_URL=... SUPABASE_SERVICE_KEY=... node outils/publier-voyage.js voyages/<slug>.json
+   set -a && source .env.dev && set +a   # tester en dev d'abord — toujours
+   node outils/publier-voyage.js voyages/<slug>.json
    ```
-   Les clés viennent de `.env` (non versionné). Le script s'arrête net à
-   la première erreur — pas de rattrapage silencieux, l'état partiel en
-   base est signalé.
+   Les clés viennent de `.env` (prod) ou `.env.dev` (non versionnés, voir
+   « Environnements » ci-dessus) — tester en dev avant de rejouer contre
+   `.env` en conscience. Le script s'arrête net à la première erreur —
+   pas de rattrapage silencieux, l'état partiel en base est signalé.
 5. **Édition ultérieure** — un changement ponctuel se fait directement en
    base (SQL ou conversation), puis :
    ```bash
@@ -66,7 +107,7 @@ dépôt.
 
 Un objet à trois clés : `voyage`, `journees` (tableau), `badges` (tableau).
 Le mapping exact vers les tables Supabase est dans
-`supabase/migrations/0001_init.sql` à `0012_retire_plan_b.sql` — la liste
+`supabase/migrations/0001_init.sql` à `0014_chapitre_jsonb.sql` — la liste
 ci-dessous en est le résumé côté rédaction.
 
 ### `voyage` (objet)

@@ -2,4 +2,5 @@ dist/
 supabase/.temp/
 .claude/
 .env
+.env.dev
 .DS_Store

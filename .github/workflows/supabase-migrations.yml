@@ -1,0 +1,47 @@
+name: Migrations Supabase
+
+# Applique automatiquement les migrations non encore jouées :
+#   - toute branche autre que main -> projet dev (jamais les données famille)
+#   - main (apres fusion)          -> projet prod
+# Le choix ne repose sur rien d'autre que le nom de la branche : aucune
+# action manuelle ne doit etre necessaire pour qu'un push mette a jour
+# le bon environnement.
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "supabase/migrations/**"
+
+jobs:
+  dev:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Pousse les migrations vers le projet dev
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_DEV_PROJECT_REF }}
+          supabase db push --linked
+
+  prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Pousse les migrations vers le projet prod
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROD_PROJECT_REF }}
+          supabase db push --linked

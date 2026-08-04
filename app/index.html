@@ -5685,8 +5685,20 @@ function appliquerTheme(theme){
   var paramsFragment = new URLSearchParams(window.location.hash.replace(/^#/, ""));
   var typeLienAuth = paramsFragment.get("type");
 
-  var URL_PROJET = "https://cgxnrgkalhfyfkpesshq.supabase.co";
-  var CLE_PUBLISHABLE = "sb_publishable_fbZPyz9G6UIBWwU00phJig_fQegJUl9";
+  /* Deux projets Supabase distincts (prod/dev, voir CLAUDE.md « Environnements »)
+     — aucun build, donc le choix se fait au runtime par nom d'hôte plutôt
+     que par variable d'environnement. Seul le vrai domaine de production
+     touche les données famille réelles ; tout le reste (localhost,
+     prévisualisations Netlify, autre domaine) retombe sur dev par défaut,
+     pour ne jamais pouvoir l'atteindre par accident. */
+  var ENVIRONNEMENTS = {
+    prod: { url: "https://cgxnrgkalhfyfkpesshq.supabase.co", cle: "sb_publishable_fbZPyz9G6UIBWwU00phJig_fQegJUl9" },
+    dev:  { url: "https://ozjbkpgoatagqyrlxdry.supabase.co", cle: "sb_publishable_Jz82ewEk0V8Qdq-6jRSXQg_WMxjVo5h" }
+  };
+  var HOTE_PRODUCTION = "salo2026.netlify.app";
+  var env = window.location.hostname === HOTE_PRODUCTION ? ENVIRONNEMENTS.prod : ENVIRONNEMENTS.dev;
+  var URL_PROJET = env.url;
+  var CLE_PUBLISHABLE = env.cle;
   /* Clé publique par construction (voir CLAUDE.md du projet) : la sécurité
      réelle est assurée par les policies RLS côté Supabase, pas par le
      secret de cette clé. */
