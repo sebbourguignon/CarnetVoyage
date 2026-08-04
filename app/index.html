@@ -2162,7 +2162,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       observations_cochees: cocheesReseau,
       maj_le: new Date().toISOString()
     }, { onConflict: "voyage_id,utilisateur_id" }).then(function(res){
-      if(res.error) console.error("Échec de synchronisation de la chasse :", res.error);
+      if(res.error){ console.error("Échec de synchronisation de la chasse :", res.error); return; }
+      rafraichirClassement();
     });
   }
   /* pondération : niveau 1 (visible sans chercher) à 3 (il faut vraiment
@@ -2239,6 +2240,11 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       etatQuiz[id] = { reponse: e.reponse, corrige: true, indexCorrect: res.data, correcte: (e.reponse === res.data) };
       sauvegarderEtatQuiz();
       rafraichirQuiz();
+      /* le score du membre connecté vient de changer côté serveur
+         (repondre_quiz écrit progression.quiz_score) : le podium doit le
+         refléter sans attendre un rechargement complet de page — voir
+         remplirClassement/rafraichirClassement. */
+      rafraichirClassement();
     });
   }
   /* sélectionner un choix ne corrige pas tout de suite, et la réponse
@@ -5182,14 +5188,20 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       'font-size="9.5" fill="currentColor" stroke="none">' + rang + '</text>' +
       '</svg>';
   }
-  function construireBlocClassement(){
-    var bloc = el("div", "block classement");
-    bloc.appendChild(el("h3", null, ICONES.badge + " Classement de la famille"));
-    var zone = el("div", "classement-zone");
+  /* rempli(t) la zone de classement — utilisé au premier rendu et pour un
+     rafraîchissement ciblé après une action qui change le score du membre
+     connecté (correction de quiz, coche de la chasse) : voir
+     rafraichirClassement plus bas. Le commentaire d'origine ci-dessus
+     renonçait à ce rafraîchissement pour ne pas retenter à chaque case
+     cochée, mais laissait du coup le PROPRE score du joueur figé jusqu'à
+     un rechargement complet de page — corrigé ici, le coût d'une requête
+     de plus après une correction de quiz ou une validation de journée
+     (jamais à chaque frappe) est négligeable. */
+  function remplirClassement(zone){
+    zone.innerHTML = "";
     zone.appendChild(el("p", "classement-detail", "Chargement…"));
-    bloc.appendChild(zone);
 
-    Promise.all([
+    return Promise.all([
       supabaseClient.from("progression")
         .select("utilisateur_id, observations_cochees, quiz_score, quiz_corrige")
         .eq("voyage_id", voyageId),
@@ -5252,8 +5264,17 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       zone.innerHTML = "";
       zone.appendChild(el("p", "classement-detail", "Classement indisponible pour le moment."));
     });
-
+  }
+  function construireBlocClassement(){
+    var bloc = el("div", "block classement");
+    bloc.appendChild(el("h3", null, ICONES.badge + " Classement de la famille"));
+    var zone = el("div", "classement-zone");
+    bloc.appendChild(zone);
+    remplirClassement(zone);
     return bloc;
+  }
+  function rafraichirClassement(){
+    Array.prototype.forEach.call(document.querySelectorAll(".classement-zone"), remplirClassement);
   }
 
   /* --- partage : un texte autoporteur (score, observations, badges), rien
