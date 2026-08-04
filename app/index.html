@@ -1380,6 +1380,25 @@ body.mode-public .regarder-item{cursor:default}
 }
 .quiz-choix-item.mauvaise{border-color:var(--rosso);background:rgba(178,58,46,.08)}
 
+/* bouton de validation : n'apparaît qu'une fois un choix sélectionné,
+   pour laisser le temps de tester des hypothèses avant de trancher —
+   la correction elle-même reste immédiate et définitive une fois cliqué
+   (voir choisirReponseQuiz/corrigerReponseQuiz). */
+.quiz-valider{
+  margin-top:10px;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:600;padding:10px 15px;
+  border:1px solid var(--ink);border-radius:999px;
+  background:var(--ink);color:var(--paper);cursor:pointer;
+  transition:transform .12s ease-out;
+}
+.quiz-valider:active{transform:scale(0.96)}
+.quiz-valider:disabled{opacity:.6;cursor:default}
+.quiz-valider:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
+@media (hover:hover) and (pointer:fine){
+  .quiz-valider:hover:not(:disabled){background:var(--rosso);border-color:var(--rosso)}
+}
+
 /* question corrigée, état compact : un bouton pleine largeur (repli/
    dépli, voir quizDeplies) plutôt qu'une ligne inerte, pour rester
    réversible sans ajouter d'élément séparé. */
@@ -2214,11 +2233,19 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     });
   }
   /* la réponse reste modifiable tant que la question n'est pas corrigée. */
+  /* sélectionner un choix ne corrige pas tout de suite : on laisse le
+     temps de changer d'avis (reclic sur un autre choix) avant de
+     valider explicitement — voir construireQuestionQuiz (bouton
+     .quiz-valider) et validerReponseQuiz ci-dessous. */
   function choisirReponseQuiz(id, choixIndex){
     if(etatQuiz[id] && etatQuiz[id].corrige) return;
     etatQuiz[id] = { reponse: choixIndex, corrige: false };
     sauvegarderEtatQuiz();
     rafraichirQuiz();
+  }
+  /* valide et corrige, sans retour possible : la fonction repondre_quiz
+     (RPC) écrit le résultat en base à cet instant précis. */
+  function validerReponseQuiz(id){
     corrigerReponseQuiz(id);
   }
 
@@ -2893,6 +2920,19 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     });
     item.appendChild(liste);
 
+    if(e && e.reponse != null){
+      var boutonValider = document.createElement("button");
+      boutonValider.type = "button";
+      boutonValider.className = "quiz-valider";
+      boutonValider.textContent = "Valider ma réponse";
+      boutonValider.addEventListener("click", function(){
+        boutonValider.disabled = true;
+        boutonValider.textContent = "Correction…";
+        validerReponseQuiz(id);
+      });
+      item.appendChild(boutonValider);
+    }
+
     return item;
   }
   /* reconstruit entièrement le bloc (plutôt que de patcher des classes,
@@ -2917,13 +2957,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
     j.quiz.forEach(function(q, i){ wrap.appendChild(construireQuestionQuiz(j, q, i, wrap)); });
 
-    /* la correction se fait à distance (admin/), pas de bouton ici — voir
-       README « Quiz et correction à distance ». Chaque appareil voit sa
-       correction dès son prochain chargement (progressionInitiale). */
+    /* auto-correction (voir repondre_quiz), chacun se corrige lui-même en
+       validant sa réponse — pas de correction à distance à attendre. */
     var pied = el("div", "quiz-pied");
     pied.appendChild(el("p", "quiz-score", corrigees ?
       bonnes + " / " + corrigees + " bonnes réponses · " + corrigees + " / " + total + " corrigées" :
-      total + " question" + (total > 1 ? "s" : "") + " · en attente de correction à distance"));
+      total + " question" + (total > 1 ? "s" : "")));
 
     wrap.appendChild(pied);
   }
