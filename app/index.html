@@ -2232,21 +2232,27 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       rafraichirQuiz();
     });
   }
-  /* la réponse reste modifiable tant que la question n'est pas corrigée. */
-  /* sélectionner un choix ne corrige pas tout de suite : on laisse le
-     temps de changer d'avis (reclic sur un autre choix) avant de
-     valider explicitement — voir construireQuestionQuiz (bouton
-     .quiz-valider) et validerReponseQuiz ci-dessous. */
+  /* sélectionner un choix ne corrige pas tout de suite, et la réponse
+     reste modifiable tant qu'elle n'est pas corrigée : on laisse le
+     temps de répondre aux trois questions, de changer d'avis (reclic
+     sur un autre choix), avant de valider explicitement — voir
+     remplirBlocQuiz (bouton .quiz-valider, un seul pour la journée) et
+     validerReponsesJour ci-dessous. */
   function choisirReponseQuiz(id, choixIndex){
     if(etatQuiz[id] && etatQuiz[id].corrige) return;
     etatQuiz[id] = { reponse: choixIndex, corrige: false };
     sauvegarderEtatQuiz();
     rafraichirQuiz();
   }
-  /* valide et corrige, sans retour possible : la fonction repondre_quiz
-     (RPC) écrit le résultat en base à cet instant précis. */
-  function validerReponseQuiz(id){
-    corrigerReponseQuiz(id);
+  /* valide et corrige d'un coup toutes les questions déjà répondues mais
+     pas encore corrigées de la journée, sans retour possible ensuite :
+     repondre_quiz (RPC) écrit chaque résultat en base à cet instant
+     précis. Celles restées sans réponse ne sont pas concernées. */
+  function validerReponsesJour(j){
+    (j.quiz || []).forEach(function(q){
+      var e = etatQuiz[q.id];
+      if(e && e.reponse != null && !e.corrige) corrigerReponseQuiz(q.id);
+    });
   }
 
   function estCoche(id){ return !!etatRegarder[id]; }
@@ -2920,19 +2926,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     });
     item.appendChild(liste);
 
-    if(e && e.reponse != null){
-      var boutonValider = document.createElement("button");
-      boutonValider.type = "button";
-      boutonValider.className = "quiz-valider";
-      boutonValider.textContent = "Valider ma réponse";
-      boutonValider.addEventListener("click", function(){
-        boutonValider.disabled = true;
-        boutonValider.textContent = "Correction…";
-        validerReponseQuiz(id);
-      });
-      item.appendChild(boutonValider);
-    }
-
     return item;
   }
   /* reconstruit entièrement le bloc (plutôt que de patcher des classes,
@@ -2956,6 +2949,28 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     wrap.appendChild(titre);
 
     j.quiz.forEach(function(q, i){ wrap.appendChild(construireQuestionQuiz(j, q, i, wrap)); });
+
+    /* un seul bouton pour toute la journée plutôt qu'un par question :
+       on répond aux trois avant de trancher, pas question par question.
+       Valide toutes les réponses déjà sélectionnées mais pas encore
+       corrigées ; celles laissées sans réponse restent ouvertes pour
+       plus tard (voir validerReponsesJour). */
+    var enAttente = j.quiz.filter(function(q){
+      var e = etatQuiz[q.id];
+      return e && e.reponse != null && !e.corrige;
+    });
+    if(enAttente.length){
+      var boutonValider = document.createElement("button");
+      boutonValider.type = "button";
+      boutonValider.className = "quiz-valider";
+      boutonValider.textContent = enAttente.length > 1 ? "Valider mes réponses" : "Valider ma réponse";
+      boutonValider.addEventListener("click", function(){
+        boutonValider.disabled = true;
+        boutonValider.textContent = "Correction…";
+        validerReponsesJour(j);
+      });
+      wrap.appendChild(boutonValider);
+    }
 
     /* auto-correction (voir repondre_quiz), chacun se corrige lui-même en
        validant sa réponse — pas de correction à distance à attendre. */
