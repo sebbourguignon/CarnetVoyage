@@ -2597,20 +2597,36 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     var input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
+    input.multiple = true;
     input.className = "photos-input-cache";
     input.style.display = "none";
     var boutonAjouter = el("button", "photos-bouton-ajouter", "Ajouter une photo");
     boutonAjouter.type = "button";
     boutonAjouter.addEventListener("click", function(){ input.click(); });
     input.addEventListener("change", function(){
-      if(!input.files || !input.files[0]) return;
-      var fichier = input.files[0];
+      if(!input.files || !input.files.length) return;
+      var fichiers = Array.prototype.slice.call(input.files);
       input.value = "";
       var texteInitial = boutonAjouter.textContent;
-      televerserPhoto(j, fichier, function(etat){
-        boutonAjouter.textContent = etat || texteInitial;
-        boutonAjouter.disabled = !!etat;
-      });
+      /* une a la fois : la compression + l'upload sont deja asynchrones
+         par photo (voir televerserPhoto), les lancer toutes en parallele
+         saturerait inutilement une connexion mobile sur le terrain --
+         mieux vaut une file d'attente visible ("2/5") qu'un blocage
+         silencieux. */
+      var total = fichiers.length;
+      function suivante(index){
+        if(index >= total){
+          boutonAjouter.textContent = texteInitial;
+          boutonAjouter.disabled = false;
+          return;
+        }
+        var suffixe = total > 1 ? " (" + (index + 1) + "/" + total + ")" : "";
+        televerserPhoto(j, fichiers[index], function(etat){
+          boutonAjouter.textContent = (etat || "Envoi…") + suffixe;
+          boutonAjouter.disabled = true;
+        }).then(function(){ suivante(index + 1); });
+      }
+      suivante(0);
     });
     bloc.appendChild(boutonAjouter);
     bloc.appendChild(input);
