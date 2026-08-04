@@ -8,10 +8,11 @@
      que la prochaine visite ait la dernière version.
    - Polices Google Fonts : cache-first pur — un fichier de police ne
      change jamais une fois publié, inutile de revalider.
-   - Données Supabase (GET /rest/v1/...) : network-first avec repli sur
-     le cache — priorité à la fraîcheur (horaires, quiz) quand il y a du
-     réseau, dernière version connue sinon. Seules les requêtes GET sont
-     mises en cache : jamais les écritures (progression, auth). */
+   - Données Supabase (GET /rest/v1/...) et météo (api.open-meteo.com) :
+     network-first avec repli sur le cache — priorité à la fraîcheur
+     (horaires, quiz, météo du jour) quand il y a du réseau, dernière
+     version connue sinon. Seules les requêtes GET sont mises en cache :
+     jamais les écritures (progression, auth). */
 
 var VERSION = "v1";
 var CACHE_SHELL = "carnet-shell-" + VERSION;
@@ -59,6 +60,10 @@ function estPoliceGoogle(url){
 
 function estDonneeSupabase(url){
   return url.hostname.indexOf(".supabase.co") !== -1 && url.pathname.indexOf("/rest/v1/") === 0;
+}
+
+function estMeteo(url){
+  return url.hostname === "api.open-meteo.com";
 }
 
 function reponseHorsLigne(){
@@ -128,7 +133,7 @@ self.addEventListener("fetch", function(evenement){
     return;
   }
 
-  if(estDonneeSupabase(url)){
+  if(estDonneeSupabase(url) || estMeteo(url)){
     evenement.respondWith(networkFirst(requete, CACHE_DATA));
     return;
   }

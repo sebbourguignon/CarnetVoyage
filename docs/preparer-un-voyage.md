@@ -47,7 +47,11 @@ la base de données du projet.
 3. Tu me proposes une structure de journées (dates, chapitres, temps
    forts) avant de rédiger le détail, pour qu'on valide l'ossature.
 4. Tu rédiges le JSON complet au format ci-dessous, un morceau à la fois
-   si le voyage est long (une journée = un objet dans `journees`).
+   si le voyage est long (une journée = un objet dans `journees`) —
+   pense à renseigner `lat`/`lon` pour chaque jour (position du lieu
+   principal de la journée, pas de la base du voyage : la météo en
+   dépend), en réutilisant les mêmes valeurs pour les jours passés au
+   même endroit.
 5. En option, tu proposes une palette de couleurs et deux ou trois
    polices Google Fonts qui évoquent le lieu du voyage (voir section
    « Système de design »).
@@ -114,6 +118,7 @@ valide, à retirer dans le livrable final) :
         "chien": "facile | à vérifier | interdit"
       },
       "carte": [{ "label": "Nom du point", "requete": "texte de recherche Google Maps" }],
+      "lat": 45.4384, "lon": 10.9916,  // position du lieu PRINCIPAL de ce jour precis (pas la base du voyage) — sert a la meteo
       "illustration": ["motif-fond", "motif-milieu", "motif-premier-plan"],
       "manger": {
         "midi": { "ou": "adresse ou secteur", "nom": "nom du lieu", "note": "détail pratique" },
@@ -188,6 +193,7 @@ Détail champ par champ ci-dessous.
 | `ordre` | entier | position dans le voyage (0, 1, 2...) |
 | `pratique` | objet, facultatif | `{"parking":"...", "ztl":"...", "reserver":"...", "emporter":"...", "chien":"..."}` — chaque clé facultative |
 | `carte` | tableau, facultatif | `[{"label":"...", "requete":"texte de recherche Google Maps"}]` |
+| `lat` / `lon` | nombres décimaux, facultatifs | position du lieu **principal de cette journée précise** (pas la base du voyage) — sert à afficher la météo du jour. Un jour d'excursion prend la position de sa destination, pas celle de l'hébergement. Coordonnées niveau ville, précision suffisante. Plusieurs jours passés au même endroit (ex. plusieurs jours à la même base) doivent porter exactement les mêmes valeurs, pas des variantes légèrement différentes |
 | `illustration` | tableau de texte, facultatif | mots-clés de motifs visuels, du fond vers le premier plan — ex. `["montagnes","clocher"]`. Utilise des mots-clés génériques (montagne, colline, clocher, vigne, bateau, arbre...) ; je vérifierai s'ils existent déjà dans la bibliothèque, sinon je les ferai ajouter |
 | `manger` | objet, facultatif | `{"midi":{"ou":"...", "nom":"...", "note":"...", "tel":"..."(facultatif)}, "plat":"spécialité locale", "soir":{...}}` |
 | `visibilite` | texte, facultatif | `"amis"` (public, par défaut) ou `"famille"` (réservé aux comptes invités) |

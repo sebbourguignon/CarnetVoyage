@@ -306,7 +306,9 @@
           "requete": "Mur des Canuts Lyon",
           "ordre": 5
         }
-      ]
+      ],
+      "lat": 45.764,
+      "lon": 4.8357
     },
     {
       "ancre": "d-0801",
@@ -519,7 +521,9 @@
           "requete": "Parco del Valentino Torino",
           "ordre": 5
         }
-      ]
+      ],
+      "lat": 45.0703,
+      "lon": 7.6869
     },
     {
       "ancre": "d-0802",
@@ -721,7 +725,9 @@
           "requete": "Porto di Padenghe sul Garda",
           "ordre": 5
         }
-      ]
+      ],
+      "lat": 45.6083,
+      "lon": 10.5231
     },
     {
       "ancre": "d-0803",
@@ -942,7 +948,9 @@
           "requete": "Carrefour Market Salò Via Eugenio Montale",
           "ordre": 5
         }
-      ]
+      ],
+      "lat": 45.6083,
+      "lon": 10.5231
     },
     {
       "ancre": "d-0804",
@@ -1209,7 +1217,9 @@
           "requete": "Torre dei Lamberti Verona",
           "ordre": 6
         }
-      ]
+      ],
+      "lat": 45.4384,
+      "lon": 10.9916
     },
     {
       "ancre": "d-0805",
@@ -1433,7 +1443,9 @@
           "requete": "Riva del Garda centro storico",
           "ordre": 4
         }
-      ]
+      ],
+      "lat": 45.8862,
+      "lon": 10.8407
     },
     {
       "ancre": "d-0806",
@@ -1705,7 +1717,9 @@
           "requete": "Acetaia La Vecchia Dispensa Castelvetro di Modena",
           "ordre": 9
         }
-      ]
+      ],
+      "lat": 44.6471,
+      "lon": 10.9252
     },
     {
       "ancre": "d-0807",
@@ -1895,7 +1909,9 @@
           "requete": "cantine Valtenesi Chiaretto",
           "ordre": 5
         }
-      ]
+      ],
+      "lat": 45.6083,
+      "lon": 10.5231
     },
     {
       "ancre": "d-0808",
@@ -2107,7 +2123,9 @@
           "requete": "Lago di Molveno",
           "ordre": 5
         }
-      ]
+      ],
+      "lat": 46.159,
+      "lon": 10.7649
     },
     {
       "ancre": "d-0809",
@@ -2317,7 +2335,9 @@
           "requete": "Spiaggia per cani Via Tavine Salò",
           "ordre": 6
         }
-      ]
+      ],
+      "lat": 45.6083,
+      "lon": 10.5231
     },
     {
       "ancre": "d-0810",
@@ -2580,7 +2600,9 @@
           "requete": "Rocca Sanvitale Fontanellato",
           "ordre": 8
         }
-      ]
+      ],
+      "lat": 44.8015,
+      "lon": 10.3279
     },
     {
       "ancre": "d-0811",
@@ -2812,7 +2834,9 @@
           "requete": "Franciacorta cantine Erbusco",
           "ordre": 5
         }
-      ]
+      ],
+      "lat": 45.5416,
+      "lon": 10.2118
     },
     {
       "ancre": "d-0812",
@@ -3018,7 +3042,9 @@
           "requete": "Rocca di Manerba del Garda",
           "ordre": 4
         }
-      ]
+      ],
+      "lat": 45.6083,
+      "lon": 10.5231
     },
     {
       "ancre": "d-0813",
@@ -3280,7 +3306,9 @@
           "requete": "Navigli Milano",
           "ordre": 8
         }
-      ]
+      ],
+      "lat": 45.4642,
+      "lon": 9.19
     },
     {
       "ancre": "d-0814",
@@ -3509,7 +3537,9 @@
           "requete": "Gardesana Occidentale SS45bis",
           "ordre": 5
         }
-      ]
+      ],
+      "lat": 45.83,
+      "lon": 10.69
     },
     {
       "ancre": "d-0815",
@@ -3702,7 +3732,9 @@
           "requete": "Toscolano Maderno lungolago",
           "ordre": 4
         }
-      ]
+      ],
+      "lat": 45.6083,
+      "lon": 10.5231
     },
     {
       "ancre": "d-0816",
@@ -3953,7 +3985,9 @@
           "requete": "Accademia Carrara Bergamo",
           "ordre": 7
         }
-      ]
+      ],
+      "lat": 45.6983,
+      "lon": 9.6773
     },
     {
       "ancre": "d-0817",
@@ -4143,7 +4177,9 @@
           "requete": "Place des Arcades Valbonne",
           "ordre": 3
         }
-      ]
+      ],
+      "lat": 43.6392,
+      "lon": 7.0086
     },
     {
       "ancre": "d-0818",
@@ -4341,7 +4377,9 @@
           "requete": "Musée Pont du Gard",
           "ordre": 3
         }
-      ]
+      ],
+      "lat": 43.68,
+      "lon": 3.42
     },
     {
       "ancre": "d-0819",
@@ -4539,7 +4577,9 @@
           "requete": "Cirque de Mourèze",
           "ordre": 4
         }
-      ]
+      ],
+      "lat": 43.65,
+      "lon": 3.38
     },
     {
       "ancre": "d-0820",
@@ -4745,7 +4785,9 @@
           "requete": "Gorges de l'Hérault baignade",
           "ordre": 4
         }
-      ]
+      ],
+      "lat": 43.7439,
+      "lon": 3.5502
     },
     {
       "ancre": "d-0821",
@@ -4893,7 +4935,9 @@
           "requete": "Cirque de Navacelles belvédère",
           "ordre": 2
         }
-      ]
+      ],
+      "lat": 43.68,
+      "lon": 3.42
     },
     {
       "ancre": "d-0822",
@@ -5041,7 +5085,9 @@
           "requete": "Marché Clermont-l'Hérault samedi",
           "ordre": 2
         }
-      ]
+      ],
+      "lat": 43.68,
+      "lon": 3.42
     },
     {
       "ancre": "d-0823",
@@ -5224,7 +5270,9 @@
           "requete": "Chaîne des Puys puy de Dôme",
           "ordre": 3
         }
-      ]
+      ],
+      "lat": 48.8779,
+      "lon": 2.1898
     }
   ],
   "badges": [

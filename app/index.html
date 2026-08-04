@@ -1963,6 +1963,10 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     regarder: icone('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.6"/>'),
     attention: icone('<path d="M12 3.5 21 19.5H3Z" stroke-linejoin="round"/><line x1="12" y1="9.5" x2="12" y2="14"/><circle cx="12" cy="16.8" r=".9" fill="currentColor" stroke="none"/>'),
     carte:    icone('<path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 19 9.5C19 14.5 12 21 12 21Z"/><circle cx="12" cy="9.3" r="2.2"/>'),
+    meteoSoleil: icone('<circle cx="12" cy="12" r="4.2"/><path d="M12 3v2.3M12 18.7V21M3 12h2.3M18.7 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/>'),
+    meteoNuage: icone('<path d="M7 18.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 9 4.2 4.2 0 0 1 16.5 17.4" stroke-linejoin="round"/><path d="M7 18.5h9.5"/>'),
+    meteoPluie: icone('<path d="M7 15.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 6 4.2 4.2 0 0 1 16.5 14.4" stroke-linejoin="round"/><path d="M7 15.5h9.5"/><path d="M8 18.5v2M12 18.5v2M16 18.5v2"/>'),
+    meteoOrage: icone('<path d="M7 14.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 5 4.2 4.2 0 0 1 16.5 13.4" stroke-linejoin="round"/><path d="M7 14.5h9.5"/><path d="M12.5 16.5 10 20.5h3l-1.5 3"/>'),
     externe:  icone('<path d="M14 4.5h5.5V10"/><path d="M19.5 4.5 10.5 13.5"/><path d="M18 13.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5.5"/>'),
     manger:   icone('<path d="M7 3v6M11 3v6"/><path d="M7 9a2 2 0 0 0 4 0"/><path d="M9 9v12"/>' +
                     '<path d="M17 3c0 4.2-2.2 5-2.2 8.2 0 2 1.1 2.8 2.2 2.8v7"/>'),
@@ -3054,6 +3058,78 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     return bFil;
   }
 
+  /* --- météo (Open-Meteo, sans clé ni compte) --------------------------
+     Un seul appel par position (lat/lon arrondis au centième, ~1 km),
+     quel que soit le nombre de journées qui la partagent — les 6 jours
+     à Salò par exemple : past_days + forecast_days couvrent tout le
+     voyage (22 jours) en un seul passage par lieu, jamais un appel par
+     jour. Jamais bloquant : hors connexion ou API indisponible, la
+     pastille météo disparaît simplement, comme le reste du carnet (voir
+     CLAUDE.md « jamais de donnée inventée » — jamais de repli inventé
+     non plus ici, on affiche ce qu'on sait ou rien). */
+  var CACHE_METEO = {};
+  function chargerJoursMeteo(lat, lon){
+    var cle = lat.toFixed(2) + "," + lon.toFixed(2);
+    if(!CACHE_METEO[cle]){
+      var url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon +
+        "&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true" +
+        "&past_days=92&forecast_days=16&timezone=auto";
+      CACHE_METEO[cle] = fetch(url)
+        .then(function(r){ if(!r.ok) throw new Error("météo HTTP " + r.status); return r.json(); })
+        .catch(function(e){ console.error("Météo indisponible :", e); return null; });
+    }
+    return CACHE_METEO[cle];
+  }
+  function isoAujourdhui(){
+    var d = dateAujourdhui();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  /* résout la météo d'une journée précise : conditions actuelles pour
+     aujourd'hui (current_weather), relevé réel pour un jour déjà passé,
+     prévision pour un jour à venir — la même réponse Open-Meteo porte
+     les trois, il n'y a qu'à choisir la bonne entrée selon la date. */
+  function chargerMeteo(j){
+    if(j.lat == null || j.lon == null) return Promise.resolve(null);
+    return chargerJoursMeteo(j.lat, j.lon).then(function(data){
+      if(!data || !data.daily) return null;
+      var idx = (data.daily.time || []).indexOf(j.date);
+      if(idx === -1) return null;
+      var auj = isoAujourdhui();
+      if(j.date === auj && data.current_weather){
+        return {
+          temperature: Math.round(data.current_weather.temperature),
+          code: data.current_weather.weathercode,
+          periode: "actuel"
+        };
+      }
+      return {
+        temperature: Math.round((data.daily.temperature_2m_max[idx] + data.daily.temperature_2m_min[idx]) / 2),
+        code: data.daily.weathercode[idx],
+        periode: j.date < auj ? "passe" : "prevu"
+      };
+    });
+  }
+  /* codes Open-Meteo (WMO) regroupés en 4 pictogrammes plutôt qu'un jeu
+     complet — assez pour situer un jour d'un coup d'œil, sans viser une
+     iconographie météo exhaustive. */
+  function iconeMeteo(code){
+    if(code === 0) return ICONES.meteoSoleil;
+    if(code >= 95) return ICONES.meteoOrage;
+    if((code >= 51 && code <= 82) || (code >= 71 && code <= 77)) return ICONES.meteoPluie;
+    return ICONES.meteoNuage;
+  }
+  function creerItemMeteo(j){
+    if(j.lat == null || j.lon == null) return null;
+    var item = el("span", "day-synth-item meteo");
+    item.innerHTML = ICONES.meteoNuage + " …";
+    chargerMeteo(j).then(function(m){
+      if(!m){ item.remove(); return; }
+      var libelle = m.periode === "passe" ? " (relevé)" : m.periode === "prevu" ? " (prévu)" : "";
+      item.innerHTML = iconeMeteo(m.code) + " " + m.temperature + "°" + libelle;
+    });
+    return item;
+  }
+
   /* --- bandeau de synthèse : une ligne d'items de même niveau, calculés
      depuis l'existant. Sous le titre et l'accroche, avant le premier
      bloc. Chaque item est omis si sa donnée est absente — aucune valeur
@@ -3073,6 +3149,9 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       iTrajet.appendChild(vTrajet);
       wrap.appendChild(iTrajet);
     }
+
+    var iMeteo = creerItemMeteo(j);
+    if(iMeteo) wrap.appendChild(iMeteo);
 
     if(j.pratique && j.pratique.chien){
       var niveau = iconeNiveauChien(NIVEAU_CHIEN[j.pratique.chien] || 0);
@@ -5880,9 +5959,12 @@ function appliquerTheme(theme){
     var d = new Date(ligne.date + "T12:00:00");
     return {
       id: ligne.ancre,
+      date: ligne.date,
       dow: JOURS_SEMAINE[d.getDay()],
       num: String(d.getDate()),
       mois: NOMS_MOIS[d.getMonth()],
+      lat: ligne.lat,
+      lon: ligne.lon,
       rail1: ligne.rail1,
       rail2: ligne.rail2,
       cat: ligne.categorie,

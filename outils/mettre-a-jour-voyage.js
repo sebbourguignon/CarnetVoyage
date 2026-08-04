@@ -153,6 +153,7 @@ async function main() {
     "date", "rail1", "rail2", "categorie", "badge", "intensite", "star", "eclipse",
     "anniversaire", "titre", "accroche", "fil", "options_titre", "options", "notes",
     "chapitre", "ordre", "pratique", "carte", "illustration", "manger", "visibilite",
+    "lat", "lon",
   ];
 
   for (const j of donnees.journees) {

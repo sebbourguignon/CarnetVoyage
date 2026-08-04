@@ -153,6 +153,7 @@ Repris quasi à l'identique du format `JOURS` d'Italie2026 (voir son
 | `ordre` | position dans le voyage (entier, définit le tri) |
 | `pratique` | `{parking, ztl, reserver, emporter, chien}`, chaque clé facultative |
 | `carte` | `[{label, requete}]` — `requete` = texte de recherche Google Maps |
+| `lat` / `lon` | position (nombres décimaux) du lieu principal de la journée — sert à la météo (voir section dédiée) ; absent = pas de pastille météo pour ce jour, rien d'autre n'en dépend |
 | `illustration` | `["mot-clé", ...]` — motifs disponibles dans `app/illustrations.js`, du fond vers le premier plan |
 | `manger` | `{midi: {ou, nom, note, tel?}, plat, soir: {...}}`, tout facultatif |
 | `visibilite` | `amis` (public, par défaut) ou `famille` (réservé) |
@@ -171,6 +172,32 @@ jeton `{{chien}}` est remplacé par la pastille « Chien ok ».
 | `seuil_niveau3` / `seuil_total` / `seuil_journees_corrigees` / `seuil_points_quiz` | conditions de déblocage, une seule renseignée en général |
 | `ordre` | position d'affichage |
 | `conditions_brutes` | `[{jour: <ancre>, ou: <texte identique à observations[].ou>}]` — résolu vers `badge_conditions` à la publication |
+
+## Météo (`journees[].lat`/`lon`, optionnel)
+
+Ajouté en 0017. Chaque journée peut porter la position (latitude,
+longitude en degrés décimaux) de son lieu principal — pas forcément la
+base du voyage : un jour d'excursion prend la position de la
+destination du jour, pas celle de l'hébergement. `app/index.html`
+(fonction `chargerJoursMeteo`) interroge Open-Meteo (API gratuite, sans
+clé) et affiche, dans le bandeau de tête de la vue détail :
+- le relevé réel pour un jour déjà passé,
+- les conditions actuelles pour aujourd'hui,
+- la prévision pour un jour à venir.
+
+**Un seul lieu par jour, mais partagé entre jours qui s'y trouvent
+ensemble** : un seul appel réseau couvre tout le voyage pour une
+position donnée (Open-Meteo renvoie jusqu'à 92 jours passés + 16 jours
+à venir en une requête), donc plusieurs journées à la même base
+(ex. six jours à Salò) doivent réutiliser exactement les mêmes
+`lat`/`lon` plutôt que des coordonnées légèrement différentes — sinon
+autant d'appels réseau que de variantes.
+
+En préparant un voyage, propose une position (ville/lieu-dit) par
+journée, dérivée du lieu réellement visité ce jour-là — jamais une
+position par défaut appliquée à tout le séjour. Coordonnées au niveau
+ville suffisent, inutile de viser l'adresse exacte : la météo ne varie
+pas à cette échelle.
 
 ## Thème par voyage (`voyage.theme`, optionnel)
 
