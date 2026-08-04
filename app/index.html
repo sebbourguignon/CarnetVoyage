@@ -1675,6 +1675,11 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
   margin:0;font-family:var(--font-mono);font-size:9.5px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--pietra);
 }
+/* copie posée en pied de la vue détail (voir ouvrirDetail) : ce
+   colophon-ci vit dans le flux normal de .detail-inner, qui réserve déjà
+   sa propre marge basse (tabbar + nav séquentielle, voir --tabbar-clear
+   ci-dessus) — pas besoin de la redemander en double ici. */
+.colophon-detail{padding-bottom:8px;border-top:1px solid var(--rule);margin-top:22px}
 .colophon-pt{margin:0 6px}
 .colophon-saut{display:none}
 @media(max-width:480px){
@@ -5425,6 +5430,19 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     navSticky.appendChild(construireLienNavSticky(i < JOURS.length - 1 ? JOURS[i + 1] : null, "next", "›"));
   }
 
+  /* le colophon statique de la page (voir HTML, id="colophon-marque")
+     disparaît derrière la vue détail : position:fixed;inset:0 la
+     recouvre entièrement. On en pose une copie en pied de .detail-inner,
+     avec sa propre icône (getElementById ne peut remplir qu'un seul
+     élément portant l'id d'origine). */
+  function construireColophonDetail(){
+    var footer = document.createElement("footer");
+    footer.className = "colophon colophon-detail";
+    footer.innerHTML = '<p class="colophon-texte"><span class="colophon-marque" aria-hidden="true">' +
+      svgChihuahuaAssis() +
+      '</span>Fait maison par Papa<span class="colophon-pt">·</span><br class="colophon-saut">Relu par Réglisse · Été 2026</p>';
+    return footer;
+  }
   function ouvrirDetail(id){
     var j = trouverJour(id);
     if(!j){ location.hash = "#jours"; return; }
@@ -5436,6 +5454,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     back.addEventListener("click", function(){ history.back(); });
     detailInner.appendChild(back);
     detailInner.appendChild(construireContenuJour(j));
+    detailInner.appendChild(construireColophonDetail());
     remplirNavSticky(j);
     navSticky.hidden = false;
     detailEl.scrollTop = 0;
