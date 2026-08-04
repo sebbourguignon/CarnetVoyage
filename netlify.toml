@@ -1,0 +1,13 @@
+# Deploiement continu depuis GitHub — aucun build, app/ est deja le
+# dossier a servir tel quel (voir CLAUDE.md « Environnements »).
+#
+# Branche main -> production (salo2026.netlify.app), a associer au
+# domaine existant lors de la connexion du site.
+# Toute autre branche -> deploy preview automatique
+# (https://<branche>--<nom-du-site>.netlify.app), qui pointe tout seul
+# vers le projet Supabase dev : app/index.html choisit son environnement
+# par nom d'hote (HOTE_PRODUCTION), rien a configurer ici pour ca.
+
+[build]
+  base = "app"
+  publish = "."
