@@ -3718,26 +3718,32 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     });
     container.appendChild(secVet);
 
-    /* assuranceAuto est un objet unique, pas une liste. */
-    var secAA = el("div", "urg-section");
-    secAA.appendChild(el("h3", null, "Assurance auto"));
-    var aa = urg.assuranceAuto;
-    var carteAA = el("div", "urg-card");
-    carteAA.appendChild(el("h4", null, aa.nom));
-    carteAA.appendChild(el("p", "meta", "Contrat " + aa.contrat + " · Client " + aa.client));
-    var lignesAA = el("div", "urg-lignes");
-    aa.lignes.forEach(function(l){
-      var row = document.createElement("a");
-      row.className = "urg-subline";
-      row.href = "tel:" + l.tel;
-      row.appendChild(el("span", "l", l.label));
-      row.appendChild(el("span", "n", telLisible(l.tel)));
-      row.appendChild(el("span", "h", l.horaires));
-      lignesAA.appendChild(row);
-    });
-    carteAA.appendChild(lignesAA);
-    secAA.appendChild(carteAA);
-    container.appendChild(secAA);
+    /* assuranceAuto est un objet unique, pas une liste — et réservé aux
+       comptes famille (voir urgences_famille, migration 0015) : numéro
+       client et de contrat n'ont rien à faire dans le contenu public.
+       Absent (non connecté, ou pas encore chargé) : section simplement
+       omise, jamais de trou vide ni d'erreur. */
+    if(urg.assuranceAuto){
+      var secAA = el("div", "urg-section");
+      secAA.appendChild(el("h3", null, "Assurance auto"));
+      var aa = urg.assuranceAuto;
+      var carteAA = el("div", "urg-card");
+      carteAA.appendChild(el("h4", null, aa.nom));
+      carteAA.appendChild(el("p", "meta", "Contrat " + aa.contrat + " · Client " + aa.client));
+      var lignesAA = el("div", "urg-lignes");
+      aa.lignes.forEach(function(l){
+        var row = document.createElement("a");
+        row.className = "urg-subline";
+        row.href = "tel:" + l.tel;
+        row.appendChild(el("span", "l", l.label));
+        row.appendChild(el("span", "n", telLisible(l.tel)));
+        row.appendChild(el("span", "h", l.horaires));
+        lignesAA.appendChild(row);
+      });
+      carteAA.appendChild(lignesAA);
+      secAA.appendChild(carteAA);
+      container.appendChild(secAA);
+    }
 
     var secCons = el("div", "urg-section");
     secCons.appendChild(el("h3", null, "Consulaire"));
@@ -6032,16 +6038,32 @@ function appliquerTheme(theme){
                     .eq("voyage_id", voyage.id).eq("utilisateur_id", utilisateurId).maybeSingle()
                 : Promise.resolve({ data: null });
 
-              return Promise.all([chargerProgression, chargerRole]).then(function(res){
+              /* assurance auto : table à part, réservée aux membres famille
+                 par RLS (voir migration 0015 — numéro client/contrat n'ont
+                 jamais eu leur place dans voyages.urgences, publique sans
+                 restriction). maybeSingle() renvoie null pour un visiteur
+                 non famille : la section correspondante reste simplement
+                 absente côté rendu (voir construirePanelUrgences). */
+              var chargerUrgencesFamille = utilisateurId
+                ? supabase.from("urgences_famille").select("assurance_auto")
+                    .eq("voyage_id", voyage.id).maybeSingle()
+                : Promise.resolve({ data: null });
+
+              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille]).then(function(res){
                 var resProgression = res[0];
                 var resRole = res[1];
+                var resUrgencesFamille = res[2];
                 var estAdmin = !!(resRole.data && resRole.data.role === "admin");
+                var urgences = Object.assign({}, voyage.urgences || {});
+                if(resUrgencesFamille.data && resUrgencesFamille.data.assurance_auto){
+                  urgences.assuranceAuto = resUrgencesFamille.data.assurance_auto;
+                }
                 /* zoneChargement retiré seulement après un démarrage réussi :
                    si demarrerCarnet() lève une exception, elle doit encore
                    pouvoir s'afficher dedans via le .catch() plus bas — pas
                    sur un noeud déjà détaché du DOM. */
                 demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille,
-                  voyage.urgences || {}, voyage.id, utilisateurId, resProgression.data || null, estAdmin);
+                  urgences, voyage.id, utilisateurId, resProgression.data || null, estAdmin);
                 zoneChargement.remove();
               });
             });

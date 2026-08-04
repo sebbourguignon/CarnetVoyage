@@ -115,13 +115,33 @@ async function main() {
 
   // 1) voyage — champs scalaires du niveau racine (hors thème, pas dans
   //    le périmètre d'un resync de contenu narratif). ------------------------
+  // urgences.assuranceAuto ne va jamais dans voyages.urgences (lecture
+  // publique sans restriction) : retirée ici, resynchronisée à part dans
+  // urgences_famille (RLS réservée aux membres famille, migration 0015).
   const CHAMPS_VOYAGE = ["titre", "titre_suite", "sous_titre", "date_debut", "date_fin", "frise_legende", "a_verifier", "urgences"];
   const corpsVoyage = {};
   CHAMPS_VOYAGE.forEach((c) => { if (donnees.voyage[c] !== undefined) corpsVoyage[c] = donnees.voyage[c]; });
+  const assuranceAuto = corpsVoyage.urgences && corpsVoyage.urgences.assuranceAuto;
+  if (assuranceAuto) {
+    corpsVoyage.urgences = Object.assign({}, corpsVoyage.urgences);
+    delete corpsVoyage.urgences.assuranceAuto;
+  }
   try {
     await patch("/voyages?id=eq." + voyageId, corpsVoyage);
   } catch (e) {
     echouer("mise à jour du voyage : " + e.message);
+  }
+
+  if (assuranceAuto) {
+    // supprime puis réinsère (même idiome que observations/lieux plus bas) :
+    // plus simple qu'un upsert pour une table à une ligne par voyage.
+    try {
+      await del("/urgences_famille?voyage_id=eq." + voyageId);
+      await post("/urgences_famille", { voyage_id: voyageId, assurance_auto: assuranceAuto });
+    } catch (e) {
+      echouer("mise à jour de l'assurance auto (réservée famille) : " + e.message);
+    }
+    console.log("Assurance auto resynchronisée (urgences_famille, réservée aux comptes famille).");
   }
 
   // 2) journees ---------------------------------------------------------------

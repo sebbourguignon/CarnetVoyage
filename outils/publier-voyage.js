@@ -117,13 +117,33 @@ async function main() {
   console.log("Publication de " + cheminJson + " vers " + SUPABASE_URL);
 
   // 1) voyage ----------------------------------------------------------------
+  // urgences.assuranceAuto (numéro client, numéro de contrat) ne va jamais
+  // dans voyages.urgences, en lecture publique sans restriction : elle est
+  // retirée ici et republiée à part, dans urgences_famille (RLS réservée
+  // aux membres famille — voir migration 0015).
+  const corpsVoyage = Object.assign({}, donnees.voyage);
+  const assuranceAuto = corpsVoyage.urgences && corpsVoyage.urgences.assuranceAuto;
+  if (assuranceAuto) {
+    corpsVoyage.urgences = Object.assign({}, corpsVoyage.urgences);
+    delete corpsVoyage.urgences.assuranceAuto;
+  }
+
   let voyage;
   try {
-    voyage = await post("voyages", donnees.voyage, { unique: true });
+    voyage = await post("voyages", corpsVoyage, { unique: true });
   } catch (e) {
     echouer("insertion du voyage : " + e.message);
   }
   console.log("Voyage inséré : " + voyage.slug + " (id " + voyage.id + ")");
+
+  if (assuranceAuto) {
+    try {
+      await post("urgences_famille", { voyage_id: voyage.id, assurance_auto: assuranceAuto });
+    } catch (e) {
+      echouer("insertion de l'assurance auto (réservée famille) : " + e.message);
+    }
+    console.log("Assurance auto publiée à part (urgences_famille, réservée aux comptes famille).");
+  }
 
   // 2) journees ----------------------------------------------------------------
   const ancreVersJourneeId = {};
