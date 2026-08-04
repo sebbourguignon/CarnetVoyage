@@ -5821,11 +5821,9 @@ function appliquerTheme(theme){
       optionsTitre: ligne.options_titre,
       options: ligne.options || [],
       notes: ligne.notes || [],
-      /* `chapitre` était un objet {numero, titre} dans donnees.js ; le
-         schéma SQL ne stocke qu'un texte libre. On le reprend tel quel
-         comme titre de chapitre, sans numéro distinct — c'est le seul
-         écart de mapping non trivial entre les deux formats. */
-      chapitre: ligne.chapitre ? { numero: "", titre: ligne.chapitre } : null,
+      /* `chapitre` : {numero, titre} en jsonb (migration 0014), même forme
+         que donnees.js — plus d'écart de mapping à compenser ici. */
+      chapitre: ligne.chapitre || null,
       /* la bonne réponse n'est jamais envoyée ici : elle vit dans
          quiz_reponses, réservée aux comptes admin par RLS (voir
          supabase/migrations/0008) — voir admin/index.html pour la

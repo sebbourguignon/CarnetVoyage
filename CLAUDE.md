@@ -101,7 +101,7 @@ Repris quasi à l'identique du format `JOURS` d'Italie2026 (voir son
 | `fil` | `[{h, texte}]` — déroulé horodaté |
 | `options_titre` / `options` | alternatives |
 | `notes` | `[{ton, titre, texte}]`, `ton` = `alerte` ou `soleil` |
-| `chapitre` | facultatif, texte de séparateur |
+| `chapitre` | facultatif, `{numero, titre}` — ex. `{"numero":"Chapitre I","titre":"La descente"}` ; `numero` s'affiche en très grand corps Bodoni, `titre` en dessous |
 | `ordre` | position dans le voyage (entier, définit le tri) |
 | `pratique` | `{parking, ztl, reserver, emporter, chien}`, chaque clé facultative |
 | `carte` | `[{label, requete}]` — `requete` = texte de recherche Google Maps |
