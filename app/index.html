@@ -1301,11 +1301,13 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;
   background:var(--paper-deep);display:block;
 }
-.photos-item-actions{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
-.photos-item-bouton{
-  font-family:var(--font-body);font-size:.72rem;color:var(--ink-soft);
-  background:none;border:none;padding:0;cursor:pointer;text-decoration:underline;
+.photos-item-actions{display:flex;gap:8px;margin-top:4px}
+.photos-item-icone{
+  color:var(--ink-soft);background:none;border:none;padding:2px;
+  cursor:pointer;line-height:0;
 }
+.photos-item-icone .iico{width:16px;height:16px}
+.photos-item-icone.actif{color:var(--rosso)}
 .photos-item.mine img{outline:1px solid var(--rosso)}
 .photos-item-legende{
   font-family:var(--font-body);font-size:.78rem;color:var(--ink-soft);
@@ -1339,6 +1341,11 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   padding:4px 10px;cursor:pointer;
 }
 .carnet-texte-jour-ia:disabled{opacity:.5;cursor:default}
+.carnet-texte-jour-statut{
+  font-family:var(--font-body);font-size:.78rem;color:var(--oliva,#4a6a3a);
+  opacity:0;transition:opacity .2s ease;
+}
+.carnet-texte-jour-statut.visible{opacity:1}
 
 .carnet-bouton-generer{
   font-family:var(--font-body);font-size:.9rem;font-weight:600;
@@ -1347,12 +1354,27 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   display:block;margin:0 0 12px;
 }
 .carnet-bouton-generer:disabled{opacity:.4;cursor:default}
-.carnet-mosaique-jour{margin:0 0 22px}
-.carnet-mosaique-jour:last-child{margin-bottom:0}
-.carnet-mosaique-titre{
-  font-family:var(--font-mono);font-size:.78rem;letter-spacing:.02em;
-  color:var(--ink-soft);text-transform:uppercase;margin:0 0 8px;
+
+/* accordeon par journee, meme grammaire que .lieu-item/.lieu-collapse. */
+.carnet-jour-item{border-bottom:1px solid var(--rule-soft)}
+.carnet-jour-item:last-child{border-bottom:0}
+.carnet-jour-head{
+  display:flex;align-items:center;gap:8px;width:100%;
+  background:none;border:none;padding:12px 0;cursor:pointer;text-align:left;
 }
+.carnet-jour-head .lieu-chevron{flex:0 0 auto;width:14px;height:14px;color:var(--pietra);transition:transform .2s ease}
+.carnet-jour-item.open .carnet-jour-head .lieu-chevron{transform:rotate(180deg)}
+.carnet-jour-titre{
+  flex:1 1 auto;font-family:var(--font-body);font-size:.92rem;font-weight:600;color:var(--ink);
+}
+.carnet-jour-compte{
+  flex:0 0 auto;font-family:var(--font-mono);font-size:.75rem;color:var(--ink-soft);
+  background:var(--paper-deep);border-radius:10px;padding:1px 8px;
+}
+.carnet-jour-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s cubic-bezier(0.23,1,0.32,1)}
+.carnet-jour-item.open .carnet-jour-collapse{grid-template-rows:1fr}
+.carnet-jour-collapse-inner{overflow:hidden;min-height:0}
+.carnet-jour-item.open .carnet-jour-collapse-inner{padding-bottom:16px}
 
 /* à regarder : contenu de lecture, pas une liste technique — on lui
    donne de l'air (grand interligne, respiration entre les entrées).
@@ -2065,7 +2087,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     oeilBarre: icone('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.6"/><line x1="4" y1="4" x2="20" y2="20"/>'),
     cadenas:  icone('<rect x="5.5" y="11" width="13" height="9" rx="1.6"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>'),
     cadenasOuvert: icone('<rect x="5.5" y="11" width="13" height="9" rx="1.6"/><path d="M8.5 11V8a3.5 3.5 0 0 1 6.7-1.8"/>'),
-    fermer:   icone('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>')
+    fermer:   icone('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>'),
+    /* actions par photo (onglet Carnet, voir contenuGaleriePhotos) :
+       icones plutot que texte, meme facture de trait que le reste. */
+    commentaire: icone('<path d="M4 5.5h16v11H10l-4.2 3.4V16.5H4Z" stroke-linejoin="round"/>'),
+    supprimer: icone('<path d="M5.5 7h13M9.5 7V5.3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V7M7.5 7l.8 12.2a1 1 0 0 0 1 .8h5.4a1 1 0 0 0 1-.8L16.5 7"/>'),
+    ajouter: icone('<line x1="12" y1="5.5" x2="12" y2="18.5"/><line x1="5.5" y1="12" x2="18.5" y2="12"/>')
   };
   /* niveau du champ chien (facile/à gérer/difficile) : mêmes trois barres,
      n allumées (opacité pleine) sur 3 — pas trois dessins différents. */
@@ -2631,7 +2658,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     });
   }
 
-  function contenuGaleriePhotos(conteneur, j){
+  /* actionsCompletes distingue les deux endroits ou la galerie s'affiche :
+     - vue journee (detail) : false -- juste regarder/ajouter/supprimer,
+       le reste (commenter, partager) alourdirait une page deja dense ;
+     - onglet Carnet : true -- c'est desormais le seul endroit ou
+       commenter et partager une photo (voir conversation de conception). */
+  function contenuGaleriePhotos(conteneur, j, actionsCompletes){
     conteneur.innerHTML = "";
     var photos = PHOTOS_PAR_JOURNEE[j.uuid] || [];
     if(!photos.length){
@@ -2657,32 +2689,44 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
       if(p.membre_id === utilisateurId){
         var actions = el("div", "photos-item-actions");
-        var boutonCommenter = el("button", "photos-item-bouton", p.legende ? "Modifier le commentaire" : "Commenter");
-        boutonCommenter.type = "button";
-        boutonCommenter.addEventListener("click", function(){
-          var existante = figure.querySelector(".photos-item-legende");
-          if(existante) figure.removeChild(existante);
-          var champ = document.createElement("textarea");
-          champ.className = "photos-item-legende-champ";
-          champ.value = p.legende || "";
-          champ.placeholder = "Un mot sur cette photo…";
-          champ.rows = 2;
-          figure.insertBefore(champ, actions);
-          champ.focus();
-          champ.addEventListener("blur", function(){ legenderPhoto(p, j, champ.value); });
-          champ.addEventListener("keydown", function(ev){
-            if(ev.key === "Enter" && !ev.shiftKey){ ev.preventDefault(); champ.blur(); }
+
+        if(actionsCompletes){
+          var boutonCommenter = el("button", "photos-item-icone", ICONES.commentaire);
+          boutonCommenter.type = "button";
+          boutonCommenter.setAttribute("aria-label", p.legende ? "Modifier le commentaire" : "Commenter");
+          boutonCommenter.title = p.legende ? "Modifier le commentaire" : "Commenter";
+          boutonCommenter.addEventListener("click", function(){
+            var existante = figure.querySelector(".photos-item-legende");
+            if(existante) figure.removeChild(existante);
+            var champ = document.createElement("textarea");
+            champ.className = "photos-item-legende-champ";
+            champ.value = p.legende || "";
+            champ.placeholder = "Un mot sur cette photo…";
+            champ.rows = 2;
+            figure.insertBefore(champ, actions);
+            champ.focus();
+            champ.addEventListener("blur", function(){ legenderPhoto(p, j, champ.value); });
+            champ.addEventListener("keydown", function(ev){
+              if(ev.key === "Enter" && !ev.shiftKey){ ev.preventDefault(); champ.blur(); }
+            });
           });
-        });
-        actions.appendChild(boutonCommenter);
-        var boutonPartage = el("button", "photos-item-bouton", p.visibilite === "partagee" ? "Partagée ✓" : "Partager");
-        boutonPartage.type = "button";
-        boutonPartage.addEventListener("click", function(){ basculerVisibilitePhoto(p, j); });
-        actions.appendChild(boutonPartage);
-        var boutonSupprimer = el("button", "photos-item-bouton", "Supprimer");
+          actions.appendChild(boutonCommenter);
+
+          var boutonPartage = el("button", "photos-item-icone" + (p.visibilite === "partagee" ? " actif" : ""), ICONES.partager);
+          boutonPartage.type = "button";
+          boutonPartage.setAttribute("aria-label", p.visibilite === "partagee" ? "Partagée avec la famille — cliquer pour ne plus partager" : "Partager avec la famille");
+          boutonPartage.title = boutonPartage.getAttribute("aria-label");
+          boutonPartage.addEventListener("click", function(){ basculerVisibilitePhoto(p, j); });
+          actions.appendChild(boutonPartage);
+        }
+
+        var boutonSupprimer = el("button", "photos-item-icone", ICONES.supprimer);
         boutonSupprimer.type = "button";
+        boutonSupprimer.setAttribute("aria-label", "Supprimer cette photo");
+        boutonSupprimer.title = "Supprimer cette photo";
         boutonSupprimer.addEventListener("click", function(){ supprimerPhoto(p, j); });
         actions.appendChild(boutonSupprimer);
+
         figure.appendChild(actions);
       }
       grille.appendChild(figure);
@@ -2690,27 +2734,26 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     conteneur.appendChild(grille);
   }
 
-  /* un même jour peut être affiché deux fois à la fois (onglet Aujourd'hui
-     et vue détail), même logique que rafraichirRegarder ci-dessus. */
+  /* un même jour peut être affiché deux fois à la fois (vue détail et
+     onglet Carnet) : on reconstruit les deux plutôt que de suivre les
+     deltas un par un, le volume (quelques dizaines de photos sur tout
+     un voyage) rend ça largement assez rapide pour rester imperceptible. */
   function rafraichirPhotos(jourId){
     var j = trouverJour(jourId);
     if(!j) return;
     Array.prototype.forEach.call(document.querySelectorAll(".photos[data-jour-photos='" + jourId + "'] .photos-grille-conteneur"), function(conteneur){
-      contenuGaleriePhotos(conteneur, j);
+      contenuGaleriePhotos(conteneur, j, false);
     });
-    /* l'onglet Carnet affiche un compte de photos global : à refaire à
-       chaque changement plutôt que de suivre les deltas un par un, le
-       volume (quelques dizaines de photos sur tout un voyage) rend ça
-       largement assez rapide pour rester imperceptible. */
     if(modeFamille) rendrePanelCarnet();
   }
 
-  function construireBlocPhotos(j){
-    if(!modeFamille || !utilisateurId) return null;
-    var bloc = el("div", "block photos");
-    bloc.setAttribute("data-jour-photos", j.id);
-    bloc.appendChild(el("h3", null, "Photos du jour"));
-
+  /* bouton + input d'ajout de photo, reutilise a deux endroits (vue
+     journee et onglet Carnet, voir conversation de conception) : la
+     vue journee ne garde qu'ajouter/supprimer, l'onglet Carnet est
+     desormais l'endroit pour tout le reste (texte, commentaires,
+     partage). */
+  function construireControleUpload(j){
+    var wrap = document.createElement("div");
     var input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
@@ -2745,14 +2788,25 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       }
       suivante(0);
     });
-    bloc.appendChild(boutonAjouter);
-    bloc.appendChild(input);
+    wrap.appendChild(boutonAjouter);
+    wrap.appendChild(input);
+    return wrap;
+  }
 
-    bloc.appendChild(construireTexteCarnetJour(j));
+  /* vue journee : uniquement ajouter/regarder/supprimer, pas le texte de
+     carnet ni les commentaires/partage — desormais dans l'onglet Carnet
+     (voir construireSectionCarnetJour), pour ne pas alourdir cette page
+     deja dense en informations pratiques. */
+  function construireBlocPhotos(j){
+    if(!modeFamille || !utilisateurId) return null;
+    var bloc = el("div", "block photos");
+    bloc.setAttribute("data-jour-photos", j.id);
+    bloc.appendChild(el("h3", null, "Photos du jour"));
+    bloc.appendChild(construireControleUpload(j));
 
     var conteneur = el("div", "photos-grille-conteneur");
     bloc.appendChild(conteneur);
-    contenuGaleriePhotos(conteneur, j);
+    contenuGaleriePhotos(conteneur, j, false);
 
     return bloc;
   }
@@ -2762,6 +2816,18 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      Un badge indique si le texte affiche est l'automatique ou une
      surcharge, avec un bouton pour revenir a l'automatique -- jamais de
      perte silencieuse du texte auto derriere une surcharge oubliee. */
+  /* confirmation d'enregistrement, transitoire : reponse a "a quel moment
+     je suis sur que c'est enregistre ?" (voir conversation de conception)
+     -- affichee juste apres la resolution de l'appel Supabase, jamais
+     avant (pas d'optimisme silencieux qui mentirait en cas d'echec
+     reseau, deja loggue en erreur par ailleurs). */
+  function afficherConfirmationEnregistrement(statutEl){
+    statutEl.textContent = "Enregistré ✓";
+    statutEl.classList.add("visible");
+    clearTimeout(statutEl._minuteur);
+    statutEl._minuteur = setTimeout(function(){ statutEl.classList.remove("visible"); }, 2200);
+  }
+
   function construireTexteCarnetJour(j){
     var wrap = el("div", "carnet-texte-jour");
     wrap.appendChild(el("p", "carnet-texte-jour-label", "Texte du carnet pour ce jour (utilisé dans votre carnet PDF personnel)"));
@@ -2771,6 +2837,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     champ.rows = 3;
     champ.value = texteCarnetJournee(j);
 
+    var statut = el("span", "carnet-texte-jour-statut", "");
+
     var estSurcharge = !!TEXTES_CARNET_PAR_JOURNEE[j.uuid];
     var boutonReinit = el("button", "carnet-texte-jour-reinit", "Revenir au texte automatique");
     boutonReinit.type = "button";
@@ -2779,10 +2847,16 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     champ.addEventListener("blur", function(){
       var valeur = champ.value.trim();
       if(!valeur || valeur === texteAutoJournee(j)){
-        reinitialiserTexteCarnet(j).then(function(){ boutonReinit.hidden = true; });
+        reinitialiserTexteCarnet(j).then(function(){
+          boutonReinit.hidden = true;
+          afficherConfirmationEnregistrement(statut);
+        });
         return;
       }
-      sauvegarderTexteCarnet(j, valeur).then(function(){ boutonReinit.hidden = false; });
+      sauvegarderTexteCarnet(j, valeur).then(function(){
+        boutonReinit.hidden = false;
+        afficherConfirmationEnregistrement(statut);
+      });
     });
     boutonReinit.addEventListener("click", function(){
       reinitialiserTexteCarnet(j).then(function(){
@@ -2810,7 +2884,10 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         var texte = res.data && res.data.texte;
         if(!texte) throw new Error("réponse vide");
         champ.value = texte;
-        return sauvegarderTexteCarnet(j, texte).then(function(){ boutonReinit.hidden = false; });
+        return sauvegarderTexteCarnet(j, texte).then(function(){
+          boutonReinit.hidden = false;
+          afficherConfirmationEnregistrement(statut);
+        });
       }).catch(function(err){
         console.error("Échec de génération IA :", err);
         window.alert("La génération n'a pas fonctionné — réessayez plus tard, ou écrivez le texte à la main.");
@@ -2824,6 +2901,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     var actionsTexte = el("div", "carnet-texte-jour-actions");
     actionsTexte.appendChild(boutonReinit);
     actionsTexte.appendChild(boutonIA);
+    actionsTexte.appendChild(statut);
     wrap.appendChild(actionsTexte);
     return wrap;
   }
@@ -2914,36 +2992,58 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
     panel.appendChild(bloc);
 
-    var mosaique = construireMosaiquePhotosCarnet();
-    if(mosaique) panel.appendChild(mosaique);
+    var sections = construireSectionsCarnetJours();
+    if(sections) panel.appendChild(sections);
   }
 
-  /* mosaique de relecture : toutes les photos visibles par le membre
-     connecte (les siennes + celles partagees par les autres), regroupees
-     par journee dans l'ordre du voyage -- pour retrouver d'un coup d'oeil
-     ce qui a deja ete ajoute, sans repasser jour par jour. */
-  function construireMosaiquePhotosCarnet(){
-    var joursAvecPhotos = JOURS.filter(function(j){ return (PHOTOS_PAR_JOURNEE[j.uuid] || []).length; });
-    if(!joursAvecPhotos.length) return null;
+  /* une section par journee du voyage (pas seulement celles qui ont deja
+     des photos, voir conversation de conception) : texte de carnet,
+     ajout de photo et galerie complete (commenter/partager/supprimer) --
+     desormais le seul endroit pour ces actions, la vue journee ne garde
+     qu'ajouter/supprimer (voir construireBlocPhotos). Accordeon replie
+     par defaut, meme convention que construireItemLieu, sauf pour un
+     jour qui a deja du contenu (photo ou texte perso) : ouvert d'emblee,
+     pas la peine de re-deplier ce qu'on vient de remplir. */
+  function construireSectionCarnetJour(j){
+    var aDejaDuContenu = !!((PHOTOS_PAR_JOURNEE[j.uuid] || []).length || TEXTES_CARNET_PAR_JOURNEE[j.uuid]);
+    var item = el("div", "carnet-jour-item" + (aDejaDuContenu ? " open" : ""));
 
+    var id = "carnet-jour-" + j.id;
+    var bouton = document.createElement("button");
+    bouton.type = "button";
+    bouton.className = "carnet-jour-head";
+    bouton.setAttribute("aria-expanded", aDejaDuContenu ? "true" : "false");
+    bouton.setAttribute("aria-controls", id);
+    bouton.appendChild(el("span", "lieu-chevron", ICONES.chevron));
+    bouton.appendChild(el("span", "carnet-jour-titre", j.dow + " " + j.num + " " + j.mois + " — " + texteJour(j)));
+    var nbPhotos = (PHOTOS_PAR_JOURNEE[j.uuid] || []).length;
+    if(nbPhotos) bouton.appendChild(el("span", "carnet-jour-compte", String(nbPhotos)));
+    bouton.addEventListener("click", function(){
+      var ouvrir = !item.classList.contains("open");
+      item.classList.toggle("open", ouvrir);
+      bouton.setAttribute("aria-expanded", ouvrir ? "true" : "false");
+    });
+    item.appendChild(bouton);
+
+    var collapse = el("div", "carnet-jour-collapse");
+    collapse.id = id;
+    var inner = el("div", "carnet-jour-collapse-inner");
+    inner.appendChild(construireTexteCarnetJour(j));
+    inner.appendChild(construireControleUpload(j));
+    var conteneur = el("div", "photos-grille-conteneur");
+    inner.appendChild(conteneur);
+    contenuGaleriePhotos(conteneur, j, true);
+    collapse.appendChild(inner);
+    item.appendChild(collapse);
+
+    return item;
+  }
+
+  function construireSectionsCarnetJours(){
+    if(!JOURS.length) return null;
     var wrap = el("div", "block");
     wrap.appendChild(el("h3", null, "Vos photos, jour par jour"));
-    joursAvecPhotos.forEach(function(j){
-      var section = el("div", "carnet-mosaique-jour");
-      section.appendChild(el("p", "carnet-mosaique-titre", j.dow + " " + j.num + " " + j.mois + " — " + texteJour(j)));
-      var grille = el("div", "photos-grille");
-      (PHOTOS_PAR_JOURNEE[j.uuid] || []).forEach(function(p){
-        var figure = el("figure", "photos-item" + (p.membre_id === utilisateurId ? " mine" : ""));
-        var img = document.createElement("img");
-        img.alt = p.legende || "";
-        img.loading = "lazy";
-        urlSigneePhoto(p.storage_path).then(function(url){ if(url) img.src = url; });
-        figure.appendChild(img);
-        grille.appendChild(figure);
-      });
-      section.appendChild(grille);
-      wrap.appendChild(section);
-    });
+    JOURS.forEach(function(j){ wrap.appendChild(construireSectionCarnetJour(j)); });
     return wrap;
   }
 
