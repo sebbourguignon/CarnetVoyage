@@ -1315,6 +1315,12 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   display:block;margin:0 0 12px;
 }
 .carnet-bouton-generer:disabled{opacity:.4;cursor:default}
+.carnet-mosaique-jour{margin:0 0 22px}
+.carnet-mosaique-jour:last-child{margin-bottom:0}
+.carnet-mosaique-titre{
+  font-family:var(--font-mono);font-size:.78rem;letter-spacing:.02em;
+  color:var(--ink-soft);text-transform:uppercase;margin:0 0 8px;
+}
 
 /* à regarder : contenu de lecture, pas une liste technique — on lui
    donne de l'air (grand interligne, respiration entre les entrées).
@@ -2701,6 +2707,38 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     }
 
     panel.appendChild(bloc);
+
+    var mosaique = construireMosaiquePhotosCarnet();
+    if(mosaique) panel.appendChild(mosaique);
+  }
+
+  /* mosaique de relecture : toutes les photos visibles par le membre
+     connecte (les siennes + celles partagees par les autres), regroupees
+     par journee dans l'ordre du voyage -- pour retrouver d'un coup d'oeil
+     ce qui a deja ete ajoute, sans repasser jour par jour. */
+  function construireMosaiquePhotosCarnet(){
+    var joursAvecPhotos = JOURS.filter(function(j){ return (PHOTOS_PAR_JOURNEE[j.uuid] || []).length; });
+    if(!joursAvecPhotos.length) return null;
+
+    var wrap = el("div", "block");
+    wrap.appendChild(el("h3", null, "Vos photos, jour par jour"));
+    joursAvecPhotos.forEach(function(j){
+      var section = el("div", "carnet-mosaique-jour");
+      section.appendChild(el("p", "carnet-mosaique-titre", j.dow + " " + j.num + " " + j.mois + " — " + texteJour(j)));
+      var grille = el("div", "photos-grille");
+      (PHOTOS_PAR_JOURNEE[j.uuid] || []).forEach(function(p){
+        var figure = el("figure", "photos-item" + (p.membre_id === utilisateurId ? " mine" : ""));
+        var img = document.createElement("img");
+        img.alt = p.legende || "";
+        img.loading = "lazy";
+        urlSigneePhoto(p.storage_path).then(function(url){ if(url) img.src = url; });
+        figure.appendChild(img);
+        grille.appendChild(figure);
+      });
+      section.appendChild(grille);
+      wrap.appendChild(section);
+    });
+    return wrap;
   }
 
   /* --- onglet À réserver : quelles journées ont une action réelle -------
@@ -3722,6 +3760,15 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       body.appendChild(construireBlocFil(j));
     }
 
+    /* juste apres le fil horaire : c'est la premiere chose qui suit le
+       "quoi faire aujourd'hui", avant les infos pratiques secondaires
+       (parking, quiz, chasse...) -- voir discussion de placement, pas
+       en toute premiere position pour ne pas repousser le fil (ce que
+       consulte en priorite quelqu'un qui prepare son depart a 8h),
+       pas non plus apres le quiz/chasse ou il etait quasi invisible. */
+    var blocPhotos = construireBlocPhotos(j);
+    if(blocPhotos) body.appendChild(blocPhotos);
+
     if(j.pratique){
       var dlPratique = construirePratiqueJour(j.pratique);
       if(dlPratique) body.appendChild(dlPratique);
@@ -3768,9 +3815,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(modeFamille && j.quiz && j.quiz.length){
       body.appendChild(construireBlocQuiz(j));
     }
-
-    var blocPhotos = construireBlocPhotos(j);
-    if(blocPhotos) body.appendChild(blocPhotos);
 
     if(j.notes && j.notes.length){
       var bNotes = el("div", "block");

@@ -14,25 +14,74 @@
 // Reponse : { url: string } -- URL signee (1 h) vers le PDF dans le
 // bucket prive "carnets" (migration 0019).
 //
-// pdf-lib (npm, via specifier Deno natif) : seule dependance de ce
-// fichier, pas de bundler -- Deno resout et met en cache le paquet lui-meme.
-// Le reste du projet (app/, outils/) reste sans dependance, voir CLAUDE.md ;
-// cette regle vise le code servi au navigateur, pas les Edge Functions,
-// ou assembler un PDF a la main serait deraisonnable.
+// pdf-lib + @pdf-lib/fontkit (npm, via specifier Deno natif) : seule
+// dependance de ce fichier, pas de bundler -- Deno resout et met en cache
+// les paquets lui-meme. Le reste du projet (app/, outils/) reste sans
+// dependance, voir CLAUDE.md ; cette regle vise le code servi au
+// navigateur, pas les Edge Functions, ou assembler un PDF a la main
+// serait deraisonnable.
+//
+// Palette et polices : reprises telles quelles de la direction
+// Officina Bodoniana d'app/index.html (variables --paper/--ink/--rosso,
+// --font-display/--font-body) pour que le carnet imprime ressemble a
+// l'appli plutot qu'a un PDF generique. Les deux fichiers de police sont
+// les variable fonts Google Fonts telles quelles (aucune instance
+// statique n'existe pour Bodoni Moda/IBM Plex Sans dans le depot
+// google/fonts) : pdf-lib les embarque via leur instance par defaut
+// (poids Regular) -- pas de gras disponible, compense par la taille
+// plutot que par le poids pour les titres.
+//
+// Encodees en base64 dans des modules .ts (BodoniModa_Variable.ts,
+// IBMPlexSans_Variable.ts) plutot que lues depuis un fichier .ttf a
+// l'execution : `supabase functions deploy` ne televerse que les
+// fichiers presents dans le graphe de modules import/export, jamais un
+// asset statique lu via Deno.readFile -- verifie en test (erreur
+// "path not found" une fois deploye).
 
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { PDFDocument, rgb, StandardFonts } from "npm:pdf-lib@1.17.1";
+import { PDFDocument, rgb } from "npm:pdf-lib@1.17.1";
+import fontkit from "npm:@pdf-lib/fontkit@1.1.1";
+import { donneesBase64 as bodoniModaBase64 } from "./BodoniModa_Variable.ts";
+import { donneesBase64 as ibmPlexSansBase64 } from "./IBMPlexSans_Variable.ts";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// --- palette Officina Bodoniana (voir app/index.html, :root) ------------
+const CARTA = rgb(0xF3 / 255, 0xF1 / 255, 0xEA / 255);
+const INCHIOSTRO = rgb(0x1A / 255, 0x1A / 255, 0x18 / 255);
+const GRIGIO = rgb(0x59 / 255, 0x56 / 255, 0x50 / 255);
+const ROSSO = rgb(0xB2 / 255, 0x3A / 255, 0x2E / 255);
+
+const LARGEUR = 595.28, HAUTEUR = 841.89; // A4 portrait, points
+const MARGE = 56;
+
 function jsonResponse(corps: unknown, statut = 200) {
   return new Response(JSON.stringify(corps), {
     status: statut,
     headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
   });
+}
+
+function decoderBase64(base64: string): Uint8Array {
+  const binaire = atob(base64);
+  const octets = new Uint8Array(binaire.length);
+  for (let i = 0; i < binaire.length; i++) octets[i] = binaire.charCodeAt(i);
+  return octets;
+}
+
+/* dimensions d'une image mises a l'echelle "contain" dans une case
+   carree (jamais de recadrage ni de deformation, contrairement a la
+   premiere version qui forcait width=height=tailleCase) : le plus grand
+   cote de l'image occupe tailleCase, l'autre est mis a l'echelle dans
+   les memes proportions, puis l'image est centree dans la case. */
+function dimensionsContenues(largeurImg: number, hauteurImg: number, tailleCase: number) {
+  const echelle = Math.min(tailleCase / largeurImg, tailleCase / hauteurImg);
+  const largeur = largeurImg * echelle;
+  const hauteur = hauteurImg * echelle;
+  return { largeur, hauteur, decalageX: (tailleCase - largeur) / 2, decalageY: (tailleCase - hauteur) / 2 };
 }
 
 Deno.serve(async (requete) => {
@@ -88,18 +137,25 @@ Deno.serve(async (requete) => {
     }
 
     const pdf = await PDFDocument.create();
-    const policeTitre = await pdf.embedFont(StandardFonts.HelveticaBold);
-    const policeTexte = await pdf.embedFont(StandardFonts.Helvetica);
-    const LARGEUR = 595.28, HAUTEUR = 841.89; // A4 portrait, points
+    pdf.registerFontkit(fontkit);
+    const policeTitre = await pdf.embedFont(decoderBase64(bodoniModaBase64));
+    const policeTexte = await pdf.embedFont(decoderBase64(ibmPlexSansBase64));
+
+    function nouvellePage() {
+      const page = pdf.addPage([LARGEUR, HAUTEUR]);
+      page.drawRectangle({ x: 0, y: 0, width: LARGEUR, height: HAUTEUR, color: CARTA });
+      return page;
+    }
 
     // --- page de couverture -------------------------------------------
-    const couverture = pdf.addPage([LARGEUR, HAUTEUR]);
+    const couverture = nouvellePage();
+    couverture.drawRectangle({ x: MARGE, y: HAUTEUR - 220, width: 34, height: 3, color: ROSSO });
+    couverture.drawText(mode === "perso" ? "CARNET PERSONNEL" : "CARNET DE FAMILLE", {
+      x: MARGE, y: HAUTEUR - 200, size: 10.5, font: policeTexte, color: ROSSO,
+    });
     const titreCarnet = [voyage.titre, voyage.titre_suite].filter(Boolean).join(" ").replace(/<[^>]+>/g, "");
     couverture.drawText(titreCarnet, {
-      x: 50, y: HAUTEUR - 160, size: 26, font: policeTitre, color: rgb(0.11, 0.11, 0.09), maxWidth: LARGEUR - 100,
-    });
-    couverture.drawText(mode === "perso" ? "Carnet personnel" : "Carnet de famille", {
-      x: 50, y: HAUTEUR - 200, size: 14, font: policeTexte, color: rgb(0.7, 0.23, 0.18),
+      x: MARGE, y: HAUTEUR - 260, size: 34, font: policeTitre, color: INCHIOSTRO, maxWidth: LARGEUR - MARGE * 2,
     });
 
     // --- une page par journee ayant au moins une photo ------------------
@@ -107,23 +163,25 @@ Deno.serve(async (requete) => {
       const photosDuJour = photosParJournee.get(j.id);
       if (!photosDuJour || !photosDuJour.length) continue;
 
-      let page = pdf.addPage([LARGEUR, HAUTEUR]);
-      let y = HAUTEUR - 60;
+      let page = nouvellePage();
+      let y = HAUTEUR - 70;
 
-      const dateAffichee = j.date ? new Date(j.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "";
-      page.drawText(dateAffichee, { x: 50, y, size: 11, font: policeTexte, color: rgb(0.43, 0.42, 0.38) });
-      y -= 22;
+      const dateAffichee = j.date
+        ? new Date(j.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+        : "";
+      page.drawText(dateAffichee.toUpperCase(), { x: MARGE, y, size: 9.5, font: policeTexte, color: GRIGIO });
+      y -= 26;
       const titreJour = String(j.titre || "").replace(/<[^>]+>/g, "");
-      page.drawText(titreJour, { x: 50, y, size: 18, font: policeTitre, color: rgb(0.11, 0.11, 0.09), maxWidth: LARGEUR - 100 });
-      y -= 34;
+      page.drawText(titreJour, { x: MARGE, y, size: 22, font: policeTitre, color: INCHIOSTRO, maxWidth: LARGEUR - MARGE * 2 });
+      y -= 16;
+      page.drawRectangle({ x: MARGE, y, width: 28, height: 2, color: ROSSO });
+      y -= 30;
 
-      // grille simple 2 colonnes, images carrees recadrees par le fit
-      // proportionnel de pdf-lib (drawImage avec width/height fixes) --
-      // suffisant pour un carnet a emporter, pas un book d'edition.
+      // grille 2 colonnes, chaque photo mise a l'echelle "contain" et
+      // centree dans sa case (jamais de deformation, voir dimensionsContenues).
       const colonnes = 2;
-      const marge = 50;
-      const espace = 12;
-      const tailleCase = (LARGEUR - marge * 2 - espace * (colonnes - 1)) / colonnes;
+      const espace = 14;
+      const tailleCase = (LARGEUR - MARGE * 2 - espace * (colonnes - 1)) / colonnes;
 
       let colonne = 0;
       for (const photo of photosDuJour) {
@@ -134,13 +192,20 @@ Deno.serve(async (requete) => {
           const octets = new Uint8Array(await fichier.arrayBuffer());
           const image = await pdf.embedJpg(octets).catch(() => pdf.embedPng(octets));
 
-          if (y - tailleCase < 40) {
-            page = pdf.addPage([LARGEUR, HAUTEUR]);
-            y = HAUTEUR - 60;
+          if (y - tailleCase < 50) {
+            page = nouvellePage();
+            y = HAUTEUR - 70;
             colonne = 0;
           }
-          const x = marge + colonne * (tailleCase + espace);
-          page.drawImage(image, { x, y: y - tailleCase, width: tailleCase, height: tailleCase });
+          const caseX = MARGE + colonne * (tailleCase + espace);
+          const caseYBas = y - tailleCase;
+          const dims = dimensionsContenues(image.width, image.height, tailleCase);
+          page.drawImage(image, {
+            x: caseX + dims.decalageX,
+            y: caseYBas + dims.decalageY,
+            width: dims.largeur,
+            height: dims.hauteur,
+          });
 
           colonne = (colonne + 1) % colonnes;
           if (colonne === 0) y -= tailleCase + espace;
