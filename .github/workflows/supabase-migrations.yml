@@ -7,6 +7,12 @@ name: Migrations Supabase
 # action manuelle ne doit etre necessaire pour qu'un push mette a jour
 # le bon environnement.
 
+env:
+  # references de projet, pas des secrets (visibles dans les URLs
+  # publiques du dashboard) - seul SUPABASE_ACCESS_TOKEN doit rester prive.
+  SUPABASE_DEV_PROJECT_REF: ozjbkpgoatagqyrlxdry
+  SUPABASE_PROD_PROJECT_REF: cgxnrgkalhfyfkpesshq
+
 on:
   push:
     branches: ["**"]
@@ -27,7 +33,7 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
-          supabase link --project-ref ${{ secrets.SUPABASE_DEV_PROJECT_REF }}
+          supabase link --project-ref $SUPABASE_DEV_PROJECT_REF
           supabase db push --linked
 
   prod:
@@ -43,5 +49,5 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
-          supabase link --project-ref ${{ secrets.SUPABASE_PROD_PROJECT_REF }}
+          supabase link --project-ref $SUPABASE_PROD_PROJECT_REF
           supabase db push --linked
