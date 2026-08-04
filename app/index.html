@@ -3068,13 +3068,23 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      CLAUDE.md « jamais de donnée inventée » — jamais de repli inventé
      non plus ici, on affiche ce qu'on sait ou rien). */
   var CACHE_METEO = {};
+  /* la liste Agenda affiche les 24 jours d'un coup, sur ~18 lieux
+     distincts : sans étalement, ça part en rafale et Open-Meteo répond
+     429 (trop de requêtes à la même seconde) sur les derniers appels.
+     300ms entre chaque NOUVEAU lieu (pas chaque jour, les doublons de
+     lieu réutilisent déjà la même promesse) suffit à rester sous le
+     radar sans que l'attente se voie à l'écran. */
+  var meteoFileAttente = 0;
   function chargerJoursMeteo(lat, lon){
     var cle = lat.toFixed(2) + "," + lon.toFixed(2);
     if(!CACHE_METEO[cle]){
+      var delai = meteoFileAttente * 300;
+      meteoFileAttente++;
       var url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon +
         "&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true" +
         "&past_days=92&forecast_days=16&timezone=auto";
-      CACHE_METEO[cle] = fetch(url)
+      CACHE_METEO[cle] = new Promise(function(resolve){ setTimeout(resolve, delai); })
+        .then(function(){ return fetch(url); })
         .then(function(r){ if(!r.ok) throw new Error("météo HTTP " + r.status); return r.json(); })
         .catch(function(e){ console.error("Météo indisponible :", e); return null; });
     }
@@ -3126,6 +3136,22 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       if(!m){ item.remove(); return; }
       var libelle = m.periode === "passe" ? " (relevé)" : m.periode === "prevu" ? " (prévu)" : "";
       item.innerHTML = iconeMeteo(m.code) + " " + m.temperature + "°" + libelle;
+    });
+    return item;
+  }
+  /* version compacte (icône + température seule, sans libellé "prévu"/
+     "relevé") pour les cartes de la liste Agenda et de l'accueil
+     (Aujourd'hui/Demain) — même style que .cdist déjà en place, pas le
+     format pilule de la vue détail. Même cache par position que
+     creerItemMeteo : afficher toute la liste des 24 jours ne coûte
+     qu'un appel réseau par lieu distinct, pas par carte. */
+  function creerItemMeteoCompact(j){
+    if(j.lat == null || j.lon == null) return null;
+    var item = el("span", "cdist meteo");
+    item.innerHTML = "…";
+    chargerMeteo(j).then(function(m){
+      if(!m){ item.remove(); return; }
+      item.innerHTML = iconeMeteo(m.code) + " " + m.temperature + "°";
     });
     return item;
   }
@@ -3454,6 +3480,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     var meta = el("div", "cmeta");
     meta.appendChild(el("span", "kind " + j.cat, j.badge));
     meta.appendChild(el("span", "cdist", j.rail1 + " · " + j.rail2));
+    var iMeteoCarte = creerItemMeteoCompact(j);
+    if(iMeteoCarte) meta.appendChild(iMeteoCarte);
     a.appendChild(meta);
 
     return a;
