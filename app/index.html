@@ -957,61 +957,10 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .urg-memo li{position:relative;padding:7px 0 7px 16px;font-size:.84rem;color:var(--pietra)}
 .urg-memo li::before{content:"—";position:absolute;left:0}
 
-/* ---------- onglet Admin (correction du quiz) ---------- */
+/* ---------- onglet Admin (fréquentation) ---------- */
 .admin-zone{margin-top:14px}
-.admin-jours{display:flex;flex-direction:column}
-.admin-jour-bouton{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  width:100%;text-align:left;background:none;color:var(--ink);font-family:inherit;
-  border:0;border-bottom:1px solid var(--rule-soft);padding:16px 0;cursor:pointer;
-}
-.admin-jour-bouton:last-child{border-bottom:0}
-.admin-jour-bouton:hover .admin-jour-titre{color:var(--rosso)}
-.admin-jour-bouton:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
-.admin-jour-bouton.actif .admin-jour-titre{color:var(--rosso)}
-.admin-jour-titre{font-weight:600;font-size:.96rem}
-.admin-jour-statut-corrige{font-family:var(--font-mono);font-size:.78rem;color:var(--oliva);font-weight:600;flex:none}
-.admin-jour-statut-attente{font-family:var(--font-mono);font-size:.78rem;color:var(--rosso);flex:none}
-.admin-jour-statut-vide{font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft);font-style:italic;flex:none}
-.admin-carte-jour{margin-top:30px;padding-top:24px;border-top:2px solid var(--ink)}
-.admin-carte-jour > h3{font-size:1.08rem;margin:0 0 16px;font-weight:600}
-.admin-recap{margin:0 0 22px}
-.admin-recap > h4{
-  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--pietra);margin:0 0 10px;font-weight:600;
-}
-.admin-membre{padding:16px 0;border-top:1px solid var(--rule-soft)}
-.admin-membre:first-child{border-top:0;padding-top:0}
-.admin-membre-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
-.admin-membre-nom{font-weight:600}
-.admin-membre-score{font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft)}
-.admin-question-ligne{display:flex;gap:8px;font-size:.86rem;padding:5px 0;align-items:baseline;line-height:1.4}
-.admin-question-ligne .admin-puce{flex:none;width:16px}
-.admin-correcte{color:var(--oliva)}
-.admin-incorrecte{color:var(--rosso)}
-.admin-sans-reponse{color:var(--ink-soft);font-style:italic}
-.admin-actions{margin-top:12px}
-.admin-bouton{
-  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;
-  text-transform:uppercase;font-weight:600;padding:10px 15px;
-  border:1px solid var(--rosso);border-radius:999px;background:transparent;
-  color:var(--rosso);cursor:pointer;
-}
-.admin-bouton:hover{background:var(--rosso);color:var(--paper)}
-.admin-bouton:disabled{opacity:.5;cursor:default}
 .admin-info{font-size:.85rem;color:var(--ink-soft);margin:8px 0 0}
 .admin-erreur{color:var(--rosso)}
-.admin-sousonglets{display:flex;gap:8px;margin:20px 0 0}
-.admin-sousonglet{
-  font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;
-  text-transform:uppercase;font-weight:600;padding:9px 16px;
-  border:1px solid var(--rule-soft);border-radius:999px;background:transparent;
-  color:var(--ink-soft);cursor:pointer;
-}
-.admin-sousonglet:hover{border-color:var(--rosso);color:var(--rosso)}
-.admin-sousonglet:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
-.admin-sousonglet[aria-current="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.admin-sous-panel{margin-top:18px}
 .admin-frequentation{margin-top:0}
 .admin-souszone-titre{font-size:1.08rem;margin:0 0 12px;font-weight:600}
 .admin-freq-soustitre{
@@ -2171,7 +2120,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     try{ window.localStorage.setItem(STOCKAGE_REGARDER, JSON.stringify(etatRegarder)); }catch(e){}
   }
   /* pousse l'ensemble des cases cochées vers Supabase — même volume et
-     même stratégie best-effort que synchroniserReponsesQuiz : hors
+     même stratégie best-effort que corrigerReponseQuiz : hors
      connexion, le localStorage a déjà fait foi, et le prochain clic en
      ligne retentera. Nécessaire pour que le classement (voir plus bas)
      puisse lire la progression des autres membres de la famille. */
@@ -2242,25 +2191,26 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   function sauvegarderEtatQuiz(){
     try{ window.localStorage.setItem(STOCKAGE_QUIZ, JSON.stringify(etatQuiz)); }catch(e){}
   }
-  /* pousse l'ensemble des réponses en attente vers Supabase — coup par
-     coup plutôt qu'un diff, le volume (quelques dizaines de questions max)
-     ne justifie pas plus fin. Best-effort : hors connexion, l'upsert
-     échoue silencieusement, sauvegarderEtatQuiz() (localStorage) a déjà
-     fait foi pour cet appareil, et le prochain démarrage en ligne
-     retentera via ce même appel au clic suivant. */
-  function synchroniserReponsesQuiz(){
-    if(!modeFamille || !utilisateurId || !voyageId) return;
-    var quizEtatReseau = {};
-    Object.keys(etatQuiz).forEach(function(qid){
-      quizEtatReseau[qid] = { reponse: etatQuiz[qid].reponse };
-    });
-    supabaseClient.from("progression").upsert({
-      voyage_id: voyageId,
-      utilisateur_id: utilisateurId,
-      quiz_etat: quizEtatReseau,
-      maj_le: new Date().toISOString()
-    }, { onConflict: "voyage_id,utilisateur_id" }).then(function(res){
-      if(res.error) console.error("Échec de synchronisation du quiz :", res.error);
+  /* auto-correction : chacun ayant désormais un vrai compte, plus besoin
+     qu'un adulte prenne le téléphone de chacun pour valider après coup
+     (voir CLAUDE.md/l'ancien onglet Admin) — repondre_quiz (fonction
+     security definer, migration 0013) compare la réponse à la bonne
+     réponse (quiz_reponses, jamais exposée au client) et met à jour
+     progression (quiz_etat, quiz_resultats, quiz_score, quiz_corrige) en
+     une seule opération côté serveur, puis renvoie l'index correct pour
+     un affichage immédiat. Best-effort : hors connexion, l'appel échoue
+     silencieusement, la réponse reste "en attente" localement et sera
+     retentée au prochain chargement en ligne (voir la relance juste après
+     migrerDepuisItalie2026 plus haut). */
+  function corrigerReponseQuiz(id){
+    if(!modeFamille || !utilisateurId || !voyageId) return Promise.resolve();
+    var e = etatQuiz[id];
+    if(!e || e.reponse == null || e.corrige) return Promise.resolve();
+    return supabaseClient.rpc("repondre_quiz", { cible_question_id: id, cible_reponse: e.reponse }).then(function(res){
+      if(res.error){ console.error("Échec de correction du quiz :", res.error); return; }
+      etatQuiz[id] = { reponse: e.reponse, corrige: true, indexCorrect: res.data, correcte: (e.reponse === res.data) };
+      sauvegarderEtatQuiz();
+      rafraichirQuiz();
     });
   }
   /* la réponse reste modifiable tant que la question n'est pas corrigée. */
@@ -2268,8 +2218,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(etatQuiz[id] && etatQuiz[id].corrige) return;
     etatQuiz[id] = { reponse: choixIndex, corrige: false };
     sauvegarderEtatQuiz();
-    synchroniserReponsesQuiz();
     rafraichirQuiz();
+    corrigerReponseQuiz(id);
   }
 
   function estCoche(id){ return !!etatRegarder[id]; }
@@ -2339,11 +2289,17 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       sauvegarderEtatRegarder();
       sauvegarderEtatQuiz();
       synchroniserObservations();
-      synchroniserReponsesQuiz();
+      Object.keys(etatQuiz).forEach(function(id){ corrigerReponseQuiz(id); });
     }
     try{ window.localStorage.setItem(STOCKAGE_MIGRATION_ITALIE2026, "1"); }catch(e){}
   }
   migrerDepuisItalie2026();
+  /* réponses répondues mais jamais corrigées (posées hors connexion lors
+     d'une visite précédente) : on retente à chaque démarrage en ligne,
+     même logique de rattrapage que la migration ci-dessus. */
+  Object.keys(etatQuiz).forEach(function(id){
+    if(etatQuiz[id] && etatQuiz[id].reponse != null && !etatQuiz[id].corrige) corrigerReponseQuiz(id);
+  });
 
   /* un même jour peut être affiché deux fois à la fois (onglet Aujourd'hui
      et vue détail) : on resynchronise tous les rendus visibles plutôt que
@@ -3750,156 +3706,17 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     container.appendChild(memoWrap);
   }
 
-  /* --- onglet Admin : correction du quiz -----------------------------------
-     Repris de l'ancienne admin/index.html (voir git), en réutilisant
-     supabaseClient/voyageId/utilisateurId déjà acquis par demarrerCarnet
-     et l'aide el()/construireEnteteOnglet du moteur de rendu, pour rester
-     dans le même système visuel que les autres onglets plutôt qu'une
-     page à part. La bonne réponse de chaque question reste lue depuis
-     quiz_reponses (RLS réservée aux admins), jamais écrite ailleurs que
-     via la fonction security definer corriger_quiz. */
+  /* --- onglet Admin : fréquentation ----------------------------------
+     La correction du quiz n'est plus une action admin : chaque membre
+     famille se corrige lui-même en repondant (voir repondre_quiz, RPC
+     security definer, et choisirReponseQuiz plus haut) puisque tout est
+     desormais stocke en base par un vrai compte, plus besoin qu'un
+     adulte prenne le telephone de chacun pour valider apres coup.
+     Seule reste ici la lecture d'usage (visites), reservee aux comptes
+     admin par RLS. */
   function formaterDateAdmin(date){
     try{ return new Date(date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }); }
     catch(e){ return date; }
-  }
-  function nomMembreAdmin(membres, utilisateurId){
-    var m = membres.filter(function(x){ return x.utilisateur_id === utilisateurId; })[0];
-    if(m && m.prenom) return m.prenom;
-    return utilisateurId.slice(0, 8) + "…";
-  }
-  function statutJourAdmin(jour, progressions){
-    var aUneReponse = false, toutCorrige = true;
-    progressions.forEach(function(prog){
-      jour.questions.forEach(function(q){
-        var etat = prog.quiz_etat || {};
-        var resultats = prog.quiz_resultats || {};
-        if(etat[q.id] != null){
-          aUneReponse = true;
-          if(resultats[q.id] == null) toutCorrige = false;
-        }
-      });
-    });
-    if(!aUneReponse) return "vide";
-    return toutCorrige ? "corrige" : "attente";
-  }
-  function construireLigneQuestionAdmin(q, reponse, indexCorrect){
-    var ligne = el("div", "admin-question-ligne");
-    var texteCorrect = (indexCorrect != null && q.choix[indexCorrect]) ? q.choix[indexCorrect] : "?";
-    if(reponse == null){
-      ligne.appendChild(el("span", "admin-puce", "·"));
-      ligne.appendChild(el("span", "admin-sans-reponse", q.question + " — sans réponse (bonne réponse : " + texteCorrect + ")"));
-    } else {
-      var correcte = reponse === indexCorrect;
-      ligne.appendChild(el("span", "admin-puce " + (correcte ? "admin-correcte" : "admin-incorrecte"), correcte ? "✓" : "✗"));
-      var texte = q.question + " — répondu : " + (q.choix[reponse] || "?");
-      if(!correcte) texte += " (bonne réponse : " + texteCorrect + ")";
-      ligne.appendChild(el("span", correcte ? "admin-correcte" : "admin-incorrecte", texte));
-    }
-    return ligne;
-  }
-  function construireRecapJourAdmin(jour, membres, progressions, monId){
-    var recap = el("div", "admin-recap");
-    var auMoinsUn = false;
-    membres.forEach(function(m){
-      var prog = progressions.filter(function(p){ return p.utilisateur_id === m.utilisateur_id; })[0];
-      var etat = (prog && prog.quiz_etat) || {};
-      var resultats = (prog && prog.quiz_resultats) || {};
-      var questionsCorrigees = jour.questions.filter(function(q){ return etat[q.id] != null && resultats[q.id] != null; });
-      if(!questionsCorrigees.length) return;
-      if(!auMoinsUn){ recap.appendChild(el("h4", null, "Déjà corrigé")); auMoinsUn = true; }
-      var score = 0;
-      questionsCorrigees.forEach(function(q){ if(etat[q.id].reponse === resultats[q.id]) score += POINTS_PAR_BONNE_REPONSE_QUIZ; });
-      var bloc = el("div", "admin-membre");
-      var tete = el("div", "admin-membre-tete");
-      tete.appendChild(el("span", "admin-membre-nom", nomMembreAdmin(membres, m.utilisateur_id) + (m.utilisateur_id === monId ? " (vous)" : "")));
-      tete.appendChild(el("span", "admin-membre-score", score + " pts sur cette journée · " + questionsCorrigees.length + "/" + jour.questions.length + " corrigées"));
-      bloc.appendChild(tete);
-      questionsCorrigees.forEach(function(q){ bloc.appendChild(construireLigneQuestionAdmin(q, etat[q.id].reponse, resultats[q.id])); });
-      recap.appendChild(bloc);
-    });
-    recap.hidden = !auMoinsUn;
-    return recap;
-  }
-  function afficherCorrectionJourAdmin(jour, membres, progressions, monId, bonnesReponses, carteJour, onCorrection){
-    carteJour.innerHTML = "";
-    carteJour.hidden = false;
-    var recapEl = construireRecapJourAdmin(jour, membres, progressions, monId);
-    carteJour.appendChild(recapEl);
-    function rafraichirRecap(){
-      var nouveauRecap = construireRecapJourAdmin(jour, membres, progressions, monId);
-      recapEl.replaceWith(nouveauRecap);
-      recapEl = nouveauRecap;
-    }
-
-    carteJour.appendChild(el("h3", null, formaterDateAdmin(jour.date) + " — " + jour.titre));
-
-    var membresEnAttente = 0, quelquUnARepondu = false;
-    membres.forEach(function(m){
-      var prog = progressions.filter(function(p){ return p.utilisateur_id === m.utilisateur_id; })[0];
-      var etat = (prog && prog.quiz_etat) || {};
-      var resultatsConnus = (prog && prog.quiz_resultats) || {};
-      if(jour.questions.some(function(q){ return etat[q.id] != null; })) quelquUnARepondu = true;
-      var questionsEnAttente = jour.questions.filter(function(q){ return etat[q.id] != null && resultatsConnus[q.id] == null; });
-      if(!questionsEnAttente.length) return;
-      membresEnAttente++;
-
-      var resultatsFusionnes = Object.assign({}, resultatsConnus, bonnesReponses);
-      var blocMembre = el("div", "admin-membre");
-      var tete = el("div", "admin-membre-tete");
-      tete.appendChild(el("span", "admin-membre-nom", nomMembreAdmin(membres, m.utilisateur_id) + (m.utilisateur_id === monId ? " (vous)" : "")));
-      var scoreTotal = 0;
-      Object.keys(etat).forEach(function(qid){
-        if(etat[qid] && etat[qid].reponse != null && resultatsFusionnes[qid] != null && etat[qid].reponse === resultatsFusionnes[qid]){
-          scoreTotal += POINTS_PAR_BONNE_REPONSE_QUIZ;
-        }
-      });
-      tete.appendChild(el("span", "admin-membre-score", scoreTotal + " pts au total · " + questionsEnAttente.length + " question(s) à corriger sur ce jour"));
-      blocMembre.appendChild(tete);
-      questionsEnAttente.forEach(function(q){ blocMembre.appendChild(construireLigneQuestionAdmin(q, etat[q.id].reponse, bonnesReponses[q.id])); });
-
-      var actions = el("div", "admin-actions");
-      var boutonValider = el("button", "admin-bouton", "Valider pour " + nomMembreAdmin(membres, m.utilisateur_id));
-      boutonValider.type = "button";
-      var messageValidation = el("p", "admin-info");
-      boutonValider.addEventListener("click", function(){
-        boutonValider.disabled = true;
-        var resultatsJour = {};
-        jour.questions.forEach(function(q){ if(bonnesReponses[q.id] != null) resultatsJour[q.id] = bonnesReponses[q.id]; });
-        supabaseClient.rpc("corriger_quiz", {
-          cible_utilisateur_id: m.utilisateur_id,
-          cible_voyage_id: jour.voyage_id,
-          nouveau_score: scoreTotal,
-          nouveaux_resultats: resultatsJour
-        }).then(function(res){
-          if(res.error){
-            messageValidation.textContent = "Échec : " + res.error.message;
-            messageValidation.className = "admin-info admin-erreur";
-            boutonValider.disabled = false;
-            return;
-          }
-          if(prog){
-            prog.quiz_resultats = Object.assign({}, prog.quiz_resultats, resultatsJour);
-            prog.quiz_score = scoreTotal;
-            prog.quiz_corrige = true;
-          } else {
-            progressions.push({ utilisateur_id: m.utilisateur_id, quiz_etat: etat, quiz_resultats: resultatsJour, quiz_score: scoreTotal, quiz_corrige: true });
-          }
-          blocMembre.remove();
-          rafraichirRecap();
-          if(onCorrection) onCorrection();
-        });
-      });
-      actions.appendChild(boutonValider);
-      blocMembre.appendChild(actions);
-      blocMembre.appendChild(messageValidation);
-      carteJour.appendChild(blocMembre);
-    });
-
-    if(!membresEnAttente){
-      carteJour.appendChild(el("p", "admin-info", quelquUnARepondu
-        ? "Rien à corriger : tout le monde est déjà corrigé sur cette journée."
-        : "Personne n'a encore répondu au quiz de cette journée."));
-    }
   }
   /* --- fréquentation famille : tableau de bord (indicateurs, barres par
      membre, courbe des visites par jour, top des onglets), lu depuis la
@@ -4111,119 +3928,21 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       });
   }
 
-  /* --- console d'administration : sous-onglets internes -------------------
-     Deux sections (Quiz, Fréquentation), une seule visible à la fois — même
-     mécanique que la barre d'onglets principale (aria-current, panneaux
-     cachés plutôt que reconstruits), pour ne pas obliger à défiler toute
-     la correction du quiz avant d'atteindre les statistiques. */
-  function construirePanelAdmin(container, voyageId, utilisateurId){
+  /* --- console d'administration : fréquentation ----------------------------
+     Seule section restante depuis le passage à l'auto-correction du quiz
+     (voir repondre_quiz) : plus besoin de sous-onglets. */
+  function construirePanelAdmin(container, voyageId){
     container.appendChild(construireEnteteOnglet("Admin"));
-
-    var sousOnglets = el("div", "admin-sousonglets");
-    sousOnglets.setAttribute("role", "tablist");
-    var boutonsSousOnglets = {};
-    var zonesSousOnglets = {};
-    function creerSousOnglet(nom, libelle){
-      var bouton = document.createElement("button");
-      bouton.type = "button";
-      bouton.className = "admin-sousonglet";
-      bouton.setAttribute("role", "tab");
-      bouton.textContent = libelle;
-      bouton.addEventListener("click", function(){ afficherSousOnglet(nom); });
-      boutonsSousOnglets[nom] = bouton;
-      sousOnglets.appendChild(bouton);
-      var zone = el("div", "admin-sous-panel");
-      zonesSousOnglets[nom] = zone;
-      return zone;
-    }
-    function afficherSousOnglet(nom){
-      Object.keys(zonesSousOnglets).forEach(function(id){
-        zonesSousOnglets[id].hidden = (id !== nom);
-        boutonsSousOnglets[id].setAttribute("aria-current", id === nom ? "true" : "false");
-      });
-    }
-
-    var zoneQuiz = creerSousOnglet("quiz", "Quiz");
-    var zoneFrequentation = creerSousOnglet("frequentation", "Fréquentation");
-    container.appendChild(sousOnglets);
-    container.appendChild(zoneQuiz);
-    container.appendChild(zoneFrequentation);
-    afficherSousOnglet("quiz");
 
     var zone = el("div", "admin-zone");
     zone.appendChild(el("p", "admin-info", "Chargement…"));
-    zoneQuiz.appendChild(zone);
+    container.appendChild(zone);
 
-    supabaseClient.from("journees").select("id, date, titre, ordre, quiz_questions(id, question, choix, ordre)")
-      .eq("voyage_id", voyageId).order("ordre", { ascending: true })
-      .then(function(resJournees){
-        if(resJournees.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement du quiz impossible : " + resJournees.error.message)); return; }
-
-        var jours = (resJournees.data || [])
-          .filter(function(j){ return j.quiz_questions && j.quiz_questions.length; })
-          .map(function(j){
-            return {
-              id: j.id, date: j.date, titre: j.titre, voyage_id: voyageId,
-              questions: j.quiz_questions.slice().sort(function(a, b){ return a.ordre - b.ordre; })
-                .map(function(q){ return { id: q.id, question: q.question, choix: q.choix }; })
-            };
-          });
-
-        if(!jours.length){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info", "Aucune question de quiz pour ce voyage.")); return; }
-
-        var idsQuestions = [];
-        jours.forEach(function(j){ j.questions.forEach(function(q){ idsQuestions.push(q.id); }); });
-
-        Promise.all([
-          supabaseClient.from("membres_famille").select("utilisateur_id, prenom").eq("voyage_id", voyageId),
-          supabaseClient.from("progression").select("utilisateur_id, quiz_etat, quiz_resultats, quiz_score, quiz_corrige").eq("voyage_id", voyageId),
-          supabaseClient.from("quiz_reponses").select("question_id, reponse_correcte").in("question_id", idsQuestions)
-        ]).then(function(resultats){
-          var resMembres = resultats[0], resProgression = resultats[1], resReponses = resultats[2];
-          if(resMembres.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement des membres impossible : " + resMembres.error.message)); return; }
-          if(resProgression.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement des réponses impossible : " + resProgression.error.message)); return; }
-          if(resReponses.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement des bonnes réponses impossible : " + resReponses.error.message)); return; }
-
-          var membres = resMembres.data || [];
-          var progressions = resProgression.data || [];
-          construireBlocFrequentation(zoneFrequentation, voyageId, membres);
-          var bonnesReponses = {};
-          (resReponses.data || []).forEach(function(r){ bonnesReponses[r.question_id] = r.reponse_correcte; });
-
-          zone.innerHTML = "";
-          var listeJours = el("div", "admin-jours");
-          zone.appendChild(listeJours);
-          var carteJour = el("div", "admin-carte-jour");
-          carteJour.hidden = true;
-          zone.appendChild(carteJour);
-
-          var boutonsJours = {}, statutSpans = {};
-          function rafraichirStatutJour(jour){
-            var statut = statutJourAdmin(jour, progressions);
-            var span = statutSpans[jour.id];
-            span.className = "admin-jour-statut-" + statut;
-            span.textContent = statut === "vide" ? "personne n'a répondu" : statut === "corrige" ? "✓ corrigée" : "en attente de correction";
-          }
-
-          jours.forEach(function(jour){
-            var statut = statutJourAdmin(jour, progressions);
-            var bouton = el("button", "admin-jour-bouton");
-            bouton.type = "button";
-            var gauche = el("span", "admin-jour-titre", formaterDateAdmin(jour.date) + " — " + jour.titre);
-            var droite = el("span", "admin-jour-statut-" + statut,
-              statut === "vide" ? "personne n'a répondu" : statut === "corrige" ? "✓ corrigée" : "en attente de correction");
-            bouton.appendChild(gauche);
-            bouton.appendChild(droite);
-            bouton.addEventListener("click", function(){
-              Object.keys(boutonsJours).forEach(function(id){ boutonsJours[id].classList.toggle("actif", id === jour.id); });
-              afficherCorrectionJourAdmin(jour, membres, progressions, utilisateurId, bonnesReponses, carteJour, function(){ rafraichirStatutJour(jour); });
-              carteJour.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-            boutonsJours[jour.id] = bouton;
-            statutSpans[jour.id] = droite;
-            listeJours.appendChild(bouton);
-          });
-        });
+    supabaseClient.from("membres_famille").select("utilisateur_id, prenom").eq("voyage_id", voyageId)
+      .then(function(res){
+        if(res.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement des membres impossible : " + res.error.message)); return; }
+        zone.remove();
+        construireBlocFrequentation(container, voyageId, res.data || []);
       });
   }
 
@@ -4519,7 +4238,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      l'app (voir historique) ; session et rôle sont déjà acquis ici via
      sessionFamille/estAdmin, donc pas de nouvel écran de connexion. */
   if(estAdmin){
-    construirePanelAdmin(document.getElementById("panel-admin"), voyageId, utilisateurId);
+    construirePanelAdmin(document.getElementById("panel-admin"), voyageId);
   }
 
   /* --- panneau À réserver -------------------------------------------------- */
