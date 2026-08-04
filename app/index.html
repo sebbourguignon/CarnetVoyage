@@ -1308,6 +1308,14 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 }
 .photos-item.mine img{outline:1px solid var(--rosso)}
 
+.carnet-bouton-generer{
+  font-family:var(--font-body);font-size:.9rem;font-weight:600;
+  color:var(--paper);background:var(--rosso);border:none;
+  border-radius:4px;padding:12px 18px;cursor:pointer;
+  display:block;margin:0 0 12px;
+}
+.carnet-bouton-generer:disabled{opacity:.4;cursor:default}
+
 /* à regarder : contenu de lecture, pas une liste technique — on lui
    donne de l'air (grand interligne, respiration entre les entrées).
    Chasse au trésor : chaque entrée est cochable (case custom sur un
@@ -1667,6 +1675,7 @@ body.mode-public .regarder-item{cursor:default}
    seul la largeur des deux restants, aucune règle de mise en page
    supplémentaire nécessaire. */
 body.mode-public .tabbar a[data-tab="chasse"],
+body.mode-public .tabbar a[data-tab="carnet"],
 body.mode-public .tabbar a[data-tab="reserver"],
 body.mode-public .tabbar a[data-tab="urgences"]{display:none}
 /* onglet Admin : réservé aux comptes membres_famille.role="admin" du
@@ -1785,6 +1794,8 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
 
 <section class="panel" id="panel-chasse" data-panel="chasse" hidden></section>
 
+<section class="panel" id="panel-carnet" data-panel="carnet" hidden></section>
+
 <section class="panel" id="panel-reserver" data-panel="reserver" hidden></section>
 
 <section class="panel" id="panel-urgences" data-panel="urgences" hidden></section>
@@ -1820,6 +1831,10 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
     <a href="#chasse" data-tab="chasse">
       <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6.2"/><path d="M8.6 14.5 6.5 21l5.5-2.6L17.5 21l-2.1-6.5"/></svg></span>
       <span class="tab-lbl">Chasse</span>
+    </a>
+    <a href="#carnet" data-tab="carnet">
+      <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3.5" width="15" height="17" rx="1.6"/><path d="M9 3.5v17"/></svg></span>
+      <span class="tab-lbl">Carnet</span>
     </a>
     <a href="#reserver" data-tab="reserver">
       <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5h10v15l-5-3.6-5 3.6Z"/></svg></span>
@@ -2554,6 +2569,11 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     Array.prototype.forEach.call(document.querySelectorAll(".photos[data-jour-photos='" + jourId + "'] .photos-grille-conteneur"), function(conteneur){
       contenuGaleriePhotos(conteneur, j);
     });
+    /* l'onglet Carnet affiche un compte de photos global : à refaire à
+       chaque changement plutôt que de suivre les deltas un par un, le
+       volume (quelques dizaines de photos sur tout un voyage) rend ça
+       largement assez rapide pour rester imperceptible. */
+    if(modeFamille) rendrePanelCarnet();
   }
 
   function construireBlocPhotos(j){
@@ -2588,6 +2608,93 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     contenuGaleriePhotos(conteneur, j);
 
     return bloc;
+  }
+
+  /* --- onglet Carnet : generation du PDF a emporter (Edge Function
+     "generer-carnet", voir conception) --------------------------------
+     Deux modes, meme reutilisation que la conception l'a fixe :
+     - "perso" : uniquement les photos du membre connecte, quelle que
+       soit leur visibilite -- chacun peut se faire son propre souvenir.
+     - "famille" : les photos marquees "partagee" par n'importe quel
+       membre -- jamais par defaut, uniquement celles dont l'auteur a
+       explicitement accepte qu'elles y figurent (voir construireBlocPhotos).
+     Generation disponible a tout moment, meme partielle -- pas de notion
+     de voyage "termine" (voir conversation de conception). L'Edge
+     Function elle-meme est un chantier separe : ce panneau reste
+     fonctionnel (compte les photos, affiche l'etat) meme avant qu'elle
+     existe, avec un message clair si l'appel echoue plutot qu'un bouton
+     qui ne fait rien. */
+  function statistiquesPhotos(){
+    var joursAvecPhotos = 0, total = 0, partageesTotal = 0;
+    Object.keys(PHOTOS_PAR_JOURNEE).forEach(function(uuid){
+      var liste = PHOTOS_PAR_JOURNEE[uuid] || [];
+      if(liste.length) joursAvecPhotos++;
+      total += liste.length;
+      partageesTotal += liste.filter(function(p){ return p.visibilite === "partagee"; }).length;
+    });
+    var mesPhotos = 0;
+    Object.keys(PHOTOS_PAR_JOURNEE).forEach(function(uuid){
+      (PHOTOS_PAR_JOURNEE[uuid] || []).forEach(function(p){ if(p.membre_id === utilisateurId) mesPhotos++; });
+    });
+    return { joursAvecPhotos: joursAvecPhotos, total: total, partageesTotal: partageesTotal, mesPhotos: mesPhotos };
+  }
+
+  function demanderGenerationCarnet(mode, majBouton){
+    majBouton("Génération…");
+    return supabaseClient.functions.invoke("generer-carnet", {
+      body: { voyage_id: voyageId, mode: mode }
+    }).then(function(res){
+      if(res.error) throw res.error;
+      var url = res.data && res.data.url;
+      if(!url) throw new Error("réponse inattendue");
+      window.open(url, "_blank", "noopener");
+    }).catch(function(err){
+      console.error("Échec de génération du carnet :", err);
+      window.alert("La génération du carnet n'est pas encore disponible — revenez un peu plus tard dans le voyage.");
+    }).then(function(){
+      majBouton(null);
+    });
+  }
+
+  function construireBoutonGeneration(libelleInitial, mode){
+    var bouton = el("button", "carnet-bouton-generer", libelleInitial);
+    bouton.type = "button";
+    bouton.addEventListener("click", function(){
+      demanderGenerationCarnet(mode, function(etat){
+        bouton.textContent = etat || libelleInitial;
+        bouton.disabled = !!etat;
+      });
+    });
+    return bouton;
+  }
+
+  function rendrePanelCarnet(){
+    var panel = document.getElementById("panel-carnet");
+    panel.innerHTML = "";
+    panel.appendChild(construireEnteteOnglet("Carnet"));
+
+    var stats = statistiquesPhotos();
+    var bloc = el("div", "block");
+    bloc.appendChild(el("p", "tagline",
+      stats.total
+        ? stats.total + (stats.total > 1 ? " photos ajoutées sur " : " photo ajoutée sur ") +
+          stats.joursAvecPhotos + (stats.joursAvecPhotos > 1 ? " journées." : " journée.")
+        : "Aucune photo ajoutée pour l'instant — ajoutez-en depuis une journée pour commencer votre carnet."
+    ));
+
+    var boutonPerso = construireBoutonGeneration("Générer mon carnet", "perso");
+    boutonPerso.disabled = stats.mesPhotos === 0;
+    bloc.appendChild(boutonPerso);
+
+    if(stats.partageesTotal > 0){
+      var boutonFamille = construireBoutonGeneration("Générer le carnet familial", "famille");
+      bloc.appendChild(boutonFamille);
+    } else {
+      bloc.appendChild(el("p", "photos-vide",
+        "Le carnet familial regroupe les photos que chacun choisit de partager (bouton « Partager » sur une photo) — aucune pour l'instant."));
+    }
+
+    panel.appendChild(bloc);
   }
 
   /* --- onglet À réserver : quelles journées ont une action réelle -------
@@ -4114,7 +4221,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      graphique : cohérent avec le reste du moteur de rendu (voir les
      icônes de la barre d'onglets, elles aussi du SVG écrit à la main). */
   var NOMS_ONGLETS_FREQUENTATION = {
-    aujourdhui: "Accueil", jours: "Agenda", chasse: "Chasse",
+    aujourdhui: "Accueil", jours: "Agenda", chasse: "Chasse", carnet: "Carnet",
     reserver: "Réserver", urgences: "Urgences", admin: "Admin"
   };
   function formaterDureeFrequentation(secondes){
@@ -4634,6 +4741,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
   /* --- panneau Chasse au trésor -------------------------------------------- */
   rendrePanelChasse();
+
+  /* --- panneau Carnet (generation PDF) ------------------------------------
+     Entierement reserve aux comptes famille (photos, voir migration 0018) :
+     rien a construire pour un visiteur public, contrairement a Chasse qui
+     garde un contenu commun. */
+  if(modeFamille) rendrePanelCarnet();
 
   /* --- recherche du jour courant ------------------------------------------
      Comparaison de chaînes valide ici : tous les id sont "d-MMJJ", même
@@ -5797,7 +5910,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   }
 
   /* --- routage par ancre --------------------------------------------------- */
-  var PANELS = ["aujourdhui", "jours", "chasse", "reserver", "urgences", "admin"];
+  var PANELS = ["aujourdhui", "jours", "chasse", "carnet", "reserver", "urgences", "admin"];
   var tabbar = document.getElementById("tabbar");
 
   function afficherPanel(nom, scrollY){
@@ -5834,7 +5947,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      jamais sur un onglet caché ni une page vide. */
   function ancreVersOngletMasque(h){
     if(h === "admin") return !estAdmin;
-    return !modeFamille && (h === "chasse" || h === "urgences" || /^reserver(-\d{4})?$/.test(h));
+    return !modeFamille && (h === "chasse" || h === "carnet" || h === "urgences" || /^reserver(-\d{4})?$/.test(h));
   }
   function route(){
     if(ancreVersOngletMasque((location.hash || "").slice(1))){
@@ -5868,6 +5981,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(h === "aujourdhui"){ rendreAujourdhui(); afficherPanel("aujourdhui"); document.title = titreCarnet(); }
     else if(h === "urgences"){ afficherPanel("urgences"); titrerOnglet("urgences"); }
     else if(h === "chasse"){ afficherPanel("chasse"); titrerOnglet("chasse"); }
+    else if(h === "carnet"){ afficherPanel("carnet"); titrerOnglet("carnet"); }
     else if(h === "reserver"){ afficherPanel("reserver", detailEtaitOuvert ? scrollPositions.reserver : 0); titrerOnglet("reserver"); }
     else if(h === "admin"){ afficherPanel("admin"); titrerOnglet("admin"); }
     else if(h === "jours"){
