@@ -116,8 +116,39 @@ Deno.serve(async (requete) => {
     if (erreurVoyage || !voyage) return jsonResponse({ error: "voyage introuvable ou acces refuse" }, 404);
 
     const { data: journees, error: erreurJournees } = await supabaseUtilisateur
-      .from("journees").select("id, date, titre, accroche").eq("voyage_id", voyage_id).order("ordre", { ascending: true });
+      .from("journees")
+      .select("id, date, titre, accroche, rail1, fil, lieux(nom, ordre)")
+      .eq("voyage_id", voyage_id).order("ordre", { ascending: true });
     if (erreurJournees) return jsonResponse({ error: erreurJournees.message }, 500);
+
+    // Surcharges de texte de carnet (migration 0020) : uniquement en mode
+    // perso, propres a l'appelant -- le carnet familial n'a pas de
+    // proprietaire par journee, il reste toujours sur le texte automatique.
+    const textesParJournee = new Map<string, string>();
+    if (mode === "perso") {
+      const { data: textesCarnet, error: erreurTextes } = await supabaseUtilisateur
+        .from("carnet_textes").select("journee_id, texte")
+        .eq("voyage_id", voyage_id).eq("membre_id", utilisateurId);
+      if (erreurTextes) return jsonResponse({ error: erreurTextes.message }, 500);
+      for (const t of textesCarnet || []) textesParJournee.set(t.journee_id, t.texte);
+    }
+
+    // Meme gabarit que texteAutoJournee (app/index.html) : assemblage de
+    // champs deja verifies (titre, accroche, rail1, lieux/fil), jamais de
+    // donnee inventee.
+    function texteAutoJournee(j: { titre: string; accroche: string | null; rail1: string | null; fil: { texte: string }[] | null; lieux: { nom: string; ordre: number }[] | null }): string {
+      const titre = String(j.titre || "").replace(/<[^>]+>/g, "");
+      let debut = titre + (j.rail1 ? ` — ${j.rail1}` : "");
+      const suite: string[] = [];
+      if (j.accroche) suite.push(String(j.accroche).replace(/<[^>]+>/g, ""));
+      const lieuxNoms = (j.lieux || []).slice().sort((a, b) => a.ordre - b.ordre).map((l) => l.nom).filter(Boolean);
+      if (lieuxNoms.length) {
+        suite.push(`Au programme : ${lieuxNoms.join(", ")}.`);
+      } else if (j.fil && j.fil.length) {
+        suite.push(`Au programme : ${j.fil.map((f) => String(f.texte || "").replace(/<[^>]+>/g, "")).join(" ")}`);
+      }
+      return debut + (suite.length ? `. ${suite.join(" ")}` : ".");
+    }
 
     let requetePhotos = supabaseUtilisateur.from("photos").select("*").eq("voyage_id", voyage_id);
     requetePhotos = mode === "perso"
@@ -175,13 +206,34 @@ Deno.serve(async (requete) => {
       page.drawText(titreJour, { x: MARGE, y, size: 22, font: policeTitre, color: INCHIOSTRO, maxWidth: LARGEUR - MARGE * 2 });
       y -= 16;
       page.drawRectangle({ x: MARGE, y, width: 28, height: 2, color: ROSSO });
-      y -= 30;
+      y -= 26;
+
+      // paragraphe de contexte : surcharge de l'utilisateur (mode perso)
+      // ou gabarit automatique -- jamais vide, voir texteAutoJournee.
+      // pdf-lib retourne les metriques de mise en page (dont le nombre de
+      // lignes produites par le retour a la ligne automatique via
+      // maxWidth), utilisees pour reserver exactement la place occupee
+      // plutot qu'une estimation au juger.
+      const texteJour = textesParJournee.get(j.id) || texteAutoJournee(j);
+      const tailleTexte = 10.5, interligne = 15;
+      const metriques = page.drawText(texteJour, {
+        x: MARGE, y, size: tailleTexte, font: policeTexte, color: INCHIOSTRO,
+        maxWidth: LARGEUR - MARGE * 2, lineHeight: interligne,
+      });
+      const nbLignes = (metriques as unknown as { numberOfLines?: number })?.numberOfLines
+        ?? Math.max(1, Math.ceil(policeTexte.widthOfTextAtSize(texteJour, tailleTexte) / (LARGEUR - MARGE * 2)));
+      y -= nbLignes * interligne + 20;
 
       // grille 2 colonnes, chaque photo mise a l'echelle "contain" et
-      // centree dans sa case (jamais de deformation, voir dimensionsContenues).
+      // centree dans sa case (jamais de deformation, voir dimensionsContenues) ;
+      // une bande reservee sous chaque case affiche le commentaire de la
+      // photo (photos.legende) s'il existe.
       const colonnes = 2;
       const espace = 14;
-      const tailleCase = (LARGEUR - MARGE * 2 - espace * (colonnes - 1)) / colonnes;
+      const largeurCase = (LARGEUR - MARGE * 2 - espace * (colonnes - 1)) / colonnes;
+      const hauteurLegende = 26;
+      const tailleCase = largeurCase; // cases carrees : largeur = hauteur de la zone image
+      const hauteurBloc = tailleCase + hauteurLegende;
 
       let colonne = 0;
       for (const photo of photosDuJour) {
@@ -192,23 +244,29 @@ Deno.serve(async (requete) => {
           const octets = new Uint8Array(await fichier.arrayBuffer());
           const image = await pdf.embedJpg(octets).catch(() => pdf.embedPng(octets));
 
-          if (y - tailleCase < 50) {
+          if (y - hauteurBloc < 50) {
             page = nouvellePage();
             y = HAUTEUR - 70;
             colonne = 0;
           }
-          const caseX = MARGE + colonne * (tailleCase + espace);
-          const caseYBas = y - tailleCase;
+          const caseX = MARGE + colonne * (largeurCase + espace);
+          const imageYBas = y - tailleCase;
           const dims = dimensionsContenues(image.width, image.height, tailleCase);
           page.drawImage(image, {
             x: caseX + dims.decalageX,
-            y: caseYBas + dims.decalageY,
+            y: imageYBas + dims.decalageY,
             width: dims.largeur,
             height: dims.hauteur,
           });
+          if (photo.legende) {
+            page.drawText(String(photo.legende).slice(0, 140), {
+              x: caseX, y: imageYBas - 14, size: 8.5, font: policeTexte, color: GRIGIO,
+              maxWidth: largeurCase, lineHeight: 11,
+            });
+          }
 
           colonne = (colonne + 1) % colonnes;
-          if (colonne === 0) y -= tailleCase + espace;
+          if (colonne === 0) y -= hauteurBloc + espace;
         } catch (_e) {
           continue; // une photo illisible ne doit pas casser tout le carnet
         }

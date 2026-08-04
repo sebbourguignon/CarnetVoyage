@@ -1307,6 +1307,31 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   background:none;border:none;padding:0;cursor:pointer;text-decoration:underline;
 }
 .photos-item.mine img{outline:1px solid var(--rosso)}
+.photos-item-legende{
+  font-family:var(--font-body);font-size:.78rem;color:var(--ink-soft);
+  margin:4px 0 0;line-height:1.4;
+}
+.photos-item-legende-champ{
+  font-family:var(--font-body);font-size:.8rem;color:var(--ink);
+  width:100%;box-sizing:border-box;margin:4px 0 0;padding:4px 6px;
+  border:1px solid var(--rule-soft);border-radius:3px;resize:vertical;
+}
+
+.carnet-texte-jour{margin:0 0 14px}
+.carnet-texte-jour-label{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.02em;
+  color:var(--ink-soft);text-transform:uppercase;margin:0 0 6px;
+}
+.carnet-texte-jour-champ{
+  font-family:var(--font-body);font-size:.9rem;line-height:1.6;color:var(--ink);
+  width:100%;box-sizing:border-box;padding:10px 12px;
+  border:1px solid var(--rule-soft);border-radius:4px;resize:vertical;
+  background:var(--paper);
+}
+.carnet-texte-jour-reinit{
+  font-family:var(--font-body);font-size:.78rem;color:var(--rosso);
+  background:none;border:none;padding:6px 0 0;cursor:pointer;text-decoration:underline;
+}
 
 .carnet-bouton-generer{
   font-family:var(--font-body);font-size:.9rem;font-weight:600;
@@ -1870,7 +1895,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
    tel quel le corps de l'ancienne IIFE, en recevant JOURS/BADGES/CARNET
    en paramètres plutôt qu'en globales.
    ========================================================================== */
-function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin, photosInitiales){
+function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin, photosInitiales, textesCarnetInitiaux){
   "use strict";
 
   /* --- constantes de filtres : propriété du moteur de rendu, pas du
@@ -2444,6 +2469,55 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     (PHOTOS_PAR_JOURNEE[p.journee_id] = PHOTOS_PAR_JOURNEE[p.journee_id] || []).push(p);
   });
 
+  /* --- texte de carnet par journee (voir supabase/migrations/0020) ------
+     Par defaut, un paragraphe assemble depuis des champs deja verifies
+     (titre, accroche, rail1, lieux/fil) -- jamais de donnee inventee,
+     juste de la mise en forme. Chaque membre peut le remplacer par son
+     propre texte pour SON carnet perso (une ligne carnet_textes = une
+     surcharge ; son absence = texte automatique, jamais une valeur
+     vide stockee). Le carnet familial, lui, n'a pas de proprietaire par
+     journee : il utilise toujours texteAutoJournee, voir generer-carnet. */
+  var TEXTES_CARNET_PAR_JOURNEE = {};
+  (textesCarnetInitiaux || []).forEach(function(t){ TEXTES_CARNET_PAR_JOURNEE[t.journee_id] = t; });
+
+  function texteAutoJournee(j){
+    var morceaux = [sansHtml(j.titre)];
+    if(j.rail1) morceaux[0] += " — " + j.rail1;
+    var suite = [];
+    if(j.accroche) suite.push(sansHtml(j.accroche));
+    var lieuxNoms = (j.lieux || []).map(function(l){ return l.nom; }).filter(Boolean);
+    if(lieuxNoms.length){
+      suite.push("Au programme : " + lieuxNoms.join(", ") + ".");
+    } else if(j.fil && j.fil.length){
+      suite.push("Au programme : " + j.fil.map(function(f){ return sansHtml(f.texte); }).join(" "));
+    }
+    return morceaux[0] + (suite.length ? ". " + suite.join(" ") : ".");
+  }
+
+  function texteCarnetJournee(j){
+    var surcharge = TEXTES_CARNET_PAR_JOURNEE[j.uuid];
+    return (surcharge && surcharge.texte) || texteAutoJournee(j);
+  }
+
+  function sauvegarderTexteCarnet(j, texte){
+    if(!modeFamille || !utilisateurId || !voyageId) return Promise.resolve();
+    return supabaseClient.from("carnet_textes").upsert({
+      voyage_id: voyageId, journee_id: j.uuid, membre_id: utilisateurId, texte: texte,
+      maj_le: new Date().toISOString()
+    }, { onConflict: "journee_id,membre_id" }).select().single().then(function(res){
+      if(res.error){ console.error("Échec d'enregistrement du texte de carnet :", res.error); return; }
+      TEXTES_CARNET_PAR_JOURNEE[j.uuid] = res.data;
+    });
+  }
+
+  function reinitialiserTexteCarnet(j){
+    if(!TEXTES_CARNET_PAR_JOURNEE[j.uuid]) return Promise.resolve();
+    return supabaseClient.from("carnet_textes").delete().eq("id", TEXTES_CARNET_PAR_JOURNEE[j.uuid].id).then(function(res){
+      if(res.error){ console.error("Échec de réinitialisation du texte de carnet :", res.error); return; }
+      delete TEXTES_CARNET_PAR_JOURNEE[j.uuid];
+    });
+  }
+
   var URLS_SIGNEES_PHOTOS = {};
   function urlSigneePhoto(storagePath){
     if(!URLS_SIGNEES_PHOTOS[storagePath]){
@@ -2528,6 +2602,15 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     });
   }
 
+  function legenderPhoto(photo, j, nouvelleLegende){
+    var texte = nouvelleLegende.trim();
+    return supabaseClient.from("photos").update({ legende: texte || null }).eq("id", photo.id).then(function(res){
+      if(res.error){ console.error("Échec d'enregistrement du commentaire :", res.error); return; }
+      photo.legende = texte || null;
+      rafraichirPhotos(j.id);
+    });
+  }
+
   function supprimerPhoto(photo, j){
     if(!window.confirm("Supprimer cette photo ?")) return Promise.resolve();
     return supabaseClient.storage.from("photos").remove([photo.storage_path]).then(function(){
@@ -2556,8 +2639,35 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       img.loading = "lazy";
       urlSigneePhoto(p.storage_path).then(function(url){ if(url) img.src = url; });
       figure.appendChild(img);
+
+      /* commentaire : affiche s'il existe, quel qu'en soit l'auteur (les
+         enfants doivent voir les commentaires des autres, pas seulement
+         les leurs) ; seul l'auteur de la photo peut l'ajouter/le modifier
+         -- c'est une legende de la photo, pas un fil de discussion. */
+      if(p.legende){
+        figure.appendChild(el("figcaption", "photos-item-legende", sansHtml(p.legende)));
+      }
+
       if(p.membre_id === utilisateurId){
         var actions = el("div", "photos-item-actions");
+        var boutonCommenter = el("button", "photos-item-bouton", p.legende ? "Modifier le commentaire" : "Commenter");
+        boutonCommenter.type = "button";
+        boutonCommenter.addEventListener("click", function(){
+          var existante = figure.querySelector(".photos-item-legende");
+          if(existante) figure.removeChild(existante);
+          var champ = document.createElement("textarea");
+          champ.className = "photos-item-legende-champ";
+          champ.value = p.legende || "";
+          champ.placeholder = "Un mot sur cette photo…";
+          champ.rows = 2;
+          figure.insertBefore(champ, actions);
+          champ.focus();
+          champ.addEventListener("blur", function(){ legenderPhoto(p, j, champ.value); });
+          champ.addEventListener("keydown", function(ev){
+            if(ev.key === "Enter" && !ev.shiftKey){ ev.preventDefault(); champ.blur(); }
+          });
+        });
+        actions.appendChild(boutonCommenter);
         var boutonPartage = el("button", "photos-item-bouton", p.visibilite === "partagee" ? "Partagée ✓" : "Partager");
         boutonPartage.type = "button";
         boutonPartage.addEventListener("click", function(){ basculerVisibilitePhoto(p, j); });
@@ -2631,11 +2741,52 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     bloc.appendChild(boutonAjouter);
     bloc.appendChild(input);
 
+    bloc.appendChild(construireTexteCarnetJour(j));
+
     var conteneur = el("div", "photos-grille-conteneur");
     bloc.appendChild(conteneur);
     contenuGaleriePhotos(conteneur, j);
 
     return bloc;
+  }
+
+  /* --- texte du carnet pour ce jour : pre-rempli avec texteAutoJournee,
+     modifiable a la main (voir migration 0020 / sauvegarderTexteCarnet).
+     Un badge indique si le texte affiche est l'automatique ou une
+     surcharge, avec un bouton pour revenir a l'automatique -- jamais de
+     perte silencieuse du texte auto derriere une surcharge oubliee. */
+  function construireTexteCarnetJour(j){
+    var wrap = el("div", "carnet-texte-jour");
+    wrap.appendChild(el("p", "carnet-texte-jour-label", "Texte du carnet pour ce jour (utilisé dans votre carnet PDF personnel)"));
+
+    var champ = document.createElement("textarea");
+    champ.className = "carnet-texte-jour-champ";
+    champ.rows = 3;
+    champ.value = texteCarnetJournee(j);
+
+    var estSurcharge = !!TEXTES_CARNET_PAR_JOURNEE[j.uuid];
+    var boutonReinit = el("button", "carnet-texte-jour-reinit", "Revenir au texte automatique");
+    boutonReinit.type = "button";
+    boutonReinit.hidden = !estSurcharge;
+
+    champ.addEventListener("blur", function(){
+      var valeur = champ.value.trim();
+      if(!valeur || valeur === texteAutoJournee(j)){
+        reinitialiserTexteCarnet(j).then(function(){ boutonReinit.hidden = true; });
+        return;
+      }
+      sauvegarderTexteCarnet(j, valeur).then(function(){ boutonReinit.hidden = false; });
+    });
+    boutonReinit.addEventListener("click", function(){
+      reinitialiserTexteCarnet(j).then(function(){
+        champ.value = texteAutoJournee(j);
+        boutonReinit.hidden = true;
+      });
+    });
+
+    wrap.appendChild(champ);
+    wrap.appendChild(boutonReinit);
+    return wrap;
   }
 
   /* --- onglet Carnet : generation du PDF a emporter (Edge Function
@@ -6585,11 +6736,18 @@ function appliquerTheme(theme){
                     .eq("voyage_id", voyage.id).order("cree_le", { ascending: true })
                 : Promise.resolve({ data: null });
 
-              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille, chargerPhotos]).then(function(res){
+              /* surcharges de texte de carnet (voir migration 0020) :
+                 RLS limite deja a ses propres lignes, select("*") suffit. */
+              var chargerTextesCarnet = utilisateurId
+                ? supabase.from("carnet_textes").select("*").eq("voyage_id", voyage.id)
+                : Promise.resolve({ data: null });
+
+              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille, chargerPhotos, chargerTextesCarnet]).then(function(res){
                 var resProgression = res[0];
                 var resRole = res[1];
                 var resUrgencesFamille = res[2];
                 var resPhotos = res[3];
+                var resTextesCarnet = res[4];
                 var estAdmin = !!(resRole.data && resRole.data.role === "admin");
                 var urgences = Object.assign({}, voyage.urgences || {});
                 if(resUrgencesFamille.data && resUrgencesFamille.data.assurance_auto){
@@ -6601,7 +6759,7 @@ function appliquerTheme(theme){
                    sur un noeud déjà détaché du DOM. */
                 demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille,
                   urgences, voyage.id, utilisateurId, resProgression.data || null, estAdmin,
-                  resPhotos.data || []);
+                  resPhotos.data || [], resTextesCarnet.data || []);
                 zoneChargement.remove();
               });
             });
