@@ -120,8 +120,15 @@ ci-dessous en est le résumé côté rédaction.
 | `date_debut` / `date_fin` | `YYYY-MM-DD` |
 | `frise_legende` | légende sous la frise d'intensité |
 | `a_verifier` | résumé des points ouverts avant départ — jamais vide s'il y a une incertitude |
-| `urgences` | objet `{memo: [texte...], numeros: [{tel, label, note?}...], documents, consulaire, veterinaires, assuranceAuto}` — `assuranceAuto` (numéro client/contrat) est automatiquement séparé à la publication vers `urgences_famille`, réservée aux comptes famille (RLS) : ne jamais mettre de donnée personnelle identifiante ailleurs dans `urgences`, qui reste en lecture publique sans restriction |
+| `urgences` | objet `{memo: [texte...], numeros: [{tel, label, note?}...], documents, consulaire, veterinaires}` — jamais de donnée personnelle identifiante ici, en lecture publique sans restriction |
 | `theme` | optionnel, voir section dédiée ci-dessous |
+
+**Assurance auto (numéro client, numéro de contrat)** : n'existe **pas**
+dans `voyages/<slug>.json` — le dépôt Git est public, ce fichier ne doit
+jamais porter d'identifiant personnel. Cette donnée vit uniquement dans
+`urgences_famille` (table à part, RLS réservée aux comptes famille,
+migration 0015), éditée directement en base ou en conversation, jamais
+via le pipeline `outils/`.
 
 ### `journees` (tableau, un objet par jour)
 

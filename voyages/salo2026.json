@@ -96,24 +96,7 @@
           "adresse": "Viale F. Agello 70/D, 25015 Desenzano del Garda BS",
           "horaires": "Lun-ven 9h-13h et 15h-19h"
         }
-      ],
-      "assuranceAuto": {
-        "nom": "L'Olivier Assurance",
-        "client": "NUMERO_RETIRE",
-        "lignes": [
-          {
-            "tel": "+33141859973",
-            "label": "Urgence auto — dépannage",
-            "horaires": "24h/24, 7j/7"
-          },
-          {
-            "tel": "+33184022022",
-            "label": "Déclaration de sinistre",
-            "horaires": "Lun-ven 9h-12h30"
-          }
-        ],
-        "contrat": "NUMERO_RETIRE"
-      }
+      ]
     }
   },
   "journees": [
