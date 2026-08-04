@@ -22,7 +22,16 @@ dépôt.
   champ. Si une donnée vient d'une source, le dire en conversation.
 - **Terrain avant tout** — consultation mobile, souvent sans réseau. Le
   service worker (`app/sw.js`) est déjà en place ; rien dans le contenu
-  ne doit supposer une connexion permanente.
+  ne doit supposer une connexion permanente. **Après toute modification
+  de `app/index.html`, `app/illustrations.js`, `manifest.json` ou des
+  icônes, incrémenter `VERSION` dans `app/sw.js`** — sinon le navigateur
+  ne détecte pas la mise à jour (il compare les octets de `sw.js`, pas
+  le contenu qu'il cache) et personne ne voit la nouvelle version tant
+  qu'il n'a pas vidé son cache à la main. Sur téléphone, surtout en PWA
+  installée sur l'écran d'accueil, il n'existe aucun rechargement forcé
+  façon Cmd+Maj+R — `app/index.html` recharge automatiquement la page
+  dès qu'un nouveau service worker prend la main (`controllerchange`),
+  mais uniquement si ce bump a bien été fait.
 - **Tout le contenu est en français**, y compris les commentaires de code.
 - **Pas de framework front, pas de dépendance ajoutée** — HTML/CSS/JS
   natifs côté `app/`. Les seuls scripts Node sont dans `outils/`, sans

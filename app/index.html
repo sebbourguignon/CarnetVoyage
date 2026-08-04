@@ -6160,12 +6160,28 @@ function appliquerTheme(theme){
   /* Service worker : cache l'app shell, les polices et les dernières
      données Supabase chargées, pour que le carnet reste consultable sans
      réseau sur le terrain (voir sw.js pour le détail des stratégies).
-     Chemin relatif : le scope suit l'endroit où app/ est servi. */
+     Chemin relatif : le scope suit l'endroit où app/ est servi.
+
+     Rechargement automatique à la mise à jour : sur un téléphone, en
+     PWA installée sur l'écran d'accueil surtout, personne ne peut faire
+     un rechargement forcé façon Cmd+Maj+R pour contourner le cache.
+     controllerchange se déclenche quand un nouveau service worker vient
+     de prendre la main (il l'a fait tout seul, skipWaiting + clients.
+     claim() dans sw.js) : on recharge la page à cet instant précis, une
+     seule fois (refreshing), pour ne jamais tourner en boucle. Un peu
+     brusque si on est en train de lire, mais bien plus sûr qu'un
+     carnet resté silencieusement périmé pendant tout le voyage. */
   if("serviceWorker" in navigator){
     window.addEventListener("load", function(){
       navigator.serviceWorker.register("sw.js").catch(function(err){
         console.error("Échec d'enregistrement du service worker :", err);
       });
+    });
+    var refreshing = false;
+    navigator.serviceWorker.addEventListener("controllerchange", function(){
+      if(refreshing) return;
+      refreshing = true;
+      window.location.reload();
     });
   }
 })();
