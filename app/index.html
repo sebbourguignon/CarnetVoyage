@@ -2865,20 +2865,25 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       });
     });
 
-    /* proposition IA (Edge Function "generer-texte-ia", voir
-       supabase/functions) : jamais appliquee automatiquement, juste
-       posee dans le champ -- c'est le blur du textarea qui l'enregistre
-       comme n'importe quelle saisie manuelle. Sur demande explicite
-       seulement (bouton), pas a l'ouverture du bloc : chaque generation
-       consomme un appel facture. */
-    var boutonIA = el("button", "carnet-texte-jour-ia", "Générer avec l'IA");
+    /* amelioration IA (Edge Function "generer-texte-ia", voir
+       supabase/functions) : part du texte deja present dans le champ
+       (souvenirs/formulation de la famille) plutot que de toujours
+       repartir de zero -- seul le texte automatique non modifie est
+       traite comme "rien a ameliorer", donc generation depuis les faits.
+       Jamais applique automatiquement : la reponse se pose dans le
+       champ, c'est le blur du textarea qui l'enregistre comme n'importe
+       quelle saisie manuelle. Sur demande explicite seulement (bouton),
+       pas a l'ouverture du bloc : chaque appel est facture. */
+    var boutonIA = el("button", "carnet-texte-jour-ia", "Améliorer avec l'IA");
     boutonIA.type = "button";
     boutonIA.addEventListener("click", function(){
       var texteInitial = boutonIA.textContent;
       boutonIA.disabled = true;
       boutonIA.textContent = "Génération…";
+      var texteSaisi = champ.value.trim();
+      var texteAAmeliorer = (texteSaisi && texteSaisi !== texteAutoJournee(j)) ? texteSaisi : "";
       supabaseClient.functions.invoke("generer-texte-ia", {
-        body: { voyage_id: voyageId, journee_id: j.uuid }
+        body: { voyage_id: voyageId, journee_id: j.uuid, texte_actuel: texteAAmeliorer }
       }).then(function(res){
         if(res.error) throw res.error;
         var texte = res.data && res.data.texte;

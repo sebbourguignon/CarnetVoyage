@@ -38,10 +38,11 @@ Deno.serve(async (requete) => {
   }
 
   try {
-    const { voyage_id, journee_id } = await requete.json();
+    const { voyage_id, journee_id, texte_actuel } = await requete.json();
     if (!voyage_id || !journee_id) {
       return jsonResponse({ error: "voyage_id et journee_id requis" }, 400);
     }
+    const texteActuel = typeof texte_actuel === "string" ? texte_actuel.trim() : "";
 
     const authHeader = requete.headers.get("Authorization");
     if (!authHeader) return jsonResponse({ error: "authentification requise" }, 401);
@@ -80,14 +81,29 @@ Deno.serve(async (requete) => {
       filTexte ? `Déroulé prévu : ${filTexte}` : "",
     ].filter(Boolean).join("\n");
 
-    const reponseOpenAI = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${cleOpenAI}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        temperature: 0.7,
-        max_tokens: 220,
-        messages: [
+    // Deux modes (voir conversation de conception) : "amelioration" d'un
+    // texte deja saisi a la main (le cas courant — l'utilisateur veut
+    // garder ses propres mots/souvenirs, juste les rendre plus fluides),
+    // ou generation depuis zero si le champ est vide/encore sur le texte
+    // automatique. Dans les deux cas, les faits verifies servent de garde-
+    // fou : jamais de fait ajoute qui n'y figure pas, mais le texte saisi
+    // par la famille (souvenirs, anecdotes) n'est lui jamais retire ou
+    // remis en cause — seule sa formulation peut changer.
+    const messages = texteActuel
+      ? [
+          {
+            role: "system",
+            content: "Tu améliores un court paragraphe déjà écrit par une famille pour son carnet de voyage papier " +
+              "(clarté, fluidité, ton chaleureux à la première personne du pluriel \"nous\"), sans changer son sens " +
+              "ni retirer les souvenirs ou détails personnels qu'il contient. Des informations de référence sur la " +
+              "journée sont fournies pour t'aider à clarifier ou enrichir la formulation — règle absolue : n'ajoute " +
+              "aucun fait, horaire, tarif ou détail qui ne figure ni dans le texte original ni dans ces informations " +
+              "de référence. Réponds uniquement avec le paragraphe amélioré, sans titre ni guillemets, longueur " +
+              "similaire au texte d'origine.",
+          },
+          { role: "user", content: `Informations de référence sur la journée :\n${faits}\n\nTexte à améliorer :\n${texteActuel}` },
+        ]
+      : [
           {
             role: "system",
             content: "Tu écris un court paragraphe (80 à 120 mots) pour le carnet de voyage papier d'une famille. " +
@@ -97,8 +113,12 @@ Deno.serve(async (requete) => {
               "Réponds uniquement avec le paragraphe, sans titre ni guillemets.",
           },
           { role: "user", content: faits },
-        ],
-      }),
+        ];
+
+    const reponseOpenAI = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${cleOpenAI}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "gpt-4o-mini", temperature: 0.7, max_tokens: 260, messages }),
     });
 
     if (!reponseOpenAI.ok) {
