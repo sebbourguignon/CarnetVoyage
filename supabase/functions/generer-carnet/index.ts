@@ -21,42 +21,57 @@
 // navigateur, pas les Edge Functions, ou assembler un PDF a la main
 // serait deraisonnable.
 //
-// Palette et polices : reprises telles quelles de la direction
-// Officina Bodoniana d'app/index.html (variables --paper/--ink/--rosso,
-// --font-display/--font-body) pour que le carnet imprime ressemble a
-// l'appli plutot qu'a un PDF generique. Les deux fichiers de police sont
-// les variable fonts Google Fonts telles quelles (aucune instance
-// statique n'existe pour Bodoni Moda/IBM Plex Sans dans le depot
-// google/fonts) : pdf-lib les embarque via leur instance par defaut
-// (poids Regular) -- pas de gras disponible, compense par la taille
-// plutot que par le poids pour les titres.
+// Architecture (refactor du 2026-08-05, demande explicite : separer
+// donnees / mise en page / rendu plutot qu'une seule fonction geante) :
+//   - design-system.ts : palette, grille, echelle typographique
+//   - illustrations.ts : bibliotheque de silhouettes (port pdf-lib de
+//     app/illustrations.js)
+//   - ornements.ts      : sceau, carte stylisee, icones, decoupe en arche
+//   - composants.ts     : un composant nomme par bloc de mise en page
+//     (dessinerPageCouverture, dessinerPageCloture, dessinerEnteteJour,
+//     dessinerRepereJour, dessinerGaleriePhotos, dessinerBlocCitation...)
+//   - index.ts (ce fichier) : recupere les donnees Supabase, construit le
+//     contexte (polices, images), appelle les composants dans l'ordre.
+//     Ne contient plus de logique de dessin bas niveau.
 //
-// Encodees en base64 dans des modules .ts (BodoniModa_Variable.ts,
-// IBMPlexSans_Variable.ts) plutot que lues depuis un fichier .ttf a
-// l'execution : `supabase functions deploy` ne televerse que les
-// fichiers presents dans le graphe de modules import/export, jamais un
-// asset statique lu via Deno.readFile -- verifie en test (erreur
-// "path not found" une fois deploye).
+// Direction visuelle (couverture/pages en photo + sceau + carte stylisee,
+// 2026-08-05) : esprit magazine de voyage haut de gamme, voir DESIGN.md
+// et l'historique de conversation pour le detail des arbitrages.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { PDFDocument, rgb } from "npm:pdf-lib@1.17.1";
+import { PDFDocument } from "npm:pdf-lib@1.17.1";
 import fontkit from "npm:@pdf-lib/fontkit@1.1.1";
-import { donneesBase64 as bodoniModaBase64 } from "./BodoniModa_Variable.ts";
-import { donneesBase64 as ibmPlexSansBase64 } from "./IBMPlexSans_Variable.ts";
+import { donneesBase64 as bodoniRegularBase64 } from "./BodoniModa_Variable.ts";
+import { donneesBase64 as bodoniBoldBase64 } from "./BodoniModa_Bold.ts";
+import { donneesBase64 as plexRegularBase64 } from "./IBMPlexSans_Variable.ts";
+import { donneesBase64 as plexSemiBoldBase64 } from "./IBMPlexSans_SemiBold.ts";
+import { donneesBase64 as plexLightBase64 } from "./IBMPlexSans_Light.ts";
+import { donneesBase64 as bodoniItalicBase64 } from "./BodoniModa_Italic.ts";
+import { GRILLE } from "./design-system.ts";
+import {
+  dessinerBandeauTempsForts,
+  dessinerEnteteJour,
+  dessinerFiletMarge,
+  dessinerGaleriePhotos,
+  dessinerPageCloture,
+  dessinerPageCouverture,
+  dessinerPageGalerieTrois,
+  dessinerPiedDePage,
+  dessinerRecitColonnes,
+  dessinerRepereCarte,
+  dessinerSceauCarnet,
+  dessinerSeparateurChapitre,
+  formatDateLongue,
+  nettoyerHtml,
+  nouvellePage,
+  PhotoValide,
+  Polices,
+} from "./composants.ts";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-// --- palette Officina Bodoniana (voir app/index.html, :root) ------------
-const CARTA = rgb(0xF3 / 255, 0xF1 / 255, 0xEA / 255);
-const INCHIOSTRO = rgb(0x1A / 255, 0x1A / 255, 0x18 / 255);
-const GRIGIO = rgb(0x59 / 255, 0x56 / 255, 0x50 / 255);
-const ROSSO = rgb(0xB2 / 255, 0x3A / 255, 0x2E / 255);
-
-const LARGEUR = 595.28, HAUTEUR = 841.89; // A4 portrait, points
-const MARGE = 56;
 
 function jsonResponse(corps: unknown, statut = 200) {
   return new Response(JSON.stringify(corps), {
@@ -72,19 +87,7 @@ function decoderBase64(base64: string): Uint8Array {
   return octets;
 }
 
-/* dimensions d'une image mises a l'echelle "contain" dans une case
-   carree (jamais de recadrage ni de deformation, contrairement a la
-   premiere version qui forcait width=height=tailleCase) : le plus grand
-   cote de l'image occupe tailleCase, l'autre est mis a l'echelle dans
-   les memes proportions, puis l'image est centree dans la case. */
-function dimensionsContenues(largeurImg: number, hauteurImg: number, tailleCase: number) {
-  const echelle = Math.min(tailleCase / largeurImg, tailleCase / hauteurImg);
-  const largeur = largeurImg * echelle;
-  const hauteur = hauteurImg * echelle;
-  return { largeur, hauteur, decalageX: (tailleCase - largeur) / 2, decalageY: (tailleCase - hauteur) / 2 };
-}
-
-Deno.serve(async (requete) => {
+Deno.serve(async (requete: Request) => {
   if (requete.method === "OPTIONS") {
     return new Response("ok", { headers: CORS_HEADERS });
   }
@@ -112,12 +115,12 @@ Deno.serve(async (requete) => {
     const utilisateurId = userData.user.id;
 
     const { data: voyage, error: erreurVoyage } = await supabaseUtilisateur
-      .from("voyages").select("titre, titre_suite").eq("id", voyage_id).maybeSingle();
+      .from("voyages").select("titre, titre_suite, date_debut, date_fin").eq("id", voyage_id).maybeSingle();
     if (erreurVoyage || !voyage) return jsonResponse({ error: "voyage introuvable ou acces refuse" }, 404);
 
     const { data: journees, error: erreurJournees } = await supabaseUtilisateur
       .from("journees")
-      .select("id, date, titre, accroche, rail1, fil, lieux(nom, ordre)")
+      .select("id, date, titre, accroche, rail1, rail2, fil, categorie, illustration, eclipse, chapitre, lieux(nom, ordre)")
       .eq("voyage_id", voyage_id).order("ordre", { ascending: true });
     if (erreurJournees) return jsonResponse({ error: erreurJournees.message }, 500);
 
@@ -137,15 +140,15 @@ Deno.serve(async (requete) => {
     // champs deja verifies (titre, accroche, rail1, lieux/fil), jamais de
     // donnee inventee.
     function texteAutoJournee(j: { titre: string; accroche: string | null; rail1: string | null; fil: { texte: string }[] | null; lieux: { nom: string; ordre: number }[] | null }): string {
-      const titre = String(j.titre || "").replace(/<[^>]+>/g, "");
+      const titre = nettoyerHtml(j.titre);
       let debut = titre + (j.rail1 ? ` — ${j.rail1}` : "");
       const suite: string[] = [];
-      if (j.accroche) suite.push(String(j.accroche).replace(/<[^>]+>/g, ""));
+      if (j.accroche) suite.push(nettoyerHtml(j.accroche));
       const lieuxNoms = (j.lieux || []).slice().sort((a, b) => a.ordre - b.ordre).map((l) => l.nom).filter(Boolean);
       if (lieuxNoms.length) {
         suite.push(`Au programme : ${lieuxNoms.join(", ")}.`);
       } else if (j.fil && j.fil.length) {
-        suite.push(`Au programme : ${j.fil.map((f) => String(f.texte || "").replace(/<[^>]+>/g, "")).join(" ")}`);
+        suite.push(`Au programme : ${j.fil.map((f) => nettoyerHtml(f.texte)).join(" ")}`);
       }
       return debut + (suite.length ? `. ${suite.join(" ")}` : ".");
     }
@@ -166,112 +169,211 @@ Deno.serve(async (requete) => {
       liste.push(p);
       photosParJournee.set(p.journee_id, liste);
     }
+    const journeesIllustrees = (journees || []).filter((j) => photosParJournee.get(j.id)?.length);
 
     const pdf = await PDFDocument.create();
     pdf.registerFontkit(fontkit);
-    const policeTitre = await pdf.embedFont(decoderBase64(bodoniModaBase64));
-    const policeTexte = await pdf.embedFont(decoderBase64(ibmPlexSansBase64));
+    const polices: Polices = {
+      titre: await pdf.embedFont(decoderBase64(bodoniBoldBase64)),
+      titreDoux: await pdf.embedFont(decoderBase64(bodoniRegularBase64)),
+      accroche: await pdf.embedFont(decoderBase64(bodoniItalicBase64)),
+      texte: await pdf.embedFont(decoderBase64(plexRegularBase64)),
+      label: await pdf.embedFont(decoderBase64(plexSemiBoldBase64)),
+      legende: await pdf.embedFont(decoderBase64(plexLightBase64)),
+    };
 
-    function nouvellePage() {
-      const page = pdf.addPage([LARGEUR, HAUTEUR]);
-      page.drawRectangle({ x: 0, y: 0, width: LARGEUR, height: HAUTEUR, color: CARTA });
-      return page;
+    // cache par id de photo : la photo de couverture est choisie parmi les
+    // photos du premier jour illustré (voir plus bas), puis ce même jour
+    // est redessiné dans la boucle principale -- sans cache, chaque photo
+    // du premier jour serait téléchargée et embarquée deux fois.
+    const cacheImages = new Map<string, Awaited<ReturnType<typeof pdf.embedJpg>> | null>();
+    async function telechargerImage(photo: NonNullable<typeof photos>[number]) {
+      if (cacheImages.has(photo.id)) return cacheImages.get(photo.id)!;
+      const { data: fichier, error } = await supabaseUtilisateur.storage.from("photos").download(photo.storage_path);
+      if (error || !fichier) {
+        cacheImages.set(photo.id, null);
+        return null;
+      }
+      const octets = new Uint8Array(await fichier.arrayBuffer());
+      let image;
+      try {
+        image = await pdf.embedJpg(octets);
+      } catch {
+        try {
+          image = await pdf.embedPng(octets);
+        } catch {
+          image = null;
+        }
+      }
+      cacheImages.set(photo.id, image);
+      return image;
     }
 
-    // --- page de couverture -------------------------------------------
-    const couverture = nouvellePage();
-    couverture.drawRectangle({ x: MARGE, y: HAUTEUR - 220, width: 34, height: 3, color: ROSSO });
-    couverture.drawText(mode === "perso" ? "CARNET PERSONNEL" : "CARNET DE FAMILLE", {
-      x: MARGE, y: HAUTEUR - 200, size: 10.5, font: policeTexte, color: ROSSO,
-    });
+    let folio = 0;
+
+    // --- page 1 : couverture ------------------------------------------
+    // photo héros choisie parmi les photos du premier jour illustré, pas
+    // juste la première venue : on préfère le ratio le plus proche du
+    // cadre en arche de la couverture (largeur/hauteur ≈ 1.15), et à
+    // ratio égal la définition la plus haute -- seul critère de "qualité"
+    // mesurable sans inventer une note esthétique.
+    const RATIO_ARCHE_COUVERTURE = (GRILLE.largeur - GRILLE.marge * 2) / 420;
+    const photosPremierJour = journeesIllustrees.length ? photosParJournee.get(journeesIllustrees[0].id) || [] : [];
+    const candidatesCouverture = (await Promise.all(
+      photosPremierJour.map(async (p) => ({ p, img: await telechargerImage(p).catch(() => null) })),
+    )).filter((c): c is { p: NonNullable<typeof photos>[number]; img: NonNullable<Awaited<ReturnType<typeof telechargerImage>>> } => !!c.img);
+    const imgCouverture = candidatesCouverture.length
+      ? candidatesCouverture.reduce((meilleur, c) => {
+        const ecart = (img: typeof c.img) => Math.abs(img.width / img.height - RATIO_ARCHE_COUVERTURE);
+        if (ecart(c.img) < ecart(meilleur.img)) return c;
+        if (ecart(c.img) === ecart(meilleur.img) && c.img.width * c.img.height > meilleur.img.width * meilleur.img.height) return c;
+        return meilleur;
+      }).img
+      : null;
     const titreCarnet = [voyage.titre, voyage.titre_suite].filter(Boolean).join(" ").replace(/<[^>]+>/g, "");
-    couverture.drawText(titreCarnet, {
-      x: MARGE, y: HAUTEUR - 260, size: 34, font: policeTitre, color: INCHIOSTRO, maxWidth: LARGEUR - MARGE * 2,
+    dessinerPageCouverture(pdf, polices, {
+      titre: titreCarnet,
+      mode,
+      dateDebut: formatDateLongue(voyage.date_debut) || null,
+      dateFin: formatDateLongue(voyage.date_fin) || null,
+      nbJours: journeesIllustrees.length,
+      nbPhotos: photos.length,
+      motifsRepli: ["collines", "clocher", "cypres"],
+      imgHero: imgCouverture,
     });
+    folio++;
 
     // --- une page par journee ayant au moins une photo ------------------
-    for (const j of journees || []) {
-      const photosDuJour = photosParJournee.get(j.id);
-      if (!photosDuJour || !photosDuJour.length) continue;
+    for (const j of journeesIllustrees) {
+      const photosDuJour = photosParJournee.get(j.id)!;
 
-      let page = nouvellePage();
-      let y = HAUTEUR - 70;
+      const chapitre = j.chapitre as { numero?: string; titre?: string } | null;
+      if (chapitre?.numero) {
+        dessinerSeparateurChapitre(pdf, polices, chapitre);
+        folio++;
+      }
 
-      const dateAffichee = j.date
-        ? new Date(j.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
-        : "";
-      page.drawText(dateAffichee.toUpperCase(), { x: MARGE, y, size: 9.5, font: policeTexte, color: GRIGIO });
-      y -= 26;
-      const titreJour = String(j.titre || "").replace(/<[^>]+>/g, "");
-      page.drawText(titreJour, { x: MARGE, y, size: 22, font: policeTitre, color: INCHIOSTRO, maxWidth: LARGEUR - MARGE * 2 });
-      y -= 16;
-      page.drawRectangle({ x: MARGE, y, width: 28, height: 2, color: ROSSO });
-      y -= 26;
+      let page = nouvellePage(pdf);
+      folio++;
+      const estEclipse = !!j.eclipse;
+      dessinerFiletMarge(page);
+      dessinerSceauCarnet(page, polices, GRILLE.largeur - GRILLE.marge - 34, GRILLE.hauteur - 66, 30);
+      dessinerRepereCarte(page, GRILLE.largeur - GRILLE.marge - 56, GRILLE.hauteur - 118, 56, 130);
+
+      const largeurDisponible = GRILLE.largeur - GRILLE.marge - 130;
+      const titreJour = nettoyerHtml(j.titre);
+      let y = dessinerEnteteJour(page, polices, {
+        date: j.date ? formatDateLongue(j.date) : "",
+        titre: titreJour,
+        accroche: j.accroche ? nettoyerHtml(j.accroche as string) : null,
+        estEclipse,
+        largeurDisponible,
+      }, GRILLE.hauteur - 62);
 
       // paragraphe de contexte : surcharge de l'utilisateur (mode perso)
       // ou gabarit automatique -- jamais vide, voir texteAutoJournee.
-      // pdf-lib retourne les metriques de mise en page (dont le nombre de
-      // lignes produites par le retour a la ligne automatique via
-      // maxWidth), utilisees pour reserver exactement la place occupee
-      // plutot qu'une estimation au juger.
-      const texteJour = textesParJournee.get(j.id) || texteAutoJournee(j);
-      const tailleTexte = 10.5, interligne = 15;
-      const metriques = page.drawText(texteJour, {
-        x: MARGE, y, size: tailleTexte, font: policeTexte, color: INCHIOSTRO,
-        maxWidth: LARGEUR - MARGE * 2, lineHeight: interligne,
-      });
-      const nbLignes = (metriques as unknown as { numberOfLines?: number })?.numberOfLines
-        ?? Math.max(1, Math.ceil(policeTexte.widthOfTextAtSize(texteJour, tailleTexte) / (LARGEUR - MARGE * 2)));
-      y -= nbLignes * interligne + 20;
+      const texteJour = textesParJournee.get(j.id) || texteAutoJournee(j as Parameters<typeof texteAutoJournee>[0]);
 
-      // grille 2 colonnes, chaque photo mise a l'echelle "contain" et
-      // centree dans sa case (jamais de deformation, voir dimensionsContenues) ;
-      // une bande reservee sous chaque case affiche le commentaire de la
-      // photo (photos.legende) s'il existe.
-      const colonnes = 2;
-      const espace = 14;
-      const largeurCase = (LARGEUR - MARGE * 2 - espace * (colonnes - 1)) / colonnes;
-      const hauteurLegende = 26;
-      const tailleCase = largeurCase; // cases carrees : largeur = hauteur de la zone image
-      const hauteurBloc = tailleCase + hauteurLegende;
+      const images = await Promise.all(photosDuJour.map((p) => telechargerImage(p).catch(() => null)));
+      const valides: PhotoValide[] = photosDuJour
+        .map((p, i) => ({ img: images[i], legende: p.legende ? String(p.legende) : null }))
+        .filter((e): e is PhotoValide => !!e.img);
 
-      let colonne = 0;
-      for (const photo of photosDuJour) {
-        try {
-          const { data: fichier, error: erreurTelechargement } = await supabaseUtilisateur
-            .storage.from("photos").download(photo.storage_path);
-          if (erreurTelechargement || !fichier) continue;
-          const octets = new Uint8Array(await fichier.arrayBuffer());
-          const image = await pdf.embedJpg(octets).catch(() => pdf.embedPng(octets));
+      // récit à double lecture (brief : "récit écrit / récit
+      // photographique") : la première photo accompagne le texte en
+      // colonne. Elle seule vit sur la page récit -- toute photo
+      // supplémentaire va sur une page galerie dédiée, TOUJOURS une page
+      // neuve (règle explicite du 2026-08-05 : "aucune photographie de
+      // galerie ne doit être placée sur la page récit", et jamais de
+      // titre de galerie orphelin en bas de la page récit).
+      // photo secondaire de la page récit (petite, cadre arche, colonne de
+      // gauche) : la 2e photo réellement disponible du jour, quand elle
+      // existe -- prélevée AVANT le reste, qui part sur la page galerie
+      // (elle n'est donc jamais montrée deux fois). S'il n'y a qu'une seule
+      // photo pour la journée, aucune photo secondaire (comportement de
+      // repli, jamais de case vide).
+      const [photoPrincipale, photoSecondaireRecit, ...photosRestantes] = valides;
+      dessinerRecitColonnes(page, polices, texteJour, photoPrincipale ?? null, y, 158, photoSecondaireRecit ?? null);
 
-          if (y - hauteurBloc < 50) {
-            page = nouvellePage();
-            y = HAUTEUR - 70;
-            colonne = 0;
-          }
-          const caseX = MARGE + colonne * (largeurCase + espace);
-          const imageYBas = y - tailleCase;
-          const dims = dimensionsContenues(image.width, image.height, tailleCase);
-          page.drawImage(image, {
-            x: caseX + dims.decalageX,
-            y: imageYBas + dims.decalageY,
-            width: dims.largeur,
-            height: dims.hauteur,
+      // bandeau "temps forts / détails du jour" : position FIXE en bas de
+      // page récit (esprit maquette de référence -- un vrai bandeau de bas
+      // de page, pas un bloc qui suit la fin, variable, du texte), jamais
+      // superposé au pied de page (folio) grâce à sa hauteur réservée fixe.
+      const largeurContenuBandeau = GRILLE.largeur - GRILLE.marge * 2;
+      dessinerBandeauTempsForts(page, polices, {
+        lieux: (j.lieux as { nom: string; ordre: number }[] | null) || [],
+        rail1: j.rail1 ? String(j.rail1) : null,
+        rail2: j.rail2 ? String(j.rail2) : null,
+        largeurDisponible: largeurContenuBandeau,
+      }, 158);
+
+      dessinerPiedDePage(page, polices, titreJour, folio);
+
+      if (photosRestantes.length) {
+        page = nouvellePage(pdf);
+        folio++;
+        dessinerFiletMarge(page);
+        dessinerSceauCarnet(page, polices, GRILLE.largeur - GRILLE.marge - 34, GRILLE.hauteur - 66, 30);
+        dessinerRepereCarte(page, GRILLE.largeur - GRILLE.marge - 56, GRILLE.hauteur - 118, 56, 130);
+        let yGalerie = GRILLE.hauteur - 62;
+
+        if (photosRestantes.length === 3) {
+          // composition dédiée imposée (section 5 du brief) : photo large
+          // à gauche, photo + citation en haut à droite, panoramique en bas.
+          const intro = j.accroche
+            ? nettoyerHtml(j.accroche as string)
+            : `Un aperçu en images de la journée à ${titreJour}.`; // formule neutre dérivée du seul nom de lieu, jamais d'événement inventé
+          yGalerie = dessinerPageGalerieTrois(page, polices, {
+            surtitre: "Galerie du jour",
+            titre: `Les plus beaux instants de ${titreJour}`,
+            intro,
+            photos: [photosRestantes[0], photosRestantes[1], photosRestantes[2]],
+          }, yGalerie);
+        } else if (photosRestantes.length <= 6) {
+          // 4-6 photos : une seule page, composition asymétrique (hero +
+          // vignettes de tailles variées) déjà non uniforme -- voir
+          // dessinerGaleriePhotos, branche >=3.
+          const etatPage = { page, folio };
+          dessinerGaleriePhotos(etatPage, pdf, polices, titreJour, photosRestantes, yGalerie);
+          page = etatPage.page;
+          folio = etatPage.folio;
+        } else {
+          // 7 photos et plus : plusieurs pages galerie, chacune avec sa
+          // propre composition complète (titre + hero + vignettes) --
+          // jamais une dernière page avec seulement une ou deux petites
+          // images en haut (règle explicite du brief).
+          const paquets: PhotoValide[][] = [];
+          for (let i = 0; i < photosRestantes.length; i += 5) paquets.push(photosRestantes.slice(i, i + 5));
+          paquets.forEach((paquet, i) => {
+            if (i > 0) {
+              page = nouvellePage(pdf);
+              folio++;
+              dessinerFiletMarge(page);
+              dessinerSceauCarnet(page, polices, GRILLE.largeur - GRILLE.marge - 34, GRILLE.hauteur - 66, 30);
+              dessinerRepereCarte(page, GRILLE.largeur - GRILLE.marge - 56, GRILLE.hauteur - 118, 56, 130);
+              yGalerie = GRILLE.hauteur - 62;
+            }
+            const etatPage = { page, folio };
+            dessinerGaleriePhotos(etatPage, pdf, polices, `${titreJour} (${i + 1}/${paquets.length})`, paquet, yGalerie);
+            page = etatPage.page;
+            folio = etatPage.folio;
           });
-          if (photo.legende) {
-            page.drawText(String(photo.legende).slice(0, 140), {
-              x: caseX, y: imageYBas - 14, size: 8.5, font: policeTexte, color: GRIGIO,
-              maxWidth: largeurCase, lineHeight: 11,
-            });
-          }
-
-          colonne = (colonne + 1) % colonnes;
-          if (colonne === 0) y -= hauteurBloc + espace;
-        } catch (_e) {
-          continue; // une photo illisible ne doit pas casser tout le carnet
         }
+        dessinerPiedDePage(page, polices, titreJour, folio);
       }
     }
+
+    // --- page de clôture -------------------------------------------------
+    folio++;
+    dessinerPageCloture(pdf, polices, {
+      titreCarnet,
+      dateDebut: formatDateLongue(voyage.date_debut) || null,
+      dateFin: formatDateLongue(voyage.date_fin) || null,
+      nbJours: journeesIllustrees.length,
+      nbPhotos: photos.length,
+      mode,
+      folio,
+    });
 
     const octetsPdf = await pdf.save();
 
