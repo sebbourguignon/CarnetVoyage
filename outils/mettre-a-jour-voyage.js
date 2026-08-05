@@ -218,7 +218,7 @@ async function main() {
 
   // 3) badges + badge_conditions ----------------------------------------------
   let compteBadges = 0, compteBadgeConditions = 0;
-  const CHAMPS_BADGE = ["resume", "icone", "seuil_niveau3", "seuil_total", "seuil_journees_corrigees", "seuil_points_quiz", "ordre"];
+  const CHAMPS_BADGE = ["resume", "icone", "seuil_niveau3", "seuil_total", "seuil_journees_corrigees", "seuil_points_quiz", "seuil_photos", "ordre"];
 
   for (const b of donnees.badges) {
     const lignesExistantes = await get(
