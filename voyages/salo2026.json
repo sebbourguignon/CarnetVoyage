@@ -5583,6 +5583,18 @@
       "seuil_points_quiz": 150,
       "ordre": 13,
       "conditions_brutes": []
+    },
+    {
+      "nom": "Le Photographe",
+      "resume": "Plus de 50 photos ajoutées à votre carnet.",
+      "icone": "appareil-photo",
+      "seuil_niveau3": null,
+      "seuil_total": null,
+      "seuil_journees_corrigees": null,
+      "seuil_points_quiz": null,
+      "seuil_photos": 50,
+      "ordre": 14,
+      "conditions_brutes": []
     }
   ]
 }

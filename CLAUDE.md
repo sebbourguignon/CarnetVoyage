@@ -232,6 +232,71 @@ toucher au moteur. Absent (`null`) → palette et polices par défaut
   dans le JSON, comme pour le contenu : c'est un choix éditorial, pas une
   valeur par défaut à deviner.
 
+## Générateur de PDF (`supabase/functions/generer-carnet/`)
+
+Edge Function Deno (pas Node — pas de `node_modules`, `deno.land`/`npm:`
+en spécifieurs directs) qui assemble un carnet PDF « à emporter » à partir
+des photos déposées par la famille (voir « Photos famille et carnet PDF »
+dans le README pour le modèle perso/famille). Architecture en 6 fichiers,
+séparation données / mise en page / rendu voulue explicitement (voir
+l'en-tête de `index.ts`) :
+
+- `index.ts` — orchestration : requêtes Supabase (RLS fait le tri, pas de
+  logique de permission réimplémentée ici), téléchargement/cache des
+  images, boucle sur les journées illustrées, appel des composants.
+- `design-system.ts` — palette, grille A4, échelle typographique.
+  Toute valeur de style partagée par plusieurs composants vit ici, jamais
+  recopiée en dur ailleurs.
+- `ornements.ts` — sceau et carte d'Italie stylisée, les deux éléments
+  récurrents sur presque toutes les pages.
+- `icones.ts` — bibliothèque de pictogrammes line-art par lieu (voir
+  `deviverIconePourLieu`, correspondance par mot-clé, repli explicite sur
+  une icône générique si rien ne matche — jamais d'icône inventée).
+- `illustrations.ts` / `italie.ts` — silhouettes de fond et tracé fixe
+  de la carte, tous deux réutilisés par `ornements.ts`.
+- `composants.ts` — un composant nommé par bloc de page (couverture,
+  entête de journée, récit en colonnes, bandeau « Temps forts / Détails
+  du jour », galerie asymétrique, page de clôture).
+
+**Direction visuelle arrêtée le 2026-08-05, refonte 2026-08-05/2026-08-06** :
+trois maquettes de référence (couverture, page récit « Vérone », page
+galerie « Les plus beaux points de vue ») font foi comme spécification
+visuelle exacte — reproduire leur composition, pas s'en inspirer
+librement. Palette : `PAPER #F7F2E9`, `INK #242321`, `TERRACOTTA #B64332`,
+`OLIVE #7E8560`, `SAGE #A7AD91`, `SAND #DDD2C3`, `MAP_FILL #F0E7DA`,
+`MAP_STROKE #D5C8B7`, `MUTED_TEXT #69655F`. Polices déjà embarquées
+(fichiers `BodoniModa_*.ts` / `IBMPlexSans_*.ts`, base64) : Bodoni Moda
+pour titres/accroches, IBM Plex Sans pour corps/légendes — ne pas changer
+de police, seulement leur hiérarchie/usage.
+
+Règles de mise en page non négociables (spécifiées explicitement, à
+respecter dans toute nouvelle itération) :
+- jamais de texte ni de guillemet superposé à une photo — toujours un
+  espace vertical net (≥ 15-18pt) entre une image et le texte qui suit ;
+- jamais une légende sans sa photo (garde structurelle dans
+  `composants.ts`, pas seulement une consigne visuelle) ;
+- jamais un pictogramme générique répété pour des lieux différents ;
+- page de clôture entièrement typographique/vectorielle — aucune photo,
+  aucun crop arbitraire ;
+- galerie en composition asymétrique (tailles variées), jamais une grille
+  régulière ;
+- aucune donnée inventée dans les libellés (lieu, distance, météo) — si
+  l'information n'existe pas dans les données de la journée, ne pas
+  l'afficher plutôt que la deviner.
+
+**État exact au 2026-08-06** : le sceau (deux anneaux + texte courbe
+« ITALIE » / « SOUVENIRS DE FAMILLE » + scène centrale loggia/cyprès en
+line-art), la carte en filigrane, le bandeau à icônes distinctes et la
+page de clôture sans photo sont en place et déployés sur le projet
+Supabase Dev (`ozjbkpgoatagqyrlxdry`). Validé uniquement avec un script
+de test jetable (Deno absent de la machine de dev, porté en Node/pdf-lib
+npm, données factices : aplats de couleur, pas de vraies photos) rendu en
+PNG via PyMuPDF — **jamais testé avec de vraies photos**, donc le cadrage
+« cover » et le biais de recadrage vertical des photos réelles restent à
+vérifier. Reste également un peu plus de vide en bas des pages galerie et
+clôture que sur les maquettes de référence (amélioré mais pas totalement
+résorbé lors de la dernière itération).
+
 ## Ce qui n'est PAS à documenter ici
 
 Architecture technique détaillée, RLS, fonctions SQL : voir les migrations

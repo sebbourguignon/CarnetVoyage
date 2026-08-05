@@ -262,6 +262,7 @@ async function main() {
       seuil_total: b.seuil_total,
       seuil_journees_corrigees: b.seuil_journees_corrigees,
       seuil_points_quiz: b.seuil_points_quiz,
+      seuil_photos: b.seuil_photos,
       ordre: b.ordre,
       voyage_id: voyage.id,
     };

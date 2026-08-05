@@ -1283,6 +1283,99 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .lieu-quoi{font-size:.95rem;line-height:1.7;color:var(--ink);margin:0 0 8px}
 .lieu-pratique{font-size:.85rem;line-height:1.6;color:var(--ink-soft);margin:0}
 
+/* photos famille : galerie par jour + bouton d'ajout (voir construireBlocPhotos).
+   Vignettes carrées, esprit planche-contact plutôt que grille Instagram —
+   cohérent avec le reste du carnet qui reste sobre en couleur. */
+.photos-bouton-ajouter{
+  font-family:var(--font-body);font-size:.85rem;font-weight:600;
+  color:var(--rosso);background:none;border:1px solid var(--rosso);
+  border-radius:4px;padding:8px 14px;cursor:pointer;margin-bottom:12px;
+}
+.photos-bouton-ajouter:disabled{opacity:.5;cursor:default}
+.photos-vide{font-size:.85rem;color:var(--ink-soft);margin:0}
+.photos-grille{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;padding:0;
+}
+.photos-item{margin:0;position:relative}
+.photos-item img{
+  width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;
+  background:var(--paper-deep);display:block;
+}
+.photos-item-actions{display:flex;gap:8px;margin-top:4px}
+.photos-item-icone{
+  color:var(--ink-soft);background:none;border:none;padding:2px;
+  cursor:pointer;line-height:0;
+}
+.photos-item-icone .iico{width:16px;height:16px}
+.photos-item-icone.actif{color:var(--rosso)}
+.photos-item.mine img{outline:1px solid var(--rosso)}
+.photos-item-legende{
+  font-family:var(--font-body);font-size:.78rem;color:var(--ink-soft);
+  margin:4px 0 0;line-height:1.4;
+}
+.photos-item-legende-champ{
+  font-family:var(--font-body);font-size:.8rem;color:var(--ink);
+  width:100%;box-sizing:border-box;margin:4px 0 0;padding:4px 6px;
+  border:1px solid var(--rule-soft);border-radius:3px;resize:vertical;
+}
+
+.carnet-texte-jour{margin:0 0 14px}
+.carnet-texte-jour-label{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.02em;
+  color:var(--ink-soft);text-transform:uppercase;margin:0 0 6px;
+}
+.carnet-texte-jour-champ{
+  font-family:var(--font-body);font-size:.9rem;line-height:1.6;color:var(--ink);
+  width:100%;box-sizing:border-box;padding:10px 12px;
+  border:1px solid var(--rule-soft);border-radius:4px;resize:vertical;
+  background:var(--paper);
+}
+.carnet-texte-jour-actions{display:flex;gap:14px;align-items:center;margin-top:6px}
+.carnet-texte-jour-reinit{
+  font-family:var(--font-body);font-size:.78rem;color:var(--rosso);
+  background:none;border:none;padding:0;cursor:pointer;text-decoration:underline;
+}
+.carnet-texte-jour-ia{
+  font-family:var(--font-body);font-size:.78rem;color:var(--ink-soft);
+  background:none;border:1px solid var(--rule-soft);border-radius:3px;
+  padding:4px 10px;cursor:pointer;
+}
+.carnet-texte-jour-ia:disabled{opacity:.5;cursor:default}
+.carnet-texte-jour-statut{
+  font-family:var(--font-body);font-size:.78rem;color:var(--oliva,#4a6a3a);
+  opacity:0;transition:opacity .2s ease;
+}
+.carnet-texte-jour-statut.visible{opacity:1}
+
+.carnet-bouton-generer{
+  font-family:var(--font-body);font-size:.9rem;font-weight:600;
+  color:var(--paper);background:var(--rosso);border:none;
+  border-radius:4px;padding:12px 18px;cursor:pointer;
+  display:block;margin:0 0 12px;
+}
+.carnet-bouton-generer:disabled{opacity:.4;cursor:default}
+
+/* accordeon par journee, meme grammaire que .lieu-item/.lieu-collapse. */
+.carnet-jour-item{border-bottom:1px solid var(--rule-soft)}
+.carnet-jour-item:last-child{border-bottom:0}
+.carnet-jour-head{
+  display:flex;align-items:center;gap:8px;width:100%;
+  background:none;border:none;padding:12px 0;cursor:pointer;text-align:left;
+}
+.carnet-jour-head .lieu-chevron{flex:0 0 auto;width:14px;height:14px;color:var(--pietra);transition:transform .2s ease}
+.carnet-jour-item.open .carnet-jour-head .lieu-chevron{transform:rotate(180deg)}
+.carnet-jour-titre{
+  flex:1 1 auto;font-family:var(--font-body);font-size:.92rem;font-weight:600;color:var(--ink);
+}
+.carnet-jour-compte{
+  flex:0 0 auto;font-family:var(--font-mono);font-size:.75rem;color:var(--ink-soft);
+  background:var(--paper-deep);border-radius:10px;padding:1px 8px;
+}
+.carnet-jour-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s cubic-bezier(0.23,1,0.32,1)}
+.carnet-jour-item.open .carnet-jour-collapse{grid-template-rows:1fr}
+.carnet-jour-collapse-inner{overflow:hidden;min-height:0}
+.carnet-jour-item.open .carnet-jour-collapse-inner{padding-bottom:16px}
+
 /* à regarder : contenu de lecture, pas une liste technique — on lui
    donne de l'air (grand interligne, respiration entre les entrées).
    Chasse au trésor : chaque entrée est cochable (case custom sur un
@@ -1642,6 +1735,7 @@ body.mode-public .regarder-item{cursor:default}
    seul la largeur des deux restants, aucune règle de mise en page
    supplémentaire nécessaire. */
 body.mode-public .tabbar a[data-tab="chasse"],
+body.mode-public .tabbar a[data-tab="carnet"],
 body.mode-public .tabbar a[data-tab="reserver"],
 body.mode-public .tabbar a[data-tab="urgences"]{display:none}
 /* onglet Admin : réservé aux comptes membres_famille.role="admin" du
@@ -1760,6 +1854,8 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
 
 <section class="panel" id="panel-chasse" data-panel="chasse" hidden></section>
 
+<section class="panel" id="panel-carnet" data-panel="carnet" hidden></section>
+
 <section class="panel" id="panel-reserver" data-panel="reserver" hidden></section>
 
 <section class="panel" id="panel-urgences" data-panel="urgences" hidden></section>
@@ -1796,6 +1892,10 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
       <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6.2"/><path d="M8.6 14.5 6.5 21l5.5-2.6L17.5 21l-2.1-6.5"/></svg></span>
       <span class="tab-lbl">Chasse</span>
     </a>
+    <a href="#carnet" data-tab="carnet">
+      <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3.5" width="15" height="17" rx="1.6"/><path d="M9 3.5v17"/></svg></span>
+      <span class="tab-lbl">Carnet</span>
+    </a>
     <a href="#reserver" data-tab="reserver">
       <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5h10v15l-5-3.6-5 3.6Z"/></svg></span>
       <span class="tab-lbl">Réserver</span>
@@ -1824,7 +1924,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
    tel quel le corps de l'ancienne IIFE, en recevant JOURS/BADGES/CARNET
    en paramètres plutôt qu'en globales.
    ========================================================================== */
-function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin){
+function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin, photosInitiales, textesCarnetInitiaux){
   "use strict";
 
   /* --- constantes de filtres : propriété du moteur de rendu, pas du
@@ -1987,7 +2087,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     oeilBarre: icone('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.6"/><line x1="4" y1="4" x2="20" y2="20"/>'),
     cadenas:  icone('<rect x="5.5" y="11" width="13" height="9" rx="1.6"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>'),
     cadenasOuvert: icone('<rect x="5.5" y="11" width="13" height="9" rx="1.6"/><path d="M8.5 11V8a3.5 3.5 0 0 1 6.7-1.8"/>'),
-    fermer:   icone('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>')
+    fermer:   icone('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>'),
+    /* actions par photo (onglet Carnet, voir contenuGaleriePhotos) :
+       icones plutot que texte, meme facture de trait que le reste. */
+    commentaire: icone('<path d="M4 5.5h16v11H10l-4.2 3.4V16.5H4Z" stroke-linejoin="round"/>'),
+    supprimer: icone('<path d="M5.5 7h13M9.5 7V5.3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V7M7.5 7l.8 12.2a1 1 0 0 0 1 .8h5.4a1 1 0 0 0 1-.8L16.5 7"/>'),
+    ajouter: icone('<line x1="12" y1="5.5" x2="12" y2="18.5"/><line x1="5.5" y1="12" x2="18.5" y2="12"/>')
   };
   /* niveau du champ chien (facile/à gérer/difficile) : mêmes trois barres,
      n allumées (opacité pleine) sur 3 — pas trois dessins différents. */
@@ -2100,6 +2205,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         '<path d="M12 7 C10 5.3 7 4.8 4.5 5.2 L4.5 17.5 C7 17.1 10 17.6 12 19.3"/>' +
         '<path d="M12 7 C14 5.3 17 4.8 19.5 5.2 L19.5 17.5 C17 17.1 14 17.6 12 19.3"/>' +
         '<path d="M12 7 L12 19.3"/>'
+      );
+    },
+    "appareil-photo": function(){
+      return iconeBadgeTrait(
+        '<path d="M4 8.5 L8 8.5 L9.3 6 L14.7 6 L16 8.5 L20 8.5 A1 1 0 0 1 21 9.5 L21 17.5 A1 1 0 0 1 20 18.5 L4 18.5 A1 1 0 0 1 3 17.5 L3 9.5 A1 1 0 0 1 4 8.5 Z"/>' +
+        '<circle cx="12" cy="13" r="3.4"/>'
       );
     }
   };
@@ -2381,6 +2492,566 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     majBlocChasseTab();
     majResumeChasseAccueil();
     appliquerVisibiliteChasse();
+  }
+
+  /* --- photos famille : ajout, compression cote client, galerie par jour
+     (voir supabase/migrations/0018). Granularite par journee (pas par
+     lieu) : une photo se rattache a j.uuid, l'uuid reel de la ligne
+     journees, distinct de j.id (l'ancre texte utilisee partout ailleurs
+     dans ce fichier comme identifiant d'affichage). Visibilite "perso"
+     par defaut, "partagee" seulement si l'auteur le choisit explicitement
+     -- jamais par defaut, pour ne jamais forcer un partage non consenti
+     dans le futur carnet familial genere en PDF. Reserve aux comptes
+     famille : RLS (migration 0018) refuserait de toute facon l'ecriture
+     a un visiteur non connecte. -------------------------------------- */
+  var PHOTOS_PAR_JOURNEE = {};
+  (photosInitiales || []).forEach(function(p){
+    (PHOTOS_PAR_JOURNEE[p.journee_id] = PHOTOS_PAR_JOURNEE[p.journee_id] || []).push(p);
+  });
+
+  /* --- texte de carnet par journee (voir supabase/migrations/0020) ------
+     Par defaut, un paragraphe assemble depuis des champs deja verifies
+     (titre, accroche, rail1, lieux/fil) -- jamais de donnee inventee,
+     juste de la mise en forme. Chaque membre peut le remplacer par son
+     propre texte pour SON carnet perso (une ligne carnet_textes = une
+     surcharge ; son absence = texte automatique, jamais une valeur
+     vide stockee). Le carnet familial, lui, n'a pas de proprietaire par
+     journee : il utilise toujours texteAutoJournee, voir generer-carnet. */
+  var TEXTES_CARNET_PAR_JOURNEE = {};
+  (textesCarnetInitiaux || []).forEach(function(t){ TEXTES_CARNET_PAR_JOURNEE[t.journee_id] = t; });
+
+  function texteAutoJournee(j){
+    var morceaux = [sansHtml(j.titre)];
+    if(j.rail1) morceaux[0] += " — " + j.rail1;
+    var suite = [];
+    if(j.accroche) suite.push(sansHtml(j.accroche));
+    var lieuxNoms = (j.lieux || []).map(function(l){ return l.nom; }).filter(Boolean);
+    if(lieuxNoms.length){
+      suite.push("Au programme : " + lieuxNoms.join(", ") + ".");
+    } else if(j.fil && j.fil.length){
+      suite.push("Au programme : " + j.fil.map(function(f){ return sansHtml(f.texte); }).join(" "));
+    }
+    return morceaux[0] + (suite.length ? ". " + suite.join(" ") : ".");
+  }
+
+  function texteCarnetJournee(j){
+    var surcharge = TEXTES_CARNET_PAR_JOURNEE[j.uuid];
+    return (surcharge && surcharge.texte) || texteAutoJournee(j);
+  }
+
+  function sauvegarderTexteCarnet(j, texte){
+    if(!modeFamille || !utilisateurId || !voyageId) return Promise.resolve();
+    return supabaseClient.from("carnet_textes").upsert({
+      voyage_id: voyageId, journee_id: j.uuid, membre_id: utilisateurId, texte: texte,
+      maj_le: new Date().toISOString()
+    }, { onConflict: "journee_id,membre_id" }).select().single().then(function(res){
+      if(res.error){ console.error("Échec d'enregistrement du texte de carnet :", res.error); return; }
+      TEXTES_CARNET_PAR_JOURNEE[j.uuid] = res.data;
+    });
+  }
+
+  function reinitialiserTexteCarnet(j){
+    if(!TEXTES_CARNET_PAR_JOURNEE[j.uuid]) return Promise.resolve();
+    return supabaseClient.from("carnet_textes").delete().eq("id", TEXTES_CARNET_PAR_JOURNEE[j.uuid].id).then(function(res){
+      if(res.error){ console.error("Échec de réinitialisation du texte de carnet :", res.error); return; }
+      delete TEXTES_CARNET_PAR_JOURNEE[j.uuid];
+    });
+  }
+
+  var URLS_SIGNEES_PHOTOS = {};
+  function urlSigneePhoto(storagePath){
+    if(!URLS_SIGNEES_PHOTOS[storagePath]){
+      URLS_SIGNEES_PHOTOS[storagePath] = supabaseClient.storage.from("photos")
+        .createSignedUrl(storagePath, 3600)
+        .then(function(res){ return (res.data && res.data.signedUrl) || null; });
+    }
+    return URLS_SIGNEES_PHOTOS[storagePath];
+  }
+
+  /* redimensionne a 2000px de large max et reencode en JPEG qualite 0.8 --
+     suffisant pour un rendu ecran/impression, divise le poids par 3 a 5
+     par rapport a une photo de telephone non compressee. Necessaire pour
+     rester dans le plan gratuit Supabase (1 Go de Storage, voir
+     conversation de conception) plutot qu'un confort reseau : sans ca,
+     quelques jours de voyage a plusieurs membres suffisent a le saturer. */
+  function compresserPhoto(fichier){
+    return new Promise(function(resolve, reject){
+      var lecteur = new FileReader();
+      lecteur.onerror = reject;
+      lecteur.onload = function(){
+        var img = new Image();
+        img.onerror = reject;
+        img.onload = function(){
+          var ratio = Math.min(1, 2000 / Math.max(img.width, img.height));
+          var canvas = document.createElement("canvas");
+          canvas.width = Math.round(img.width * ratio);
+          canvas.height = Math.round(img.height * ratio);
+          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(function(blob){
+            if(blob) resolve(blob); else reject(new Error("compression impossible"));
+          }, "image/jpeg", 0.8);
+        };
+        img.src = lecteur.result;
+      };
+      lecteur.readAsDataURL(fichier);
+    });
+  }
+
+  function idRandom(){
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){
+      var r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  function televerserPhoto(j, fichier, majBouton){
+    if(!modeFamille || !utilisateurId || !voyageId) return Promise.resolve();
+    if(majBouton) majBouton("Compression…");
+    return compresserPhoto(fichier).then(function(blob){
+      var chemin = voyageId + "/" + utilisateurId + "/" + idRandom() + ".jpg";
+      if(majBouton) majBouton("Envoi…");
+      return supabaseClient.storage.from("photos").upload(chemin, blob, { contentType: "image/jpeg" })
+        .then(function(resUpload){
+          if(resUpload.error) throw resUpload.error;
+          return supabaseClient.from("photos").insert({
+            voyage_id: voyageId,
+            journee_id: j.uuid,
+            membre_id: utilisateurId,
+            storage_path: chemin
+          }).select().single();
+        })
+        .then(function(resInsert){
+          if(resInsert.error) throw resInsert.error;
+          (PHOTOS_PAR_JOURNEE[j.uuid] = PHOTOS_PAR_JOURNEE[j.uuid] || []).push(resInsert.data);
+          rafraichirPhotos(j.id);
+        });
+    }).catch(function(err){
+      console.error("Échec de l'ajout de la photo :", err);
+      window.alert("La photo n'a pas pu être envoyée — réessayez quand le réseau sera meilleur.");
+    }).then(function(){
+      if(majBouton) majBouton(null);
+    });
+  }
+
+  function basculerVisibilitePhoto(photo, j){
+    var nouvelle = photo.visibilite === "partagee" ? "perso" : "partagee";
+    return supabaseClient.from("photos").update({ visibilite: nouvelle }).eq("id", photo.id).then(function(res){
+      if(res.error){ console.error("Échec de mise à jour de la visibilité :", res.error); return; }
+      photo.visibilite = nouvelle;
+      rafraichirPhotos(j.id);
+    });
+  }
+
+  function legenderPhoto(photo, j, nouvelleLegende){
+    var texte = nouvelleLegende.trim();
+    return supabaseClient.from("photos").update({ legende: texte || null }).eq("id", photo.id).then(function(res){
+      if(res.error){ console.error("Échec d'enregistrement du commentaire :", res.error); return; }
+      photo.legende = texte || null;
+      rafraichirPhotos(j.id);
+    });
+  }
+
+  function supprimerPhoto(photo, j){
+    if(!window.confirm("Supprimer cette photo ?")) return Promise.resolve();
+    return supabaseClient.storage.from("photos").remove([photo.storage_path]).then(function(){
+      return supabaseClient.from("photos").delete().eq("id", photo.id);
+    }).then(function(res){
+      if(res.error){ console.error("Échec de suppression de la photo :", res.error); return; }
+      var liste = PHOTOS_PAR_JOURNEE[j.uuid] || [];
+      var idx = liste.indexOf(photo);
+      if(idx > -1) liste.splice(idx, 1);
+      rafraichirPhotos(j.id);
+    });
+  }
+
+  /* actionsCompletes distingue les deux endroits ou la galerie s'affiche :
+     - vue journee (detail) : false -- juste regarder/ajouter/supprimer,
+       le reste (commenter, partager) alourdirait une page deja dense ;
+     - onglet Carnet : true -- c'est desormais le seul endroit ou
+       commenter et partager une photo (voir conversation de conception). */
+  function contenuGaleriePhotos(conteneur, j, actionsCompletes){
+    conteneur.innerHTML = "";
+    var photos = PHOTOS_PAR_JOURNEE[j.uuid] || [];
+    if(!photos.length){
+      conteneur.appendChild(el("p", "photos-vide", "Aucune photo pour ce jour pour l'instant."));
+      return;
+    }
+    var grille = el("div", "photos-grille");
+    photos.forEach(function(p){
+      var figure = el("figure", "photos-item" + (p.membre_id === utilisateurId ? " mine" : ""));
+      var img = document.createElement("img");
+      img.alt = p.legende || "";
+      img.loading = "lazy";
+      urlSigneePhoto(p.storage_path).then(function(url){ if(url) img.src = url; });
+      figure.appendChild(img);
+
+      /* commentaire : affiche s'il existe, quel qu'en soit l'auteur (les
+         enfants doivent voir les commentaires des autres, pas seulement
+         les leurs) ; seul l'auteur de la photo peut l'ajouter/le modifier
+         -- c'est une legende de la photo, pas un fil de discussion. */
+      if(p.legende){
+        figure.appendChild(el("figcaption", "photos-item-legende", sansHtml(p.legende)));
+      }
+
+      if(p.membre_id === utilisateurId){
+        var actions = el("div", "photos-item-actions");
+
+        if(actionsCompletes){
+          var boutonCommenter = el("button", "photos-item-icone", ICONES.commentaire);
+          boutonCommenter.type = "button";
+          boutonCommenter.setAttribute("aria-label", p.legende ? "Modifier le commentaire" : "Commenter");
+          boutonCommenter.title = p.legende ? "Modifier le commentaire" : "Commenter";
+          boutonCommenter.addEventListener("click", function(){
+            var existante = figure.querySelector(".photos-item-legende");
+            if(existante) figure.removeChild(existante);
+            var champ = document.createElement("textarea");
+            champ.className = "photos-item-legende-champ";
+            champ.value = p.legende || "";
+            champ.placeholder = "Un mot sur cette photo…";
+            champ.rows = 2;
+            figure.insertBefore(champ, actions);
+            champ.focus();
+            champ.addEventListener("blur", function(){ legenderPhoto(p, j, champ.value); });
+            champ.addEventListener("keydown", function(ev){
+              if(ev.key === "Enter" && !ev.shiftKey){ ev.preventDefault(); champ.blur(); }
+            });
+          });
+          actions.appendChild(boutonCommenter);
+
+          var boutonPartage = el("button", "photos-item-icone" + (p.visibilite === "partagee" ? " actif" : ""), ICONES.partager);
+          boutonPartage.type = "button";
+          boutonPartage.setAttribute("aria-label", p.visibilite === "partagee" ? "Partagée avec la famille — cliquer pour ne plus partager" : "Partager avec la famille");
+          boutonPartage.title = boutonPartage.getAttribute("aria-label");
+          boutonPartage.addEventListener("click", function(){ basculerVisibilitePhoto(p, j); });
+          actions.appendChild(boutonPartage);
+        }
+
+        var boutonSupprimer = el("button", "photos-item-icone", ICONES.supprimer);
+        boutonSupprimer.type = "button";
+        boutonSupprimer.setAttribute("aria-label", "Supprimer cette photo");
+        boutonSupprimer.title = "Supprimer cette photo";
+        boutonSupprimer.addEventListener("click", function(){ supprimerPhoto(p, j); });
+        actions.appendChild(boutonSupprimer);
+
+        figure.appendChild(actions);
+      }
+      grille.appendChild(figure);
+    });
+    conteneur.appendChild(grille);
+  }
+
+  /* un même jour peut être affiché deux fois à la fois (vue détail et
+     onglet Carnet) : on reconstruit les deux plutôt que de suivre les
+     deltas un par un, le volume (quelques dizaines de photos sur tout
+     un voyage) rend ça largement assez rapide pour rester imperceptible. */
+  function rafraichirPhotos(jourId){
+    var j = trouverJour(jourId);
+    if(!j) return;
+    Array.prototype.forEach.call(document.querySelectorAll(".photos[data-jour-photos='" + jourId + "'] .photos-grille-conteneur"), function(conteneur){
+      contenuGaleriePhotos(conteneur, j, false);
+    });
+    if(modeFamille) rendrePanelCarnet();
+  }
+
+  /* bouton + input d'ajout de photo, reutilise a deux endroits (vue
+     journee et onglet Carnet, voir conversation de conception) : la
+     vue journee ne garde qu'ajouter/supprimer, l'onglet Carnet est
+     desormais l'endroit pour tout le reste (texte, commentaires,
+     partage). */
+  function construireControleUpload(j){
+    var wrap = document.createElement("div");
+    var input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.multiple = true;
+    input.className = "photos-input-cache";
+    input.style.display = "none";
+    var boutonAjouter = el("button", "photos-bouton-ajouter", "Ajouter une photo");
+    boutonAjouter.type = "button";
+    boutonAjouter.addEventListener("click", function(){ input.click(); });
+    input.addEventListener("change", function(){
+      if(!input.files || !input.files.length) return;
+      var fichiers = Array.prototype.slice.call(input.files);
+      input.value = "";
+      var texteInitial = boutonAjouter.textContent;
+      /* une a la fois : la compression + l'upload sont deja asynchrones
+         par photo (voir televerserPhoto), les lancer toutes en parallele
+         saturerait inutilement une connexion mobile sur le terrain --
+         mieux vaut une file d'attente visible ("2/5") qu'un blocage
+         silencieux. */
+      var total = fichiers.length;
+      function suivante(index){
+        if(index >= total){
+          boutonAjouter.textContent = texteInitial;
+          boutonAjouter.disabled = false;
+          return;
+        }
+        var suffixe = total > 1 ? " (" + (index + 1) + "/" + total + ")" : "";
+        televerserPhoto(j, fichiers[index], function(etat){
+          boutonAjouter.textContent = (etat || "Envoi…") + suffixe;
+          boutonAjouter.disabled = true;
+        }).then(function(){ suivante(index + 1); });
+      }
+      suivante(0);
+    });
+    wrap.appendChild(boutonAjouter);
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  /* vue journee : uniquement ajouter/regarder/supprimer, pas le texte de
+     carnet ni les commentaires/partage — desormais dans l'onglet Carnet
+     (voir construireSectionCarnetJour), pour ne pas alourdir cette page
+     deja dense en informations pratiques. */
+  function construireBlocPhotos(j){
+    if(!modeFamille || !utilisateurId) return null;
+    var bloc = el("div", "block photos");
+    bloc.setAttribute("data-jour-photos", j.id);
+    bloc.appendChild(el("h3", null, "Photos du jour"));
+    bloc.appendChild(construireControleUpload(j));
+
+    var conteneur = el("div", "photos-grille-conteneur");
+    bloc.appendChild(conteneur);
+    contenuGaleriePhotos(conteneur, j, false);
+
+    return bloc;
+  }
+
+  /* --- texte du carnet pour ce jour : pre-rempli avec texteAutoJournee,
+     modifiable a la main (voir migration 0020 / sauvegarderTexteCarnet).
+     Un badge indique si le texte affiche est l'automatique ou une
+     surcharge, avec un bouton pour revenir a l'automatique -- jamais de
+     perte silencieuse du texte auto derriere une surcharge oubliee. */
+  /* confirmation d'enregistrement, transitoire : reponse a "a quel moment
+     je suis sur que c'est enregistre ?" (voir conversation de conception)
+     -- affichee juste apres la resolution de l'appel Supabase, jamais
+     avant (pas d'optimisme silencieux qui mentirait en cas d'echec
+     reseau, deja loggue en erreur par ailleurs). */
+  function afficherConfirmationEnregistrement(statutEl){
+    statutEl.textContent = "Enregistré ✓";
+    statutEl.classList.add("visible");
+    clearTimeout(statutEl._minuteur);
+    statutEl._minuteur = setTimeout(function(){ statutEl.classList.remove("visible"); }, 2200);
+  }
+
+  function construireTexteCarnetJour(j){
+    var wrap = el("div", "carnet-texte-jour");
+    wrap.appendChild(el("p", "carnet-texte-jour-label", "Texte du carnet pour ce jour (utilisé dans votre carnet PDF personnel)"));
+
+    var champ = document.createElement("textarea");
+    champ.className = "carnet-texte-jour-champ";
+    champ.rows = 3;
+    champ.value = texteCarnetJournee(j);
+
+    var statut = el("span", "carnet-texte-jour-statut", "");
+
+    var estSurcharge = !!TEXTES_CARNET_PAR_JOURNEE[j.uuid];
+    var boutonReinit = el("button", "carnet-texte-jour-reinit", "Revenir au texte automatique");
+    boutonReinit.type = "button";
+    boutonReinit.hidden = !estSurcharge;
+
+    champ.addEventListener("blur", function(){
+      var valeur = champ.value.trim();
+      if(!valeur || valeur === texteAutoJournee(j)){
+        reinitialiserTexteCarnet(j).then(function(){
+          boutonReinit.hidden = true;
+          afficherConfirmationEnregistrement(statut);
+        });
+        return;
+      }
+      sauvegarderTexteCarnet(j, valeur).then(function(){
+        boutonReinit.hidden = false;
+        afficherConfirmationEnregistrement(statut);
+      });
+    });
+    boutonReinit.addEventListener("click", function(){
+      reinitialiserTexteCarnet(j).then(function(){
+        champ.value = texteAutoJournee(j);
+        boutonReinit.hidden = true;
+      });
+    });
+
+    /* amelioration IA (Edge Function "generer-texte-ia", voir
+       supabase/functions) : part du texte deja present dans le champ
+       (souvenirs/formulation de la famille) plutot que de toujours
+       repartir de zero -- seul le texte automatique non modifie est
+       traite comme "rien a ameliorer", donc generation depuis les faits.
+       Jamais applique automatiquement : la reponse se pose dans le
+       champ, c'est le blur du textarea qui l'enregistre comme n'importe
+       quelle saisie manuelle. Sur demande explicite seulement (bouton),
+       pas a l'ouverture du bloc : chaque appel est facture. */
+    var boutonIA = el("button", "carnet-texte-jour-ia", "Améliorer avec l'IA");
+    boutonIA.type = "button";
+    boutonIA.addEventListener("click", function(){
+      var texteInitial = boutonIA.textContent;
+      boutonIA.disabled = true;
+      boutonIA.textContent = "Génération…";
+      var texteSaisi = champ.value.trim();
+      var texteAAmeliorer = (texteSaisi && texteSaisi !== texteAutoJournee(j)) ? texteSaisi : "";
+      supabaseClient.functions.invoke("generer-texte-ia", {
+        body: { voyage_id: voyageId, journee_id: j.uuid, texte_actuel: texteAAmeliorer }
+      }).then(function(res){
+        if(res.error) throw res.error;
+        var texte = res.data && res.data.texte;
+        if(!texte) throw new Error("réponse vide");
+        champ.value = texte;
+        return sauvegarderTexteCarnet(j, texte).then(function(){
+          boutonReinit.hidden = false;
+          afficherConfirmationEnregistrement(statut);
+        });
+      }).catch(function(err){
+        console.error("Échec de génération IA :", err);
+        window.alert("La génération n'a pas fonctionné — réessayez plus tard, ou écrivez le texte à la main.");
+      }).then(function(){
+        boutonIA.disabled = false;
+        boutonIA.textContent = texteInitial;
+      });
+    });
+
+    wrap.appendChild(champ);
+    var actionsTexte = el("div", "carnet-texte-jour-actions");
+    actionsTexte.appendChild(boutonReinit);
+    actionsTexte.appendChild(boutonIA);
+    actionsTexte.appendChild(statut);
+    wrap.appendChild(actionsTexte);
+    return wrap;
+  }
+
+  /* --- onglet Carnet : generation du PDF a emporter (Edge Function
+     "generer-carnet", voir conception) --------------------------------
+     Deux modes, meme reutilisation que la conception l'a fixe :
+     - "perso" : uniquement les photos du membre connecte, quelle que
+       soit leur visibilite -- chacun peut se faire son propre souvenir.
+     - "famille" : les photos marquees "partagee" par n'importe quel
+       membre -- jamais par defaut, uniquement celles dont l'auteur a
+       explicitement accepte qu'elles y figurent (voir construireBlocPhotos).
+     Generation disponible a tout moment, meme partielle -- pas de notion
+     de voyage "termine" (voir conversation de conception). L'Edge
+     Function elle-meme est un chantier separe : ce panneau reste
+     fonctionnel (compte les photos, affiche l'etat) meme avant qu'elle
+     existe, avec un message clair si l'appel echoue plutot qu'un bouton
+     qui ne fait rien. */
+  function statistiquesPhotos(){
+    var joursAvecPhotos = 0, total = 0, partageesTotal = 0;
+    Object.keys(PHOTOS_PAR_JOURNEE).forEach(function(uuid){
+      var liste = PHOTOS_PAR_JOURNEE[uuid] || [];
+      if(liste.length) joursAvecPhotos++;
+      total += liste.length;
+      partageesTotal += liste.filter(function(p){ return p.visibilite === "partagee"; }).length;
+    });
+    var mesPhotos = 0;
+    Object.keys(PHOTOS_PAR_JOURNEE).forEach(function(uuid){
+      (PHOTOS_PAR_JOURNEE[uuid] || []).forEach(function(p){ if(p.membre_id === utilisateurId) mesPhotos++; });
+    });
+    return { joursAvecPhotos: joursAvecPhotos, total: total, partageesTotal: partageesTotal, mesPhotos: mesPhotos };
+  }
+
+  function demanderGenerationCarnet(mode, majBouton){
+    majBouton("Génération…");
+    return supabaseClient.functions.invoke("generer-carnet", {
+      body: { voyage_id: voyageId, mode: mode }
+    }).then(function(res){
+      if(res.error) throw res.error;
+      var url = res.data && res.data.url;
+      if(!url) throw new Error("réponse inattendue");
+      window.open(url, "_blank", "noopener");
+    }).catch(function(err){
+      console.error("Échec de génération du carnet :", err);
+      window.alert("La génération du carnet n'est pas encore disponible — revenez un peu plus tard dans le voyage.");
+    }).then(function(){
+      majBouton(null);
+    });
+  }
+
+  function construireBoutonGeneration(libelleInitial, mode){
+    var bouton = el("button", "carnet-bouton-generer", libelleInitial);
+    bouton.type = "button";
+    bouton.addEventListener("click", function(){
+      demanderGenerationCarnet(mode, function(etat){
+        bouton.textContent = etat || libelleInitial;
+        bouton.disabled = !!etat;
+      });
+    });
+    return bouton;
+  }
+
+  function rendrePanelCarnet(){
+    var panel = document.getElementById("panel-carnet");
+    panel.innerHTML = "";
+    panel.appendChild(construireEnteteOnglet("Carnet"));
+
+    var stats = statistiquesPhotos();
+    var bloc = el("div", "block");
+    bloc.appendChild(el("p", "tagline",
+      stats.total
+        ? stats.total + (stats.total > 1 ? " photos ajoutées sur " : " photo ajoutée sur ") +
+          stats.joursAvecPhotos + (stats.joursAvecPhotos > 1 ? " journées." : " journée.")
+        : "Aucune photo ajoutée pour l'instant — ajoutez-en depuis une journée pour commencer votre carnet."
+    ));
+
+    /* Génération du PDF mise de côté le 2026-08-06 : le rendu n'est pas
+       encore assez convaincant (voir CLAUDE.md → « Générateur de PDF »).
+       On garde tout le reste de l'onglet Carnet (ajout de photos, texte
+       par journée, galerie) pleinement fonctionnel ; les boutons de
+       génération et demanderGenerationCarnet/construireBoutonGeneration
+       restent dans le code, prêts à être réaffichés ici quand le rendu
+       sera repris. */
+
+    panel.appendChild(bloc);
+
+    var sections = construireSectionsCarnetJours();
+    if(sections) panel.appendChild(sections);
+  }
+
+  /* une section par journee du voyage (pas seulement celles qui ont deja
+     des photos, voir conversation de conception) : texte de carnet,
+     ajout de photo et galerie complete (commenter/partager/supprimer) --
+     desormais le seul endroit pour ces actions, la vue journee ne garde
+     qu'ajouter/supprimer (voir construireBlocPhotos). Accordeon replie
+     par defaut, meme convention que construireItemLieu, sauf pour un
+     jour qui a deja du contenu (photo ou texte perso) : ouvert d'emblee,
+     pas la peine de re-deplier ce qu'on vient de remplir. */
+  function construireSectionCarnetJour(j){
+    var aDejaDuContenu = !!((PHOTOS_PAR_JOURNEE[j.uuid] || []).length || TEXTES_CARNET_PAR_JOURNEE[j.uuid]);
+    var item = el("div", "carnet-jour-item" + (aDejaDuContenu ? " open" : ""));
+
+    var id = "carnet-jour-" + j.id;
+    var bouton = document.createElement("button");
+    bouton.type = "button";
+    bouton.className = "carnet-jour-head";
+    bouton.setAttribute("aria-expanded", aDejaDuContenu ? "true" : "false");
+    bouton.setAttribute("aria-controls", id);
+    bouton.appendChild(el("span", "lieu-chevron", ICONES.chevron));
+    bouton.appendChild(el("span", "carnet-jour-titre", j.dow + " " + j.num + " " + j.mois + " — " + texteJour(j)));
+    var nbPhotos = (PHOTOS_PAR_JOURNEE[j.uuid] || []).length;
+    if(nbPhotos) bouton.appendChild(el("span", "carnet-jour-compte", String(nbPhotos)));
+    bouton.addEventListener("click", function(){
+      var ouvrir = !item.classList.contains("open");
+      item.classList.toggle("open", ouvrir);
+      bouton.setAttribute("aria-expanded", ouvrir ? "true" : "false");
+    });
+    item.appendChild(bouton);
+
+    var collapse = el("div", "carnet-jour-collapse");
+    collapse.id = id;
+    var inner = el("div", "carnet-jour-collapse-inner");
+    inner.appendChild(construireTexteCarnetJour(j));
+    inner.appendChild(construireControleUpload(j));
+    var conteneur = el("div", "photos-grille-conteneur");
+    inner.appendChild(conteneur);
+    contenuGaleriePhotos(conteneur, j, true);
+    collapse.appendChild(inner);
+    item.appendChild(collapse);
+
+    return item;
+  }
+
+  function construireSectionsCarnetJours(){
+    if(!JOURS.length) return null;
+    var wrap = el("div", "block");
+    wrap.appendChild(el("h3", null, "Vos photos, jour par jour"));
+    JOURS.forEach(function(j){ wrap.appendChild(construireSectionCarnetJour(j)); });
+    return wrap;
   }
 
   /* --- onglet À réserver : quelles journées ont une action réelle -------
@@ -3402,6 +4073,15 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
       body.appendChild(construireBlocFil(j));
     }
 
+    /* juste apres le fil horaire : c'est la premiere chose qui suit le
+       "quoi faire aujourd'hui", avant les infos pratiques secondaires
+       (parking, quiz, chasse...) -- voir discussion de placement, pas
+       en toute premiere position pour ne pas repousser le fil (ce que
+       consulte en priorite quelqu'un qui prepare son depart a 8h),
+       pas non plus apres le quiz/chasse ou il etait quasi invisible. */
+    var blocPhotos = construireBlocPhotos(j);
+    if(blocPhotos) body.appendChild(blocPhotos);
+
     if(j.pratique){
       var dlPratique = construirePratiqueJour(j.pratique);
       if(dlPratique) body.appendChild(dlPratique);
@@ -3904,7 +4584,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      graphique : cohérent avec le reste du moteur de rendu (voir les
      icônes de la barre d'onglets, elles aussi du SVG écrit à la main). */
   var NOMS_ONGLETS_FREQUENTATION = {
-    aujourdhui: "Accueil", jours: "Agenda", chasse: "Chasse",
+    aujourdhui: "Accueil", jours: "Agenda", chasse: "Chasse", carnet: "Carnet",
     reserver: "Réserver", urgences: "Urgences", admin: "Admin"
   };
   function formaterDureeFrequentation(secondes){
@@ -4424,6 +5104,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
   /* --- panneau Chasse au trésor -------------------------------------------- */
   rendrePanelChasse();
+
+  /* --- panneau Carnet (generation PDF) ------------------------------------
+     Entierement reserve aux comptes famille (photos, voir migration 0018) :
+     rien a construire pour un visiteur public, contrairement a Chasse qui
+     garde un contenu commun. */
+  if(modeFamille) rendrePanelCarnet();
 
   /* --- recherche du jour courant ------------------------------------------
      Comparaison de chaînes valide ici : tous les id sont "d-MMJJ", même
@@ -5130,6 +5816,15 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(badge.seuilPointsQuiz != null){
       return pointsQuizObtenus() >= badge.seuilPointsQuiz;
     }
+    if(badge.seuilPhotos != null){
+      /* comme les seuils de quiz ci-dessus : seulement MES photos
+         (statistiquesPhotos().mesPhotos), jamais le total famille --
+         la RLS de la table photos ne laisse voir a un membre que ses
+         propres photos et celles marquees "partagee" par les autres,
+         donc impossible de calculer un vrai total famille cote client
+         sans fonction dediee. */
+      return statistiquesPhotos().mesPhotos >= badge.seuilPhotos;
+    }
     return badge.conditions.every(function(c){
       var id = idPourCondition(c);
       return !!id && !!etat[id];
@@ -5166,10 +5861,11 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   }
   function chasseBadgesDe(cochees){
     return BADGES.filter(function(b){
-      /* seuils basés sur le quiz (journées corrigées, points) : hors de
-         portée d'un etat "cochees" seul, jamais comptés dans le classement
-         d'un autre membre — seuls les badges liés à la chasse le sont. */
-      if(b.seuilJourneesCorrigees != null || b.seuilPointsQuiz != null) return false;
+      /* seuils basés sur le quiz (journées corrigées, points) ou sur les
+         photos personnelles : hors de portée d'un etat "cochees" seul,
+         jamais comptés dans le classement d'un autre membre — seuls les
+         badges liés à la chasse le sont. */
+      if(b.seuilJourneesCorrigees != null || b.seuilPointsQuiz != null || b.seuilPhotos != null) return false;
       return badgeObtenu(b, cochees);
     }).length;
   }
@@ -5602,7 +6298,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   }
 
   /* --- routage par ancre --------------------------------------------------- */
-  var PANELS = ["aujourdhui", "jours", "chasse", "reserver", "urgences", "admin"];
+  var PANELS = ["aujourdhui", "jours", "chasse", "carnet", "reserver", "urgences", "admin"];
   var tabbar = document.getElementById("tabbar");
 
   function afficherPanel(nom, scrollY){
@@ -5639,7 +6335,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      jamais sur un onglet caché ni une page vide. */
   function ancreVersOngletMasque(h){
     if(h === "admin") return !estAdmin;
-    return !modeFamille && (h === "chasse" || h === "urgences" || /^reserver(-\d{4})?$/.test(h));
+    return !modeFamille && (h === "chasse" || h === "carnet" || h === "urgences" || /^reserver(-\d{4})?$/.test(h));
   }
   function route(){
     if(ancreVersOngletMasque((location.hash || "").slice(1))){
@@ -5673,6 +6369,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(h === "aujourdhui"){ rendreAujourdhui(); afficherPanel("aujourdhui"); document.title = titreCarnet(); }
     else if(h === "urgences"){ afficherPanel("urgences"); titrerOnglet("urgences"); }
     else if(h === "chasse"){ afficherPanel("chasse"); titrerOnglet("chasse"); }
+    else if(h === "carnet"){ afficherPanel("carnet"); titrerOnglet("carnet"); }
     else if(h === "reserver"){ afficherPanel("reserver", detailEtaitOuvert ? scrollPositions.reserver : 0); titrerOnglet("reserver"); }
     else if(h === "admin"){ afficherPanel("admin"); titrerOnglet("admin"); }
     else if(h === "jours"){
@@ -6008,6 +6705,11 @@ function appliquerTheme(theme){
     var d = new Date(ligne.date + "T12:00:00");
     return {
       id: ligne.ancre,
+      /* uuid réel de la ligne journees, distinct de `id` (l'ancre texte) —
+         nécessaire pour toute écriture qui référence journees(id) en FK
+         côté Supabase (ex. photos.journee_id), alors que `id` sert
+         partout ailleurs dans ce fichier comme identifiant d'affichage. */
+      uuid: ligne.id,
       date: ligne.date,
       dow: JOURS_SEMAINE[d.getDay()],
       num: String(d.getDate()),
@@ -6069,6 +6771,7 @@ function appliquerTheme(theme){
     if(ligne.seuil_total != null) badge.seuilTotal = ligne.seuil_total;
     if(ligne.seuil_journees_corrigees != null) badge.seuilJourneesCorrigees = ligne.seuil_journees_corrigees;
     if(ligne.seuil_points_quiz != null) badge.seuilPointsQuiz = ligne.seuil_points_quiz;
+    if(ligne.seuil_photos != null) badge.seuilPhotos = ligne.seuil_photos;
     var conditions = (ligne.badge_conditions || [])
       .map(function(c){ return observationsParId[c.observation_id]; })
       .filter(Boolean);
@@ -6180,10 +6883,28 @@ function appliquerTheme(theme){
                     .eq("voyage_id", voyage.id).maybeSingle()
                 : Promise.resolve({ data: null });
 
-              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille]).then(function(res){
+              /* photos famille (voir supabase/migrations/0018) : les siennes
+                 quelle que soit leur visibilite, plus celles marquees
+                 "partagee" par les autres membres — la policy RLS fait deja
+                 ce tri, select("*") suffit ici. Absent pour un visiteur non
+                 famille (utilisateurId null), comme le reste de ce bloc. */
+              var chargerPhotos = utilisateurId
+                ? supabase.from("photos").select("*")
+                    .eq("voyage_id", voyage.id).order("cree_le", { ascending: true })
+                : Promise.resolve({ data: null });
+
+              /* surcharges de texte de carnet (voir migration 0020) :
+                 RLS limite deja a ses propres lignes, select("*") suffit. */
+              var chargerTextesCarnet = utilisateurId
+                ? supabase.from("carnet_textes").select("*").eq("voyage_id", voyage.id)
+                : Promise.resolve({ data: null });
+
+              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille, chargerPhotos, chargerTextesCarnet]).then(function(res){
                 var resProgression = res[0];
                 var resRole = res[1];
                 var resUrgencesFamille = res[2];
+                var resPhotos = res[3];
+                var resTextesCarnet = res[4];
                 var estAdmin = !!(resRole.data && resRole.data.role === "admin");
                 var urgences = Object.assign({}, voyage.urgences || {});
                 if(resUrgencesFamille.data && resUrgencesFamille.data.assurance_auto){
@@ -6194,7 +6915,8 @@ function appliquerTheme(theme){
                    pouvoir s'afficher dedans via le .catch() plus bas — pas
                    sur un noeud déjà détaché du DOM. */
                 demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille,
-                  urgences, voyage.id, utilisateurId, resProgression.data || null, estAdmin);
+                  urgences, voyage.id, utilisateurId, resProgression.data || null, estAdmin,
+                  resPhotos.data || [], resTextesCarnet.data || []);
                 zoneChargement.remove();
               });
             });
