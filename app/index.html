@@ -5488,6 +5488,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(badge.seuilNiveau3 != null) return badge.seuilNiveau3;
     if(badge.seuilJourneesCorrigees != null) return badge.seuilJourneesCorrigees;
     if(badge.seuilPointsQuiz != null) return badge.seuilPointsQuiz;
+    if(badge.seuilPhotos != null) return badge.seuilPhotos;
     return badge.conditions.length;
   }
   function badgeConditionsRestantes(badge, etat){
@@ -5506,6 +5507,9 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     }
     if(badge.seuilPointsQuiz != null){
       return Math.max(0, badge.seuilPointsQuiz - pointsQuizObtenus());
+    }
+    if(badge.seuilPhotos != null){
+      return Math.max(0, badge.seuilPhotos - statistiquesPhotos().mesPhotos);
     }
     return badge.conditions.filter(function(c){
       var id = idPourCondition(c);
@@ -5533,6 +5537,9 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     }
     if(badge.seuilPointsQuiz != null){
       return "reste " + n + (n === 1 ? " point" : " points");
+    }
+    if(badge.seuilPhotos != null){
+      return "reste " + n + (n === 1 ? " photo" : " photos");
     }
     return texteRestantes(n);
   }
