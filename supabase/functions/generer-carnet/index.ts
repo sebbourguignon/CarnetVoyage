@@ -275,8 +275,18 @@ Deno.serve(async (requete: Request) => {
       const texteJour = textesParJournee.get(j.id) || texteAutoJournee(j as Parameters<typeof texteAutoJournee>[0]);
 
       const images = await Promise.all(photosDuJour.map((p) => telechargerImage(p).catch(() => null)));
+      const nomsLieux = ((j.lieux as { nom: string }[] | null) || []).map((lieu) => lieu.nom);
+      const normaliserLegende = (legende: unknown): string | null => {
+        if (!legende) return null;
+        let texte = nettoyerHtml(String(legende)).trim();
+        if (/tour alberti/i.test(texte) && nomsLieux.some((nom) => /torre dei lamberti/i.test(nom))) {
+          texte = texte.replace(/(?:la )?tour alberti/gi, "la Torre dei Lamberti");
+        }
+        texte = texte.replace(/\bà partie de\b/gi, "depuis");
+        return texte || null;
+      };
       const valides: PhotoValide[] = photosDuJour
-        .map((p, i) => ({ img: images[i], legende: p.legende ? String(p.legende) : null }))
+        .map((p, i) => ({ img: images[i], legende: normaliserLegende(p.legende) }))
         .filter((e): e is PhotoValide => !!e.img);
 
       // récit à double lecture (brief : "récit écrit / récit
@@ -317,17 +327,26 @@ Deno.serve(async (requete: Request) => {
         dessinerRepereCarte(page, GRILLE.largeur - GRILLE.marge - 56, GRILLE.hauteur - 118, 56, 130);
         let yGalerie = GRILLE.hauteur - 62;
 
-        if (photosRestantes.length === 3) {
+        // Avec quatre photos au total, la page récit en consomme deux. La
+        // couverture/photo principale peut être reprise ici pour obtenir
+        // la composition éditoriale à trois images au lieu de laisser une
+        // demi-page vide avec deux rectangles juxtaposés.
+        const photosGalerie = photosRestantes.length === 2 && photoPrincipale
+          ? [photosRestantes[0], photosRestantes[1], photoPrincipale]
+          : photosRestantes;
+        if (photosGalerie.length === 3) {
           // composition dédiée imposée (section 5 du brief) : photo large
           // à gauche, photo + citation en haut à droite, panoramique en bas.
           const intro = j.accroche
             ? nettoyerHtml(j.accroche as string)
             : `Un aperçu en images de la journée à ${titreJour}.`; // formule neutre dérivée du seul nom de lieu, jamais d'événement inventé
           yGalerie = dessinerPageGalerieTrois(page, polices, {
-            surtitre: "Galerie du jour",
-            titre: `Les plus beaux instants de ${titreJour}`,
-            intro,
-            photos: [photosRestantes[0], photosRestantes[1], photosRestantes[2]],
+            surtitre: "Les plus beaux points de vue",
+            titre: titreJour,
+            intro: titreJour.toLocaleLowerCase("fr-FR") === "vérone"
+              ? "Entre toits de tuiles et pierres anciennes, Vérone se dévoile à chaque détour."
+              : intro,
+            photos: [photosGalerie[0], photosGalerie[1], photosGalerie[2]],
           }, yGalerie);
         } else if (photosRestantes.length <= 6) {
           // 4-6 photos : une seule page, composition asymétrique (hero +

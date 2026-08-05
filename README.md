@@ -99,16 +99,72 @@ seulement le résultat — jamais les réponses brutes des autres, par
 construction de la fonction). Chaque appareil voit sa correction dès son
 prochain chargement.
 
+## Photos famille et carnet PDF à emporter
+
+Migrations 0018-0020. Chaque membre famille peut déposer des photos par
+journée depuis `app/` (`construireBlocPhotos`, compression côté client),
+les marquer `visibilite: perso` (par défaut) ou `partagee`, et ajouter une
+légende. Il peut aussi surcharger le texte automatique d'une journée pour
+*son propre* carnet (`carnet_textes`, une ligne par membre × journée) —
+le carnet familial, lui, n'a pas de propriétaire par journée et reste
+toujours sur le texte automatique.
+
+La génération du PDF est une Edge Function Supabase,
+`supabase/functions/generer-carnet/` (Deno + pdf-lib, pas Node) :
+
+```
+index.ts          → orchestration : lit voyage/journées/photos depuis
+                     Supabase (RLS fait le tri perso/famille), assemble
+                     le contexte (polices embarquées, images
+                     téléchargées), appelle les composants dans l'ordre,
+                     upload le PDF dans le bucket privé "carnets" et
+                     renvoie une URL signée (1h).
+design-system.ts  → palette, grille de page (A4 portrait), échelle
+                     typographique — toute valeur de style partagée par
+                     plusieurs composants vit ici.
+ornements.ts      → sceau (deux anneaux + texte courbe + scène italienne
+                     en line-art), carte d'Italie stylisée (silhouette +
+                     itinéraire pointillé + marqueurs), réutilisés en
+                     grand (couverture/clôture) et en filigrane (page
+                     récit).
+icones.ts         → bibliothèque de pictogrammes line-art (amphithéâtre,
+                     cœur, tour, arche, château, route, horloge, météo,
+                     appareil photo), mappés par mot-clé sur le nom du
+                     lieu — jamais un pictogramme générique répété.
+illustrations.ts / italie.ts → silhouettes de fond (port pdf-lib de
+                     app/illustrations.js) et tracé fixe de la botte
+                     italienne (jamais dérivé de vraies coordonnées de
+                     voyage).
+composants.ts     → un composant nommé par bloc de mise en page
+                     (dessinerPageCouverture, dessinerEnteteJour,
+                     dessinerRecitColonnes, dessinerBandeauTempsForts,
+                     dessinerPageGalerieTrois, dessinerPageCloture...).
+```
+
+Direction visuelle : esprit carnet/beau livre de voyage (palette carta/
+inchiostro/terracotta/oliva, Bodoni Moda + IBM Plex, voir le détail des
+couleurs et de la mise en page dans `CLAUDE.md` → « Générateur de PDF »).
+Trois maquettes de référence (couverture, page récit, page galerie) font
+foi pour toute nouvelle itération visuelle — reproduire leur composition
+exacte, pas s'en inspirer librement.
+
+Deux modes de génération, choisis à l'appel (`voyage_id`, `mode`) :
+`perso` (uniquement les photos du membre appelant) ou `famille`
+(uniquement les photos explicitement partagées par n'importe quel
+membre). Disponible à tout moment, y compris en cours de voyage — pas de
+notion de voyage « terminé ».
+
 ## État actuel
 
-Schéma Supabase posé et appliqué (`0001_init.sql` à `0010_visites.sql`).
+Schéma Supabase posé et appliqué (`0001_init.sql` à `0020_carnet_textes.sql`).
 Moteur de rendu porté vers `app/` avec fetch Supabase (`demarrerCarnet`).
 Le voyage salo2026 est publié et sert de validation sur données réelles.
 
 Fait : `outils/publier-voyage.js`, `outils/exporter-voyage.js`,
 authentification famille, onglet Admin (correction du quiz +
 fréquentation), service worker (cache-first shell, network-first
-données Supabase).
+données Supabase), photos famille + génération de carnet PDF (perso et
+famille).
 
 Reste à faire :
 
@@ -117,3 +173,7 @@ Reste à faire :
    Google Fonts sont en dur dans `app/index.html`, ce qui empêche un
    deuxième voyage de porter sa propre identité visuelle sans toucher
    au moteur
+2. Générateur PDF : valider le rendu sur de vraies photos (jusqu'ici
+   testé uniquement avec des aplats de couleur en local, voir
+   `CLAUDE.md` → « Générateur de PDF » pour l'état exact et les points
+   restants) et réduire l'espace vide en bas des pages galerie/clôture

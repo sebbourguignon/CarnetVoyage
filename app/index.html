@@ -2983,17 +2983,13 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         : "Aucune photo ajoutée pour l'instant — ajoutez-en depuis une journée pour commencer votre carnet."
     ));
 
-    var boutonPerso = construireBoutonGeneration("Générer mon carnet", "perso");
-    boutonPerso.disabled = stats.mesPhotos === 0;
-    bloc.appendChild(boutonPerso);
-
-    if(stats.partageesTotal > 0){
-      var boutonFamille = construireBoutonGeneration("Générer le carnet familial", "famille");
-      bloc.appendChild(boutonFamille);
-    } else {
-      bloc.appendChild(el("p", "photos-vide",
-        "Le carnet familial regroupe les photos que chacun choisit de partager (bouton « Partager » sur une photo) — aucune pour l'instant."));
-    }
+    /* Génération du PDF mise de côté le 2026-08-06 : le rendu n'est pas
+       encore assez convaincant (voir CLAUDE.md → « Générateur de PDF »).
+       On garde tout le reste de l'onglet Carnet (ajout de photos, texte
+       par journée, galerie) pleinement fonctionnel ; les boutons de
+       génération et demanderGenerationCarnet/construireBoutonGeneration
+       restent dans le code, prêts à être réaffichés ici quand le rendu
+       sera repris. */
 
     panel.appendChild(bloc);
 

@@ -222,6 +222,19 @@ export function dessinerParaphe(page: PDFPage, x: number, y: number, color: RGB)
   page.drawEllipse({ x: x + 21, y: y - 2.6, xScale: 1.6, yScale: 2.6, color });
 }
 
+/** Filet olive terminé par un rameau réellement dessiné, réutilisable. */
+export function dessinerSeparateurOlivier(page: PDFPage, x: number, y: number, largeur: number, color: RGB) {
+  const fin = x + Math.max(24, largeur - 26);
+  page.drawRectangle({ x, y, width: fin - x, height: 0.65, color });
+  page.drawSvgPath("M0,8 C7,6 14,2 23,-5", { x: fin - 1, y: y + 5, scale: 1, borderColor: color, borderWidth: 0.85 });
+  const feuilles = [[5,5,18],[9,2,-18],[13,0,20],[17,-3,-18],[21,-5,18]];
+  for (const [dx, dy, angle] of feuilles) {
+    const rad = angle * Math.PI / 180;
+    const ux = Math.cos(rad) * 3.5, uy = Math.sin(rad) * 3.5;
+    page.drawEllipse({ x: fin + dx, y: y + dy, xScale: 3.6, yScale: 1.45, rotate: degrees(angle), borderColor: color, borderWidth: 0.6 });
+  }
+}
+
 /**
  * Carte d'Italie stylisée : silhouette (italie.ts, tracé fixe dérivé d'une
  * vraie frontière) remplie très pâle (mapFill/mapStroke), tracé d'itinéraire

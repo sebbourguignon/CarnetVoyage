@@ -24,8 +24,8 @@
 import { PDFDocument, PDFFont, PDFImage, PDFPage, RGB } from "npm:pdf-lib@1.17.1";
 import { appendBezierCurve, clip, closePath, endPath, lineTo, moveTo, popGraphicsState, pushGraphicsState, rectangle } from "npm:pdf-lib@1.17.1";
 import { dessinerBandeau } from "./illustrations.ts";
-import { dessinerCarteItalie, dessinerMotifScene, dessinerParaphe, dessinerPhotoArche, dessinerSceau } from "./ornements.ts";
-import { colonnes, GRILLE, PALETTE, PALETTE_BANDEAU, TYPO } from "./design-system.ts";
+import { dessinerCarteItalie, dessinerMotifScene, dessinerParaphe, dessinerPhotoArche, dessinerSceau, dessinerSeparateurOlivier } from "./ornements.ts";
+import { colonnes, COMPOSITION, GRILLE, PALETTE, PALETTE_BANDEAU, TYPO } from "./design-system.ts";
 import { deviverIconePourLieu, dessinerIconeBandeau, NomIconeBandeau } from "./icones.ts";
 
 export interface Polices {
@@ -97,7 +97,8 @@ export function nouvellePage(pdf: PDFDocument): PDFPage {
 }
 
 export function dessinerPiedDePage(page: PDFPage, polices: Polices, libelleGauche: string, numero: number) {
-  const y = 32;
+  const y = COMPOSITION.piedY;
+  dessinerSeparateurOlivier(page, GRILLE.marge, y + 19, GRILLE.largeur - GRILLE.marge * 2, PALETTE.oliva);
   page.drawText(libelleGauche.toUpperCase(), { x: GRILLE.marge, y, size: TYPO.folio.taille, font: polices.label, color: PALETTE.grigio });
   const texteNumero = String(numero).padStart(2, "0");
   const largeurNumero = polices.label.widthOfTextAtSize(texteNumero, TYPO.folio.taille);
@@ -106,7 +107,7 @@ export function dessinerPiedDePage(page: PDFPage, polices: Polices, libelleGauch
 
 /** Filet vertical décoratif en marge gauche -- signature répétée sur toutes les pages. */
 export function dessinerFiletMarge(page: PDFPage) {
-  page.drawRectangle({ x: GRILLE.marge - 20, y: 90, width: 0.8, color: PALETTE.rosso, height: GRILLE.hauteur - 180 });
+  page.drawRectangle({ x: COMPOSITION.filetMargeX, y: 76, width: 0.75, color: PALETTE.rosso, height: GRILLE.hauteur - 128 });
 }
 
 /** Sceau "ITALIE · SOUVENIRS DE FAMILLE", scène centrale = loggia + cyprès + horizon (line-art, esprit tampon de collection). */
@@ -354,7 +355,7 @@ export function dessinerEnteteJour(
     const nbLignes = compterLignes(polices.accroche, opts.accroche, TYPO.accrocheJour.taille, opts.largeurDisponible);
     y -= nbLignes * TYPO.accrocheJour.interligne + 14;
   }
-  dessinerParaphe(page, GRILLE.marge, y, opts.estEclipse ? PALETTE.blu : PALETTE.oliva);
+  dessinerSeparateurOlivier(page, GRILLE.marge, y, 86, opts.estEclipse ? PALETTE.blu : PALETTE.oliva);
   return y - 24;
 }
 
@@ -583,28 +584,31 @@ export function dessinerPageGalerieTrois(
   const largeurContenu = GRILLE.largeur - GRILLE.marge * 2;
   let y = yDepart;
 
-  page.drawText(opts.surtitre.toUpperCase(), { x: GRILLE.marge, y, size: TYPO.labelSection.taille, font: polices.label, color: PALETTE.rosso });
-  y -= 22;
+  page.drawText(opts.surtitre.toUpperCase(), { x: GRILLE.marge, y, size: 9.5, font: polices.label, color: PALETTE.rosso });
+  page.drawRectangle({ x: GRILLE.marge, y: y - 12, width: 28, height: 2, color: PALETTE.rosso });
+  y -= 52;
   // gap mesuré, pas une valeur fixe trop courte -- même bug que
   // précédemment (deux lignes de texte consécutives ont besoin d'un écart
   // qui tienne compte de leurs propres ascendantes/descendantes, pas d'un
   // delta arbitraire de 10pt) : constaté à l'inspection du rendu réel.
   y = dessinerTexteMesure(page, opts.titre, GRILLE.marge, y, {
-    size: 24, font: polices.titreDoux, color: PALETTE.inchiostro, maxWidth: largeurContenu, lineHeight: 28,
+    size: 38, font: polices.titreDoux, color: PALETTE.inchiostro, maxWidth: largeurContenu * 0.62, lineHeight: 42,
   });
-  y -= 26;
+  y -= 14;
+  dessinerSeparateurOlivier(page, GRILLE.marge, y, 150, PALETTE.oliva);
+  y -= 28;
   y = dessinerTexteMesure(page, opts.intro, GRILLE.marge, y, {
-    size: TYPO.accrocheJour.taille, font: polices.accroche, color: PALETTE.grigio, maxWidth: largeurContenu, lineHeight: TYPO.accrocheJour.interligne,
+    size: 11, font: polices.texte, color: PALETTE.grigio, maxWidth: 280, lineHeight: 15,
   });
   y -= 24;
 
   const [photoA, photoB, photoC] = opts.photos;
   const espace = 14;
   const [colA, colB] = colonnes(2, largeurContenu, GRILLE.marge, espace, [0.58, 0.42]);
-  const hauteurA = 236, hauteurB = 176;
+  const hauteurA = 218, hauteurB = 190;
   // décalage volontaire de photo B (composition asymétrique, maquette 3 :
   // la photo de droite "commence un peu plus bas" que celle de gauche).
-  const decalageB = 26;
+  const decalageB = 0;
   dessinerPhotoAvecLegende(page, polices, photoA.img, colA.x, y, colA.largeur, hauteurA, photoA.legende);
 
   // la légende de la photo B n'est PAS répétée sous l'image : elle devient
@@ -636,11 +640,11 @@ export function dessinerPageGalerieTrois(
   // l'inspection du rendu réel, 2026-08-05). La hauteur de la photo se
   // déduit de l'espace RÉELLEMENT restant jusqu'au pied de page, jamais
   // d'une valeur fixe qui laisserait un vide résiduel.
-  const largeurC = largeurContenu * 0.68;
+  const largeurC = largeurContenu * 0.72;
   const xC = GRILLE.marge + largeurContenu - largeurC;
-  const hauteurC = Math.min(Math.max(y - GRILLE.espaceFooter - 10, 200), 340);
+  const hauteurC = Math.min(Math.max(y - 78, 205), 285);
   dessinerPhotoAvecLegende(page, polices, photoC.img, xC, y, largeurC, hauteurC, photoC.legende, 22);
-  dessinerParaphe(page, GRILLE.marge, y - hauteurC / 2, PALETTE.oliva);
+  dessinerSeparateurOlivier(page, GRILLE.marge, y - hauteurC / 2, largeurContenu - largeurC - 12, PALETTE.oliva);
   y -= hauteurC + Math.max(26, hauteurLegende(polices.legende, photoC.legende, largeurC) + 10);
 
   return y;
@@ -661,21 +665,24 @@ export interface DonneesCouverture {
 export function dessinerPageCouverture(pdf: PDFDocument, polices: Polices, d: DonneesCouverture): PDFPage {
   const page = nouvellePage(pdf);
   dessinerFiletMarge(page);
-  const hauteurArche = 420;
+  const hauteurArche = COMPOSITION.couverture.photoHauteur;
   if (d.imgHero) {
-    dessinerPhotoArche(page, d.imgHero, GRILLE.marge, GRILLE.hauteur - 60, GRILLE.largeur - GRILLE.marge * 2, hauteurArche);
+    dessinerPhotoArche(page, d.imgHero, GRILLE.marge, COMPOSITION.couverture.photoHaut, GRILLE.largeur - GRILLE.marge * 2, hauteurArche);
   } else {
     dessinerBandeau(page, d.motifsRepli, "ville", 0, GRILLE.hauteur - GRILLE.margeBandeau, GRILLE.largeur, hauteurArche, PALETTE_BANDEAU);
   }
   dessinerSceauCarnet(page, polices, GRILLE.largeur - 100, GRILLE.hauteur - 100, 46);
 
-  const yZoneTexte = GRILLE.hauteur - 60 - hauteurArche;
-  const largeurTexte = GRILLE.largeur - GRILLE.marge * 2 - 140; // 140 = réserve pour le sceau/la carte à droite
-  let y = yZoneTexte - 40;
+  const yZoneTexte = COMPOSITION.couverture.photoHaut - hauteurArche;
+  const largeurTexte = COMPOSITION.couverture.largeurTitre;
+  let y = yZoneTexte - 38;
   page.drawRectangle({ x: GRILLE.marge, y, width: 34, height: 3, color: PALETTE.rosso });
   y -= 22;
   page.drawText(d.mode === "perso" ? "CARNET PERSONNEL" : "CARNET DE FAMILLE", { x: GRILLE.marge, y, size: TYPO.labelCouverture.taille, font: polices.label, color: PALETTE.rosso });
-  y -= 46;
+  y -= 42;
+  // La carte passe derrière le bloc éditorial, avant le titre, afin de
+  // former une seule composition sans jamais recouvrir les glyphes.
+  dessinerRepereCarte(page, GRILLE.largeur * 0.53, yZoneTexte + 8, GRILLE.largeur * 0.41, 300, 0.30);
   y = dessinerTexteMesure(page, d.titre, GRILLE.marge, y, {
     size: TYPO.titreCouverture.taille, font: polices.titre, color: PALETTE.inchiostro, maxWidth: largeurTexte, lineHeight: TYPO.titreCouverture.interligne,
   });
@@ -687,12 +694,7 @@ export function dessinerPageCouverture(pdf: PDFDocument, polices: Polices, d: Do
     });
     y -= 22;
   }
-  dessinerParaphe(page, GRILLE.marge, y, PALETTE.oliva);
-  // carte en filigrane : moitié droite de la zone sous la photo, du niveau
-  // du titre jusqu'en bas de page (maquette 1) -- opacité basse mais la
-  // silhouette + le tracé restent identifiables, jamais un rectangle gris
-  // méconnaissable.
-  dessinerRepereCarte(page, GRILLE.largeur / 2, yZoneTexte - 10, GRILLE.largeur / 2 - GRILLE.marge, yZoneTexte - 40, 0.4);
+  dessinerSeparateurOlivier(page, GRILLE.marge, y, 250, PALETTE.oliva);
   page.drawSvgPath("M2,15 L2,6 L6,6 L7.5,3.5 L12.5,3.5 L14,6 L18,6 L18,15 Z", { x: GRILLE.marge, y: 62, scale: 0.7, borderColor: PALETTE.oliva, borderWidth: 1.3 / 0.7 });
   page.drawEllipse({ x: GRILLE.marge + 7, y: 56, xScale: 2.5, yScale: 2.5, borderColor: PALETTE.oliva, borderWidth: 1 });
   page.drawText(`${d.nbJours} journée${d.nbJours > 1 ? "s" : ""} illustrée${d.nbJours > 1 ? "s" : ""} · ${d.nbPhotos} photo${d.nbPhotos > 1 ? "s" : ""}`, {
@@ -739,12 +741,8 @@ export function dessinerPageCloture(pdf: PDFDocument, polices: Polices, d: Donne
   const page = nouvellePage(pdf);
   dessinerFiletMarge(page);
   dessinerSceauCarnet(page, polices, GRILLE.largeur - 90, GRILLE.hauteur - 80, 40);
-  // grande carte en filigrane, quasi pleine page (écho de la couverture) --
-  // remplit l'arrière-plan pour que la page ne semble jamais à moitié
-  // vide, même quand le bloc de texte (court par nature, une page de
-  // clôture n'a pas grand-chose à dire) ne descend pas plus bas que le
-  // milieu de la page.
-  dessinerRepereCarte(page, GRILLE.largeur * 0.32, GRILLE.hauteur - 30, GRILLE.largeur * 0.68, GRILLE.hauteur - 60, 0.28);
+  dessinerRepereCarte(page, GRILLE.largeur - COMPOSITION.cloture.carteLargeur - 18, 610,
+    COMPOSITION.cloture.carteLargeur, COMPOSITION.cloture.carteHauteur, COMPOSITION.cloture.opaciteCarte);
 
   const largeurTexte = GRILLE.largeur - GRILLE.marge * 2;
   // bloc titre+phrase+dates+récap centré verticalement (règle explicite :
@@ -776,7 +774,7 @@ export function dessinerPageCloture(pdf: PDFDocument, polices: Polices, d: Donne
     x: GRILLE.marge, y, size: 10, font: polices.texte, color: PALETTE.inchiostro, maxWidth: largeurTexte,
   });
   y -= 26;
-  dessinerParaphe(page, GRILLE.marge, y, PALETTE.oliva);
+  dessinerSeparateurOlivier(page, GRILLE.marge, y, 250, PALETTE.oliva);
   dessinerPiedDePage(page, polices, d.titreCarnet, d.folio);
   return page;
 }

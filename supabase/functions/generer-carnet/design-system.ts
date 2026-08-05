@@ -19,6 +19,17 @@ export const GRILLE = {
   gouttiere: 14, // espace horizontal par défaut entre deux colonnes
 };
 
+// Dimensions éditoriales récurrentes. Elles constituent le contrat des
+// gabarits et évitent qu'une page de test impose ses coordonnées aux autres.
+export const COMPOSITION = {
+  filetMargeX: 36,
+  piedY: 32,
+  couverture: { photoHaut: 782, photoHauteur: 404, largeurTitre: 330 },
+  recit: { bandeauHaut: 158, espacePhotoTexte: 18 },
+  galerie: { haut: 780, basUtile: 70, espace: 14 },
+  cloture: { carteLargeur: 285, carteHauteur: 430, opaciteCarte: 0.18 },
+};
+
 /**
  * Répartit `largeurTotale` en `n` colonnes de même largeur séparées par la
  * gouttière -- grille à colonnes logiques (demandée explicitement en
@@ -80,12 +91,12 @@ export const PALETTE_BANDEAU: PaletteBandeau = {
 // à un seul endroit.
 export const TYPO = {
   labelCouverture: { taille: 10.5, interligne: 14 },
-  titreCouverture: { taille: 34, interligne: 39 },
+  titreCouverture: { taille: 42, interligne: 45 },
   dateCouverture: { taille: 11, interligne: 15 },
   recapCouverture: { taille: 9, interligne: 12 },
 
   dateJour: { taille: 9.5, interligne: 12 },
-  titreJour: { taille: 30, interligne: 33 },
+  titreJour: { taille: 38, interligne: 41 },
   accrocheJour: { taille: 12.5, interligne: 18 },
   labelSection: { taille: 8, interligne: 11 },
   meta: { taille: 8.5, interligne: 11 },
