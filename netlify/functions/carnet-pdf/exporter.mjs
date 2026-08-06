@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { createWriteStream } from "node:fs";
 import { readFile, unlink, writeFile } from "node:fs/promises";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import sharp from "sharp";
@@ -16,10 +19,18 @@ const DIMENSIONS = {
   galerie0: [690, 511], galerie1: [522, 411], galerie2: [487, 404], galerie3: [325, 298], galerie4: [824, 256]
 };
 
-async function telecharger(url) {
+async function telechargerVersFichier(url) {
   const reponse = await fetch(url);
   if(!reponse.ok) throw Object.assign(new Error(`image inaccessible (${reponse.status})`), { code: "IMAGE_ILLISIBLE" });
-  return Buffer.from(await reponse.arrayBuffer());
+  if(!reponse.body) throw Object.assign(new Error("image vide"), { code: "IMAGE_ILLISIBLE" });
+  const chemin=`/tmp/carnet-image-${randomUUID()}`;
+  try {
+    await pipeline(Readable.fromWeb(reponse.body),createWriteStream(chemin));
+    return chemin;
+  } catch(erreur) {
+    await unlink(chemin).catch(()=>{});
+    throw erreur;
+  }
 }
 
 async function jpegPourCadre(source, [largeurCadre, hauteurCadre]) {
@@ -37,12 +48,13 @@ async function preparerPhotos(modele, signalerEtape) {
   let numeroVariante=0;
   async function variante(photo, role) {
     await signalerEtape(`optimisation_image:${++numeroVariante}`);
-    // Ne pas mettre les originaux et les JPEG dans des Map : sur Netlify,
-    // 80 photos de téléphone suffisent alors à conserver plusieurs centaines
-    // de Mo jusqu'au lancement de Chromium. Le buffer redevient libérable dès
-    // que sa data URL a été construite.
-    const jpeg=await jpegPourCadre(await telecharger(photo.url),DIMENSIONS[role]);
-    return { ...photo, url: undefined, storagePath: undefined, dataUrl: `data:image/jpeg;base64,${jpeg.toString("base64")}` };
+    // Les originaux de téléphone restent sur /tmp pendant leur conversion :
+    // leur ArrayBuffer ne vient ainsi jamais gonfler le tas Node de Netlify.
+    const source=await telechargerVersFichier(photo.url);
+    try {
+      const jpeg=await jpegPourCadre(source,DIMENSIONS[role]);
+      return { ...photo, url: undefined, storagePath: undefined, dataUrl: `data:image/jpeg;base64,${jpeg.toString("base64")}` };
+    } finally { await unlink(source).catch(()=>{}); }
   }
   const photoCouverture=modele.journees.flatMap((journee)=>journee.photos).find(Boolean);
   for(const journee of modele.journees) {
@@ -64,8 +76,11 @@ async function preparerPhotos(modele, signalerEtape) {
     }
   }
   if(photoCouverture) {
-    const jpeg=await jpegPourCadre(await telecharger(photoCouverture.url),DIMENSIONS.couverture);
-    modele.couverturePhoto={...photoCouverture,url:undefined,storagePath:undefined,dataUrl:`data:image/jpeg;base64,${jpeg.toString("base64")}`};
+    const source=await telechargerVersFichier(photoCouverture.url);
+    try {
+      const jpeg=await jpegPourCadre(source,DIMENSIONS.couverture);
+      modele.couverturePhoto={...photoCouverture,url:undefined,storagePath:undefined,dataUrl:`data:image/jpeg;base64,${jpeg.toString("base64")}`};
+    } finally { await unlink(source).catch(()=>{}); }
   }
 }
 
