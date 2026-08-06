@@ -34,7 +34,12 @@ export default async (requete) => {
     return new Response(null,{status:204});
   } catch(erreur) {
     console.error("generer-carnet:",erreur);
-    if(client && travailId) await client.from("carnet_travaux").update({statut:"erreur",erreur:String(erreur?.message || erreur).slice(0,500),diagnostic:{code:erreur?.code || "ECHEC_GENERATION"},modele:{},maj_le:new Date().toISOString()}).eq("id",travailId).catch(()=>{});
+    if(client && travailId) {
+      try {
+        const suivi=await client.from("carnet_travaux").update({statut:"erreur",erreur:String(erreur?.message || erreur).slice(0,500),diagnostic:{code:erreur?.code || "ECHEC_GENERATION"},modele:{},maj_le:new Date().toISOString()}).eq("id",travailId);
+        if(suivi.error) console.error("suivi erreur carnet:",suivi.error);
+      } catch(erreurSuivi) { console.error("suivi erreur carnet:",erreurSuivi); }
+    }
     return new Response(null,{status:500});
   } finally { await supprimerTemporaire(cheminTemporaire); }
 };

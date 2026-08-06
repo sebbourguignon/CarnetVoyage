@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { execFile } from "node:child_process";
 import { createWriteStream } from "node:fs";
 import { readFile, unlink, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { promisify } from "node:util";
@@ -134,9 +135,12 @@ export async function exporterCarnet(modele, signalerEtape = async () => {}) {
   try {
     await signalerEtape("optimisation_images");
     await preparerPhotos(modele,signalerEtape);
+    // `import.meta.url` change de répertoire après le bundling Netlify : les
+    // fichiers inclus restent, eux, sous la racine de la fonction (/var/task).
+    const racineFonction=process.env.LAMBDA_TASK_ROOT || process.cwd();
     modele.polices={
-      bodoni:extraireBase64(await readFile(new URL("../../../supabase/functions/generer-carnet/BodoniModa_Variable.ts",import.meta.url),"utf8")),
-      plex:extraireBase64(await readFile(new URL("../../../supabase/functions/generer-carnet/IBMPlexSans_Variable.ts",import.meta.url),"utf8"))
+      bodoni:extraireBase64(await readFile(resolve(racineFonction,"supabase/functions/generer-carnet/BodoniModa_Variable.ts"),"utf8")),
+      plex:extraireBase64(await readFile(resolve(racineFonction,"supabase/functions/generer-carnet/IBMPlexSans_Variable.ts"),"utf8"))
     };
     await signalerEtape("demarrage_chromium");
     const executablePath=process.env.PUPPETEER_EXECUTABLE_PATH || await chromium.executablePath();
