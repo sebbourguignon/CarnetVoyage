@@ -85,7 +85,8 @@
       champ.value=etat.preparation.carnetStory;
       champ.addEventListener("input",function(){
         etat.preparation.carnetStory=champ.value.trim();
-        etat.preparation.carnetStorySource=etat.preparation.carnetStory?"manual":"empty";
+        etat.preparation.carnetStorySource=etat.preparation.carnetStory
+          ? (etat.preparation.carnetStorySource==="ai" ? "ai" : "manual") : "empty";
         etat.preparation.carnetStoryValidated=false; marquer(etat);
         source.textContent=libelleSource(etat.preparation.carnetStorySource); source.className="carnet-source carnet-source-"+etat.preparation.carnetStorySource;
         validation.textContent="Brouillon"; validation.className="carnet-brouillon";
@@ -99,8 +100,36 @@
         if(etat.preparation.carnetStorySource==="empty") etat.preparation.carnetStorySource="manual";
         etat.preparation.carnetStoryValidated=true; marquer(etat); rendre(options.panel);
       });
-      var ia=el("button","carnet-action-secondaire","Composer le récit avec l’IA — bientôt"); ia.type="button"; ia.disabled=true;
-      actions.appendChild(valider); actions.appendChild(ia); bloc.appendChild(actions);
+      var ia=el("button","carnet-action-secondaire","Composer le récit avec l’IA"); ia.type="button";
+      ia.disabled=!etat.preparation.id || etat.modifie;
+      ia.title=ia.disabled ? "Enregistrez d’abord les faits, photos et notes de cette journée." : "";
+      ia.addEventListener("click",function(){
+        ia.disabled=true; ia.textContent="Composition…";
+        options.supabase.functions.invoke("generer-texte-ia",{body:{carnet_journee_id:etat.preparation.id}}).then(function(res){
+          if(res.error) throw res.error;
+          var proposition=res.data && res.data.texte;
+          if(!proposition) throw new Error("réponse vide");
+          etat.avantIA=Object.assign({},etat.preparation);
+          etat.preparation.carnetStory=proposition;
+          etat.preparation.carnetStorySource="ai";
+          etat.preparation.carnetStoryValidated=false;
+          marquer(etat); rendre(options.panel);
+        }).catch(function(erreur){
+          console.error("Échec de composition du récit :",erreur);
+          window.alert((erreur && erreur.message) || "La composition du récit a échoué.");
+          ia.disabled=false; ia.textContent="Composer le récit avec l’IA";
+        });
+      });
+      actions.appendChild(valider); actions.appendChild(ia);
+      if(etat.preparation.carnetStorySource==="ai" && !etat.preparation.carnetStoryValidated){
+        var abandonner=el("button","carnet-action-texte","Abandonner ce brouillon IA"); abandonner.type="button";
+        abandonner.addEventListener("click",function(){
+          etat.preparation=etat.avantIA || modele.normaliserPreparation(null,null);
+          etat.avantIA=null; marquer(etat); rendre(options.panel);
+        });
+        actions.appendChild(abandonner);
+      }
+      bloc.appendChild(actions);
       var notes=el("label","carnet-preparation-label","Notes pour préparer le récit");
       var notesChamp=document.createElement("textarea"); notesChamp.rows=3; notesChamp.placeholder="Anecdotes, impressions ou détails à conserver…"; notesChamp.value=etat.preparation.notesManuelles;
       notesChamp.addEventListener("input",function(){ etat.preparation.notesManuelles=notesChamp.value.trim(); marquer(etat); });
@@ -203,6 +232,9 @@
     async function sauvegarder(jour,etat,statut,bouton){
       var analyse=analyser(etat);
       if(analyse.erreurs.length){ window.alert(analyse.erreurs.join("\n")); return; }
+      if(etat.preparation.carnetStorySource==="ai" && !etat.preparation.carnetStoryValidated){
+        window.alert("Validez ou abandonnez le brouillon IA avant d’enregistrer cette journée."); return;
+      }
       bouton.disabled=true; statut.textContent="Enregistrement…"; statut.className="carnet-sauvegarde-statut";
       try{
         var p=etat.preparation;
@@ -218,7 +250,8 @@
         if(p.carnetStoryValidated && p.carnetStory){
           var legacy=await options.supabase.from("carnet_textes").upsert({voyage_id:options.voyageId,journee_id:jour.uuid,membre_id:options.utilisateurId,texte:p.carnetStory,maj_le:new Date().toISOString()},{onConflict:"journee_id,membre_id"}); if(legacy.error) throw legacy.error;
         }
-        etat.modifie=false; etat.sauvegarde=true; statut.textContent="Préparation enregistrée ✓"; statut.className="carnet-sauvegarde-statut succes";
+        etat.modifie=false; etat.sauvegarde=true; etat.avantIA=null; statut.textContent="Préparation enregistrée ✓"; statut.className="carnet-sauvegarde-statut succes";
+        rendre(options.panel);
       }catch(erreur){console.error("Échec de sauvegarde de la préparation :",erreur);statut.textContent="Échec de l’enregistrement";statut.className="carnet-sauvegarde-statut erreur";}
       bouton.disabled=false;
     }

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Préparation du carnet — scénario de test</title>
   <style>
-    :root{--paper:#f7f2e9;--ink:#292724;--pietra:#6d6861;--rosso:#b64a37;--lago:#7b8060;--rule:#bdb5a8;--rule-soft:#ded7cc}
+    :root{--font-display:Georgia,serif;--font-body:Arial,sans-serif;--font-mono:monospace;--paper:#f3f1ea;--paper-deep:#e9e6dd;--card:#ddd7c7;--ink:#1a1a18;--ink-soft:#595650;--pietra:#8e8a7c;--lago:#0f4a4e;--lago-mid:#2a7d80;--rosso:#b23a2e;--sole:#9c7a2e;--oliva:#67794f;--rule:rgba(26,26,24,.14);--rule-soft:rgba(26,26,24,.07)}
     *{box-sizing:border-box}body{margin:0;background:#ece8e0;color:var(--ink);font-family:Arial,sans-serif}.shell{max-width:980px;margin:auto;padding:28px}.eyebrow{text-transform:uppercase;color:var(--rosso);font-size:.72rem;font-weight:800;letter-spacing:.08em}.carnet-bouton-generer{padding:12px 18px;border:0;border-radius:10px;background:var(--rosso);color:#fff;font-weight:800}
   </style>
   <link rel="stylesheet" href="../../app/carnet-pdf/preparation.css">
@@ -26,10 +26,9 @@
       {uuid:"jour-3",id:"d-3",dow:"Jeu",num:"6",mois:"Août",titre:"Route vers les Dolomites",rail1:"185 km",rail2:"3 h",regarder:[],lieux:[]}
     ];
     var preparations=[{id:"prep-1",journee_id:"jour-1",carnet_story:"Une ancienne proposition à relire avant de devenir notre souvenir.",carnet_story_source:"legacy",carnet_story_validated:false,afficher_programme_prevu:false,carnet_faits_confirmes:[],carnet_photos_selectionnees:[{photo_id:"photo-1",ordre:0,principale:true,focal_x:.5,focal_y:.5,legende_carnet:"Premier panorama"}]}];
-    var fauxSupabase={from:function(){throw new Error("La sauvegarde n’est pas utilisée dans cette fixture");}};
+    var fauxSupabase={from:function(){throw new Error("La sauvegarde n’est pas utilisée dans cette fixture");},functions:{invoke:function(){return Promise.resolve({data:{texte:"Nous avions rejoint Vérone sous une lumière douce, heureux de découvrir enfin l’Arena di Verona. Nous avions pris le temps d’observer ses pierres puis de marcher ensemble vers la Piazza delle Erbe, entre les façades colorées et l’animation de la place. La promenade nous avait ensuite conduits jusqu’à Castelvecchio, où chacun avait trouvé son détail préféré. Cette journée simple nous avait laissé le souvenir chaleureux d’une ville parcourue sans hâte, au rythme de nos curiosités et de nos échanges en famille."}});}}};
     var controleur=CarnetPreparationEcran.creer({panel:document.getElementById("panel"),supabase:fauxSupabase,voyageId:"voyage-test",utilisateurId:utilisateur,jours:jours,photosParJournee:{"jour-1":photos},textesLegacy:[],preparations:preparations,urlPhoto:function(path){return Promise.resolve(photos.find(function(p){return p.storage_path===path;}).url);},observationReperee:function(jour,index){return jour.uuid==="jour-1"&&index===0;}});
     controleur.rendre(document.getElementById("panel"));
   </script>
 </body>
 </html>
-

@@ -18,6 +18,12 @@ test("parcours de préparation du carnet",{skip:process.env.CARNET_PREPARATION_U
     assert.equal(await page.$eval(".carnet-programme-option input",el=>el.checked),false);
     const suggestion=await page.$$eval(".carnet-fait-confirmation input",els=>els.map(el=>el.checked));
     assert.deepEqual(suggestion,[false,false,false]);
+    await page.click(".carnet-preparation-actions .carnet-action-secondaire");
+    await page.waitForFunction(()=>document.querySelector(".carnet-source")?.textContent==="Brouillon IA");
+    assert.equal(await page.$eval(".carnet-brouillon",el=>el.textContent),"Brouillon");
+    assert.ok(await page.$(".carnet-action-texte"));
+    await page.click(".carnet-action-texte");
+    assert.equal(await page.$eval(".carnet-source",el=>el.textContent),"Ancien texte à relire");
     for(let i=1;i<13;i++){
       const selecteur=`.carnet-selection-photo:nth-child(${i+1}) .carnet-photo-choisir input`;
       await page.click(selecteur);
