@@ -34,21 +34,17 @@ async function jpegPourCadre(source, [largeurCadre, hauteurCadre]) {
 }
 
 async function preparerPhotos(modele, signalerEtape) {
-  const sources = new Map();
-  const variantes = new Map();
-  async function source(photo) {
-    if(!sources.has(photo.id)) sources.set(photo.id, telecharger(photo.url));
-    return sources.get(photo.id);
-  }
+  let numeroVariante=0;
   async function variante(photo, role) {
-    const cle=`${photo.id}:${role}`;
-    if(!variantes.has(cle)) {
-      await signalerEtape(`optimisation_image:${variantes.size + 1}`);
-      variantes.set(cle,jpegPourCadre(await source(photo),DIMENSIONS[role]));
-    }
-    const jpeg = await variantes.get(cle);
+    await signalerEtape(`optimisation_image:${++numeroVariante}`);
+    // Ne pas mettre les originaux et les JPEG dans des Map : sur Netlify,
+    // 80 photos de téléphone suffisent alors à conserver plusieurs centaines
+    // de Mo jusqu'au lancement de Chromium. Le buffer redevient libérable dès
+    // que sa data URL a été construite.
+    const jpeg=await jpegPourCadre(await telecharger(photo.url),DIMENSIONS[role]);
     return { ...photo, url: undefined, storagePath: undefined, dataUrl: `data:image/jpeg;base64,${jpeg.toString("base64")}` };
   }
+  const photoCouverture=modele.journees.flatMap((journee)=>journee.photos).find(Boolean);
   for(const journee of modele.journees) {
     const originales=journee.photos;
     const preparees=[];
@@ -67,11 +63,9 @@ async function preparerPhotos(modele, signalerEtape) {
       journee.galeries.push(groupe);
     }
   }
-  const premiere = modele.journees.find((j)=>j.photos.length);
-  if(premiere) {
-    // La source signée est encore disponible dans la carte locale `sources`.
-    const jpeg = await jpegPourCadre(await sources.get(premiere.photos[0].id), DIMENSIONS.couverture);
-    modele.couverturePhoto = { ...premiere.photos[0], dataUrl:`data:image/jpeg;base64,${jpeg.toString("base64")}` };
+  if(photoCouverture) {
+    const jpeg=await jpegPourCadre(await telecharger(photoCouverture.url),DIMENSIONS.couverture);
+    modele.couverturePhoto={...photoCouverture,url:undefined,storagePath:undefined,dataUrl:`data:image/jpeg;base64,${jpeg.toString("base64")}`};
   }
 }
 
