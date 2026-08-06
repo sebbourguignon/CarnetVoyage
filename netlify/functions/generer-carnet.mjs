@@ -18,8 +18,14 @@ export default async (requete) => {
     const lecture=await client.from("carnet_travaux").select("*, voyages(slug)").eq("id",travailId).single();
     if(lecture.error || !lecture.data) return new Response(null,{status:404});
     const modele=lecture.data.modele;
-    await client.from("carnet_travaux").update({statut:"en_cours",modele:{},maj_le:new Date().toISOString()}).eq("id",travailId);
-    const resultat=await exporterCarnet(modele);
+    const signalerEtape=async (etape)=>{
+      const suivi=await client.from("carnet_travaux").update({
+        statut:"en_cours",diagnostic:{etape},maj_le:new Date().toISOString()
+      }).eq("id",travailId);
+      if(suivi.error) console.error("suivi carnet:",suivi.error);
+    };
+    await client.from("carnet_travaux").update({statut:"en_cours",modele:{},diagnostic:{etape:"initialisation"},maj_le:new Date().toISOString()}).eq("id",travailId);
+    const resultat=await exporterCarnet(modele,signalerEtape);
     cheminTemporaire=resultat.chemin;
     const chemin=`${lecture.data.voyage_id}/${lecture.data.membre_id}/${travailId}.pdf`;
     const depot=await client.storage.from("carnets").upload(chemin,await readFile(cheminTemporaire),{contentType:"application/pdf",upsert:true});

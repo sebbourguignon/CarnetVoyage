@@ -93,22 +93,27 @@ async function recomprimerImagesLossless(octets) {
   return { octets:resultat, pages:document.getPageCount(), images:[...document.context.enumerateIndirectObjects()].filter(([,o])=>o instanceof PDFRawStream&&o.dict.get(PDFName.of("Subtype"))===PDFName.of("Image")).length, converties };
 }
 
-export async function exporterCarnet(modele) {
+export async function exporterCarnet(modele, signalerEtape = async () => {}) {
   const temporaire=`/tmp/carnet-${randomUUID()}.pdf`;
   let navigateur;
   try {
+    await signalerEtape("optimisation_images");
     await preparerPhotos(modele);
     modele.polices={
       bodoni:extraireBase64(await readFile(new URL("../../../supabase/functions/generer-carnet/BodoniModa_Variable.ts",import.meta.url),"utf8")),
       plex:extraireBase64(await readFile(new URL("../../../supabase/functions/generer-carnet/IBMPlexSans_Variable.ts",import.meta.url),"utf8"))
     };
+    await signalerEtape("demarrage_chromium");
     const executablePath=process.env.PUPPETEER_EXECUTABLE_PATH || await chromium.executablePath();
     navigateur=await puppeteer.launch({args:chromium.args,executablePath,headless:true});
+    await signalerEtape("rendu_html");
     const page=await navigateur.newPage();
     await page.setContent(construireHtml(modele),{waitUntil:"networkidle0",timeout:120000});
     await page.emulateMediaType("print");
     await page.evaluate(()=>document.fonts.ready);
+    await signalerEtape("creation_pdf");
     await page.pdf({path:temporaire,format:"A4",printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false,tagged:true,timeout:120000});
+    await signalerEtape("optimisation_pdf");
     const brut=await readFile(temporaire);
     const optimise=await recomprimerImagesLossless(brut);
     await writeFile(temporaire,optimise.octets);

@@ -49,10 +49,15 @@
       for(var tentative = 0; tentative < 450; tentative++){
         await attendre(2000);
         var lecture = await options.supabase.from("carnet_travaux")
-          .select("statut, chemin_pdf, erreur, diagnostic").eq("id", travail.id).single();
+          .select("statut, chemin_pdf, erreur, diagnostic, maj_le").eq("id", travail.id).single();
         if(lecture.error) throw lecture.error;
         resultat = lecture.data;
         if(resultat.statut === "termine" || resultat.statut === "erreur") break;
+        if(resultat.statut === "en_cours" && resultat.maj_le && Date.now() - new Date(resultat.maj_le).getTime() > 180000){
+          var interruption = new Error("la fonction de génération s’est interrompue");
+          interruption.code = "ECHEC_GENERATION";
+          throw interruption;
+        }
       }
       if(!resultat || resultat.statut !== "termine"){
         var erreur = new Error(resultat && resultat.erreur || "délai de génération dépassé");
