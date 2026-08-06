@@ -3012,7 +3012,14 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         textesLegacy: textesCarnetInitiaux || [],
         preparations: preparationsCarnetInitiales || [],
         urlPhoto: urlSigneePhoto,
-        observationReperee: function(jour,index){ return estCoche(jour.id + "-r" + index); }
+        observationReperee: function(jour,index){ return estCoche(jour.id + "-r" + index); },
+        generer: async function(){
+          var lecture=await supabaseClient.from("carnet_journees").select("*, carnet_faits_confirmes(*), carnet_photos_selectionnees(*)").eq("voyage_id",voyageId).eq("membre_id",utilisateurId);
+          if(lecture.error) throw lecture.error;
+          return CarnetPDFClient.generer({supabase:supabaseClient,supabaseUrl:supabaseUrl,voyageId:voyageId,construireModele:function(){
+            return CarnetPDFAdaptateur.adapter({carnet:CARNET,jours:JOURS,photosParJournee:PHOTOS_PAR_JOURNEE,preparations:lecture.data||[],utilisateurId:utilisateurId,urlPhoto:urlSigneePhotoPourExport,voyageId:voyageId,slug:slugVoyage});
+          }});
+        }
       });
     }
     CONTROLEUR_PREPARATION_CARNET.rendre(panel);

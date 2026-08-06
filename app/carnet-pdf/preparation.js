@@ -275,7 +275,12 @@
     function rendreRevue(panel){
       var nav=el("div","carnet-preparation-nav"); var retour=el("button","carnet-action-secondaire","← Revenir au résumé");retour.type="button";retour.addEventListener("click",function(){modeRevue=false;rendre(panel);});nav.appendChild(retour);nav.appendChild(el("p",null,"Les changements sont enregistrés journée par journée."));panel.appendChild(nav);
       var liste=el("div","carnet-preparation-jours"); options.jours.forEach(function(j){liste.appendChild(rendreJour(j));});panel.appendChild(liste);
-      var exportInfo=el("section","carnet-export-verrouille");exportInfo.appendChild(el("h3",null,"Export PDF"));exportInfo.appendChild(el("p",null,"La préparation est testable dès maintenant. Le nouvel export utilisant exclusivement ces contenus sera activé avec les gabarits du lot 4."));var b=el("button","carnet-bouton-generer","Générer le carnet — bientôt");b.disabled=true;exportInfo.appendChild(b);panel.appendChild(exportInfo);
+      var modifications=options.jours.some(function(j){return etatPour(j).modifie;});
+      var exportInfo=el("section","carnet-export-verrouille");exportInfo.appendChild(el("p","eyebrow","Export PDF"));exportInfo.appendChild(el("h3",null,"Votre carnet est prêt à composer"));
+      exportInfo.appendChild(el("p",null,modifications?"Enregistrez les journées modifiées avant de générer le carnet.":"Le PDF utilisera uniquement les récits validés, les faits confirmés et les photos sélectionnées."));
+      var b=el("button","carnet-bouton-generer","Générer le carnet");b.type="button";b.disabled=modifications||!options.generer;var statut=el("p","carnet-export-statut","");
+      b.addEventListener("click",function(){b.disabled=true;b.textContent="Génération en cours…";statut.textContent="Préparation des pages et des photographies…";statut.className="carnet-export-statut";Promise.resolve(options.generer()).then(function(diagnostic){statut.textContent=diagnostic?"Carnet téléchargé · "+diagnostic.pages+" pages · "+diagnostic.poids_mo+" Mo.":"Carnet téléchargé.";}).catch(function(erreur){statut.textContent=(erreur&&(erreur.messageUtilisateur||erreur.message))||"La génération a échoué.";statut.className="carnet-export-statut erreur";}).then(function(){b.disabled=false;b.textContent="Générer le carnet";});});
+      exportInfo.appendChild(b);exportInfo.appendChild(statut);panel.appendChild(exportInfo);
     }
 
     function rendre(panel){ options.panel=panel; panel.innerHTML=""; if(modeRevue) rendreRevue(panel); else rendreResume(panel); }
