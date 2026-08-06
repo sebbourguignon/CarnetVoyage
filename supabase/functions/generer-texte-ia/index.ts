@@ -90,7 +90,7 @@ Deno.serve(async (requete) => {
       return jsonResponse({ error: "confirmez au moins un fait, une légende ou une note avant de composer le récit" }, 422);
     }
 
-    const messages = [
+    const messages: Array<{ role: string; content: string }> = [
       {
         role: "system",
         content: "Compose un récit familial de carnet de voyage de 500 à 800 caractères à partir des seuls faits confirmés. " +
@@ -100,24 +100,31 @@ Deno.serve(async (requete) => {
       { role: "user", content: donneesConfirmees },
     ];
 
-    const reponseOpenAI = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${cleOpenAI}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "gpt-4o-mini", temperature: 0.6, max_tokens: 350, messages }),
-    });
-
-    if (!reponseOpenAI.ok) {
-      const detail = await reponseOpenAI.text();
-      console.error("generer-texte-ia: échec OpenAI", reponseOpenAI.status, detail);
-      return jsonResponse({ error: "le service de génération est momentanément indisponible" }, 502);
+    let texte = "";
+    for (let tentative = 0; tentative < 2; tentative++) {
+      const reponseOpenAI = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${cleOpenAI}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "gpt-4o-mini", temperature: 0.6, max_tokens: 450, messages }),
+      });
+      if (!reponseOpenAI.ok) {
+        const detail = await reponseOpenAI.text();
+        console.error("generer-texte-ia: échec OpenAI", reponseOpenAI.status, detail);
+        return jsonResponse({ error: "le service de génération est momentanément indisponible" }, 502);
+      }
+      const donnees = await reponseOpenAI.json();
+      texte = donnees?.choices?.[0]?.message?.content?.trim() || "";
+      if (texte.length >= 500 && texte.length <= 800) break;
+      console.warn("generer-texte-ia: nouvelle tentative après longueur hors cible", texte.length);
+      messages.push({
+        role: "user",
+        content: `Réécris le récit entre 500 et 800 caractères exactement. La proposition précédente faisait ${texte.length} caractères.`,
+      });
     }
-    const donnees = await reponseOpenAI.json();
-    const texte = donnees?.choices?.[0]?.message?.content?.trim();
     if (!texte) return jsonResponse({ error: "réponse vide du service de génération" }, 502);
-    if (texte.length < 500 || texte.length > 800) {
-      console.error("generer-texte-ia: longueur hors cible", texte.length);
-      return jsonResponse({ error: "le brouillon produit ne respecte pas la longueur attendue, veuillez réessayer" }, 502);
-    }
+    // Une variation résiduelle de longueur ne doit pas faire planter l’interface :
+    // le texte reste un brouillon modifiable et soumis à validation humaine.
+    if (texte.length < 500 || texte.length > 800) console.warn("generer-texte-ia: brouillon hors cible accepté", texte.length);
 
     return jsonResponse({ texte, source: "ai", validated: false });
   } catch (e) {

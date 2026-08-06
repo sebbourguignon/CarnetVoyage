@@ -105,8 +105,15 @@
       ia.title=ia.disabled ? "Enregistrez d’abord les faits, photos et notes de cette journée." : "";
       ia.addEventListener("click",function(){
         ia.disabled=true; ia.textContent="Composition…";
-        options.supabase.functions.invoke("generer-texte-ia",{body:{carnet_journee_id:etat.preparation.id}}).then(function(res){
-          if(res.error) throw res.error;
+        options.supabase.functions.invoke("generer-texte-ia",{body:{carnet_journee_id:etat.preparation.id}}).then(async function(res){
+          if(res.error){
+            var message=res.error.message;
+            var contexte=res.error.context;
+            if(contexte && typeof contexte.clone==="function"){
+              try{var detail=await contexte.clone().json();if(detail && detail.error)message=detail.error;}catch(_erreurLecture){}
+            }
+            throw new Error(message);
+          }
           var proposition=res.data && res.data.texte;
           if(!proposition) throw new Error("réponse vide");
           etat.avantIA=Object.assign({},etat.preparation);
