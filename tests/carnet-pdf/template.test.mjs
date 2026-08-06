@@ -37,3 +37,11 @@ test("un récit long crée des pages de continuation sans perdre le texte",()=>{
   assert.match(html,/mot0/); assert.match(html,/mot899/);
   assert.doesNotMatch(html,/standfirst|introduction/);
 });
+
+test("un titre long, cinq moments et des métadonnées facultatives restent dans le flux",()=>{
+  const titre="Une très longue journée entre les villages, les routes panoramiques et les souvenirs de famille";
+  const html=construireHtml({voyage:{titre:"Voyage"},statistiques:{journeesIllustrees:0,photos:0},journees:[{id:"1",date:"",lieu:"Italie",titre,recit:"Récit validé.",tempsForts:["Un","Deux","Trois","Quatre","Cinq"],distance:"",duree:"",temperature:"",photos:[],galeries:[],compacte:false}]});
+  assert.match(html,/class="long"/);assert.match(html,/moments-list count-5/);
+  assert.doesNotMatch(html,/Distance|Durée|Température/);
+  assert.doesNotMatch(html,/position:absolute[^}]*day-body|position:absolute[^}]*story/);
+});
