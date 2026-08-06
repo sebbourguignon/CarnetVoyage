@@ -33,9 +33,9 @@ dépôt.
   dès qu'un nouveau service worker prend la main (`controllerchange`),
   mais uniquement si ce bump a bien été fait.
 - **Tout le contenu est en français**, y compris les commentaires de code.
-- **Pas de framework front, pas de dépendance ajoutée** — HTML/CSS/JS
-  natifs côté `app/`. Les seuls scripts Node sont dans `outils/`, sans
-  dépendance npm (module `https` natif, voir `outils/publier-voyage.js`).
+- **Pas de framework ni de dépendance front** — HTML/CSS/JS natifs côté
+  `app/`. Les dépendances npm à la racine sont réservées à la Background
+  Function Netlify du PDF ; les scripts `outils/` restent sans dépendance.
 
 ## Environnements (prod / dev)
 
@@ -232,31 +232,15 @@ toucher au moteur. Absent (`null`) → palette et polices par défaut
   dans le JSON, comme pour le contenu : c'est un choix éditorial, pas une
   valeur par défaut à deviner.
 
-## Générateur de PDF (`supabase/functions/generer-carnet/`)
+## Générateur de PDF HTML/Paged.js
 
-Edge Function Deno (pas Node — pas de `node_modules`, `deno.land`/`npm:`
-en spécifieurs directs) qui assemble un carnet PDF « à emporter » à partir
-des photos déposées par la famille (voir « Photos famille et carnet PDF »
-dans le README pour le modèle perso/famille). Architecture en 6 fichiers,
-séparation données / mise en page / rendu voulue explicitement (voir
-l'en-tête de `index.ts`) :
-
-- `index.ts` — orchestration : requêtes Supabase (RLS fait le tri, pas de
-  logique de permission réimplémentée ici), téléchargement/cache des
-  images, boucle sur les journées illustrées, appel des composants.
-- `design-system.ts` — palette, grille A4, échelle typographique.
-  Toute valeur de style partagée par plusieurs composants vit ici, jamais
-  recopiée en dur ailleurs.
-- `ornements.ts` — sceau et carte d'Italie stylisée, les deux éléments
-  récurrents sur presque toutes les pages.
-- `icones.ts` — bibliothèque de pictogrammes line-art par lieu (voir
-  `deviverIconePourLieu`, correspondance par mot-clé, repli explicite sur
-  une icône générique si rien ne matche — jamais d'icône inventée).
-- `illustrations.ts` / `italie.ts` — silhouettes de fond et tracé fixe
-  de la carte, tous deux réutilisés par `ornements.ts`.
-- `composants.ts` — un composant nommé par bloc de page (couverture,
-  entête de journée, récit en colonnes, bandeau « Temps forts / Détails
-  du jour », galerie asymétrique, page de clôture).
+Le moteur actif est séparé en trois couches : adaptateur navigateur
+(`app/carnet-pdf/adaptateur.js`), template HTML autonome
+(`netlify/functions/carnet-pdf/template.mjs`) et export Chromium
+(`exporter.mjs`). La Background Function travaille avec le JWT du membre,
+dépose le résultat dans le bucket privé `carnets` et ne possède aucune clé
+service. `supabase/functions/generer-carnet/` est l'ancien moteur `pdf-lib`,
+conservé pour l'historique mais jamais appelé par le bouton actif.
 
 **Direction visuelle arrêtée le 2026-08-05, refonte 2026-08-05/2026-08-06** :
 trois maquettes de référence (couverture, page récit « Vérone », page
@@ -284,18 +268,10 @@ respecter dans toute nouvelle itération) :
   l'information n'existe pas dans les données de la journée, ne pas
   l'afficher plutôt que la deviner.
 
-**État exact au 2026-08-06** : le sceau (deux anneaux + texte courbe
-« ITALIE » / « SOUVENIRS DE FAMILLE » + scène centrale loggia/cyprès en
-line-art), la carte en filigrane, le bandeau à icônes distinctes et la
-page de clôture sans photo sont en place et déployés sur le projet
-Supabase Dev (`ozjbkpgoatagqyrlxdry`). Validé uniquement avec un script
-de test jetable (Deno absent de la machine de dev, porté en Node/pdf-lib
-npm, données factices : aplats de couleur, pas de vraies photos) rendu en
-PNG via PyMuPDF — **jamais testé avec de vraies photos**, donc le cadrage
-« cover » et le biais de recadrage vertical des photos réelles restent à
-vérifier. Reste également un peu plus de vide en bas des pages galerie et
-clôture que sur les maquettes de référence (amélioré mais pas totalement
-résorbé lors de la dernière itération).
+Les photos sont converties en JPEG qualité 82, dimensionnées par rôle à
+environ 180 ppp et les objets FlateDecode résiduels de Chromium sont
+recompressés en DCT/JPEG. Les SVG et textes restent vectoriels. Les récits
+longs créent des pages de continuation, sans contenu inventé.
 
 ## Ce qui n'est PAS à documenter ici
 

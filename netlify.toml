@@ -1,5 +1,5 @@
-# Deploiement continu depuis GitHub — aucun build, app/ est deja le
-# dossier a servir tel quel (voir CLAUDE.md « Environnements »).
+# Deploiement continu depuis GitHub — l'app reste servie telle quelle ;
+# le seul assemblage concerne la fonction Node de génération PDF.
 #
 # Branche main -> production (salo2026.netlify.app), a associer au
 # domaine existant lors de la connexion du site.
@@ -9,5 +9,8 @@
 # par nom d'hote (HOTE_PRODUCTION), rien a configurer ici pour ca.
 
 [build]
-  base = "app"
-  publish = "."
+  publish = "app"
+
+[functions]
+  directory = "netlify/functions"
+  included_files = ["supabase/functions/generer-carnet/BodoniModa_Variable.ts", "supabase/functions/generer-carnet/IBMPlexSans_Variable.ts"]

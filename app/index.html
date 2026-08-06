@@ -1354,6 +1354,8 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
   display:block;margin:0 0 12px;
 }
 .carnet-bouton-generer:disabled{opacity:.4;cursor:default}
+.carnet-generation-statut{margin:10px 0 0;color:var(--pietra);font-size:13px;line-height:1.4}
+.carnet-generation-statut.erreur{color:var(--rosso)}
 
 /* accordeon par journee, meme grammaire que .lieu-item/.lieu-collapse. */
 .carnet-jour-item{border-bottom:1px solid var(--rule-soft)}
@@ -1915,6 +1917,8 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
      plus bas, juste avant demarrerCarnet(). -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="illustrations.js"></script>
+<script src="carnet-pdf/adaptateur.js"></script>
+<script src="carnet-pdf/client.js"></script>
 <script>
 /* ==========================================================================
    MOTEUR DE RENDU — généricisé depuis Italie2026/index.html.
@@ -1924,7 +1928,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
    tel quel le corps de l'ancienne IIFE, en recevant JOURS/BADGES/CARNET
    en paramètres plutôt qu'en globales.
    ========================================================================== */
-function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin, photosInitiales, textesCarnetInitiaux){
+function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin, photosInitiales, textesCarnetInitiaux, supabaseUrl){
   "use strict";
 
   /* --- constantes de filtres : propriété du moteur de rendu, pas du
@@ -2567,6 +2571,13 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     }
     return URLS_SIGNEES_PHOTOS[storagePath];
   }
+  function urlSigneePhotoPourExport(storagePath){
+    return supabaseClient.storage.from("photos").createSignedUrl(storagePath, 1800)
+      .then(function(res){
+        if(res.error) throw res.error;
+        return (res.data && res.data.signedUrl) || null;
+      });
+  }
 
   /* redimensionne a 2000px de large max et reencode en JPEG qualite 0.8 --
      suffisant pour un rendu ecran/impression, divise le poids par 3 a 5
@@ -2946,30 +2957,39 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     return { joursAvecPhotos: joursAvecPhotos, total: total, partageesTotal: partageesTotal, mesPhotos: mesPhotos };
   }
 
-  function demanderGenerationCarnet(mode, majBouton){
-    majBouton("Génération…");
-    return supabaseClient.functions.invoke("generer-carnet", {
-      body: { voyage_id: voyageId, mode: mode }
-    }).then(function(res){
-      if(res.error) throw res.error;
-      var url = res.data && res.data.url;
-      if(!url) throw new Error("réponse inattendue");
-      window.open(url, "_blank", "noopener");
-    }).catch(function(err){
-      console.error("Échec de génération du carnet :", err);
-      window.alert("La génération du carnet n'est pas encore disponible — revenez un peu plus tard dans le voyage.");
-    }).then(function(){
-      majBouton(null);
-    });
-  }
-
-  function construireBoutonGeneration(libelleInitial, mode){
+  function construireBoutonGeneration(statut){
+    var libelleInitial = "Générer le carnet";
     var bouton = el("button", "carnet-bouton-generer", libelleInitial);
     bouton.type = "button";
+    bouton.disabled = !JOURS.length;
     bouton.addEventListener("click", function(){
-      demanderGenerationCarnet(mode, function(etat){
-        bouton.textContent = etat || libelleInitial;
-        bouton.disabled = !!etat;
+      if(bouton.disabled || CarnetPDFClient.estEnCours()) return;
+      bouton.disabled = true;
+      bouton.textContent = "Génération en cours…";
+      statut.textContent = "Préparation des pages et des photographies…";
+      statut.classList.remove("erreur");
+      CarnetPDFClient.generer({
+        supabase: supabaseClient,
+        supabaseUrl: supabaseUrl,
+        voyageId: voyageId,
+        construireModele: function(){
+          return CarnetPDFAdaptateur.adapter({
+            carnet: CARNET, jours: JOURS, photosParJournee: PHOTOS_PAR_JOURNEE,
+            utilisateurId: utilisateurId, texteJournee: texteCarnetJournee,
+            urlPhoto: urlSigneePhotoPourExport, voyageId: voyageId, slug: slugVoyage
+          });
+        }
+      }).then(function(diagnostic){
+        statut.textContent = diagnostic
+          ? "Carnet téléchargé · " + diagnostic.pages + " pages · " + diagnostic.poids_mo + " Mo." +
+            (diagnostic.budget_depasse ? " Attention : le budget de " + diagnostic.budget_mo + " Mo est dépassé." : "")
+          : "Carnet téléchargé.";
+      }).catch(function(erreur){
+        statut.textContent = erreur.messageUtilisateur;
+        statut.classList.add("erreur");
+      }).then(function(){
+        bouton.textContent = libelleInitial;
+        bouton.disabled = !JOURS.length;
       });
     });
     return bouton;
@@ -2989,13 +3009,11 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         : "Aucune photo ajoutée pour l'instant — ajoutez-en depuis une journée pour commencer votre carnet."
     ));
 
-    /* Génération du PDF mise de côté le 2026-08-06 : le rendu n'est pas
-       encore assez convaincant (voir CLAUDE.md → « Générateur de PDF »).
-       On garde tout le reste de l'onglet Carnet (ajout de photos, texte
-       par journée, galerie) pleinement fonctionnel ; les boutons de
-       génération et demanderGenerationCarnet/construireBoutonGeneration
-       restent dans le code, prêts à être réaffichés ici quand le rendu
-       sera repris. */
+    var statutGeneration = el("p", "carnet-generation-statut");
+    statutGeneration.setAttribute("role", "status");
+    statutGeneration.setAttribute("aria-live", "polite");
+    bloc.appendChild(construireBoutonGeneration(statutGeneration));
+    bloc.appendChild(statutGeneration);
 
     panel.appendChild(bloc);
 
@@ -6856,6 +6874,9 @@ function appliquerTheme(theme){
                 titre: voyage.titre,
                 titreSuite: voyage.titre_suite,
                 sousTitre: voyage.sous_titre,
+                dateDebut: voyage.date_debut,
+                dateFin: voyage.date_fin,
+                destination: voyage.destination || "",
                 friseLegende: voyage.frise_legende,
                 aVerifier: voyage.a_verifier
               };
@@ -6923,7 +6944,7 @@ function appliquerTheme(theme){
                    sur un noeud déjà détaché du DOM. */
                 demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille,
                   urgences, voyage.id, utilisateurId, resProgression.data || null, estAdmin,
-                  resPhotos.data || [], resTextesCarnet.data || []);
+                  resPhotos.data || [], resTextesCarnet.data || [], URL_PROJET);
                 zoneChargement.remove();
               });
             });

@@ -109,37 +109,24 @@ légende. Il peut aussi surcharger le texte automatique d'une journée pour
 le carnet familial, lui, n'a pas de propriétaire par journée et reste
 toujours sur le texte automatique.
 
-La génération du PDF est une Edge Function Supabase,
-`supabase/functions/generer-carnet/` (Deno + pdf-lib, pas Node) :
+La génération active utilise le prototype HTML/Paged.js validé et trois
+responsabilités séparées :
 
 ```
-index.ts          → orchestration : lit voyage/journées/photos depuis
-                     Supabase (RLS fait le tri perso/famille), assemble
-                     le contexte (polices embarquées, images
-                     téléchargées), appelle les composants dans l'ordre,
-                     upload le PDF dans le bucket privé "carnets" et
-                     renvoie une URL signée (1h).
-design-system.ts  → palette, grille de page (A4 portrait), échelle
-                     typographique — toute valeur de style partagée par
-                     plusieurs composants vit ici.
-ornements.ts      → sceau (deux anneaux + texte courbe + scène italienne
-                     en line-art), carte d'Italie stylisée (silhouette +
-                     itinéraire pointillé + marqueurs), réutilisés en
-                     grand (couverture/clôture) et en filigrane (page
-                     récit).
-icones.ts         → bibliothèque de pictogrammes line-art (amphithéâtre,
-                     cœur, tour, arche, château, route, horloge, météo,
-                     appareil photo), mappés par mot-clé sur le nom du
-                     lieu — jamais un pictogramme générique répété.
-illustrations.ts / italie.ts → silhouettes de fond (port pdf-lib de
-                     app/illustrations.js) et tracé fixe de la botte
-                     italienne (jamais dérivé de vraies coordonnées de
-                     voyage).
-composants.ts     → un composant nommé par bloc de mise en page
-                     (dessinerPageCouverture, dessinerEnteteJour,
-                     dessinerRecitColonnes, dessinerBandeauTempsForts,
-                     dessinerPageGalerieTrois, dessinerPageCloture...).
+app/carnet-pdf/adaptateur.js
+                  → données déjà chargées par l'app vers le modèle privé.
+netlify/functions/carnet-pdf/template.mjs
+                  → HTML A4 autonome : couverture, récit, galerie, fin.
+netlify/functions/carnet-pdf/exporter.mjs
+                  → JPEG 82 / 180 ppp, Chromium, recompression DCT et audit.
 ```
+
+Le bouton crée un `carnet_travaux` privé, déclenche une Background Function
+Netlify, suit son état, puis télécharge l'URL Supabase signée. Le PDF n'est
+jamais renvoyé dans la réponse Netlify (limite de payload) et le modèle est
+effacé du travail après traitement. La fonction historique
+`supabase/functions/generer-carnet/` en `pdf-lib` est conservée uniquement
+comme historique et n'est plus appelée par l'application.
 
 Direction visuelle : esprit carnet/beau livre de voyage (palette carta/
 inchiostro/terracotta/oliva, Bodoni Moda + IBM Plex, voir le détail des
@@ -148,11 +135,9 @@ Trois maquettes de référence (couverture, page récit, page galerie) font
 foi pour toute nouvelle itération visuelle — reproduire leur composition
 exacte, pas s'en inspirer librement.
 
-Deux modes de génération, choisis à l'appel (`voyage_id`, `mode`) :
-`perso` (uniquement les photos du membre appelant) ou `famille`
-(uniquement les photos explicitement partagées par n'importe quel
-membre). Disponible à tout moment, y compris en cours de voyage — pas de
-notion de voyage « terminé ».
+Le bouton principal génère le carnet personnel avec les photos du membre
+connecté et ses textes de carnet. Les journées textuelles sans photo sont
+conservées ; aucun contenu de remplacement n'est inventé.
 
 ## État actuel
 
