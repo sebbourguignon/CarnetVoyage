@@ -46,3 +46,9 @@ test("la migration est additive et migre les textes en legacy",async()=>{
   assert.doesNotMatch(sql,/drop table\s+carnet_textes/i);
   assert.match(sql,/maximum de 20 photos par journée/i);
 });
+
+test("l’activation de la préparation est explicite et rétrocompatible",async()=>{
+  const sql=await readFile(new URL("../../supabase/migrations/0024_activation_preparation_carnet.sql",import.meta.url),"utf8");
+  assert.match(sql,/preparation_active boolean not null default false/i);
+  assert.doesNotMatch(sql,/update\s+carnet_journees/i);
+});

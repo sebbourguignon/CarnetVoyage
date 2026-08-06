@@ -238,7 +238,7 @@
       bouton.disabled=true; statut.textContent="Enregistrement…"; statut.className="carnet-sauvegarde-statut";
       try{
         var p=etat.preparation;
-        var ligne={voyage_id:options.voyageId,journee_id:jour.uuid,membre_id:options.utilisateurId,carnet_story:p.carnetStory||null,carnet_story_source:p.carnetStory? p.carnetStorySource:"empty",carnet_story_validated:!!p.carnetStoryValidated,notes_manuelles:p.notesManuelles||null,temperature_reelle:p.temperatureReelle,temperature_relevee_le:p.temperatureReleveeLe,afficher_programme_prevu:!!p.afficherProgrammePrevu,maj_le:new Date().toISOString()};
+        var ligne={voyage_id:options.voyageId,journee_id:jour.uuid,membre_id:options.utilisateurId,preparation_active:true,carnet_story:p.carnetStory||null,carnet_story_source:p.carnetStory? p.carnetStorySource:"empty",carnet_story_validated:!!p.carnetStoryValidated,notes_manuelles:p.notesManuelles||null,temperature_reelle:p.temperatureReelle,temperature_relevee_le:p.temperatureReleveeLe,afficher_programme_prevu:!!p.afficherProgrammePrevu,maj_le:new Date().toISOString()};
         var upsert=await options.supabase.from("carnet_journees").upsert(ligne,{onConflict:"journee_id,membre_id"}).select("id").single(); if(upsert.error) throw upsert.error;
         p.id=upsert.data.id;
         var suppressionFaits=await options.supabase.from("carnet_faits_confirmes").delete().eq("carnet_journee_id",p.id); if(suppressionFaits.error) throw suppressionFaits.error;
