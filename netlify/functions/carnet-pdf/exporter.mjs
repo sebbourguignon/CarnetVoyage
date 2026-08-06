@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto";
+import { execFile } from "node:child_process";
 import { createWriteStream } from "node:fs";
 import { readFile, unlink, writeFile } from "node:fs/promises";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
+import { promisify } from "node:util";
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import sharp from "sharp";
@@ -10,6 +12,7 @@ import { decodePDFRawStream, PDFDocument, PDFName, PDFRawStream } from "pdf-lib"
 import { construireHtml } from "./template.mjs";
 
 const QUALITE = 82;
+const executerFichier=promisify(execFile);
 // Netlify alloue un conteneur borné : un seul worker libvips et aucun cache
 // natif évitent les arrêts brutaux lors de plusieurs déclinaisons d'une photo.
 sharp.concurrency(1);
@@ -34,14 +37,27 @@ async function telechargerVersFichier(url) {
 }
 
 async function jpegPourCadre(source, [largeurCadre, hauteurCadre]) {
-  const image = sharp(source, { failOn: "error" }).rotate();
-  const meta = await image.metadata();
-  if(!meta.width || !meta.height) throw Object.assign(new Error("dimensions d’image absentes"), { code: "IMAGE_ILLISIBLE" });
-  const echelle = Math.min(1, Math.max(largeurCadre / meta.width, hauteurCadre / meta.height));
-  const largeur = Math.max(1, Math.round(meta.width * echelle));
-  const hauteur = Math.max(1, Math.round(meta.height * echelle));
-  return image.resize({ width: largeur, height: hauteur, fit: "fill", withoutEnlargement: true })
-    .jpeg({ quality: QUALITE, chromaSubsampling: "4:2:0", progressive: false }).toBuffer();
+  const sortie=`/tmp/carnet-jpeg-${randomUUID()}.jpg`;
+  // libvips conserve des allocations natives après chaque décodage sous
+  // Linux. Un processus court par variante rend toute sa mémoire au système
+  // avant de passer à la suivante et protège le conteneur Netlify.
+  const programme=`
+    import sharp from "sharp";
+    const [source,sortie,largeurCadre,hauteurCadre,qualite]=process.argv.slice(1);
+    sharp.concurrency(1); sharp.cache(false);
+    const image=sharp(source,{failOn:"error"}).rotate();
+    const meta=await image.metadata();
+    if(!meta.width||!meta.height) throw new Error("dimensions d’image absentes");
+    const echelle=Math.min(1,Math.max(Number(largeurCadre)/meta.width,Number(hauteurCadre)/meta.height));
+    await image.resize({width:Math.max(1,Math.round(meta.width*echelle)),height:Math.max(1,Math.round(meta.height*echelle)),fit:"fill",withoutEnlargement:true})
+      .jpeg({quality:Number(qualite),chromaSubsampling:"4:2:0",progressive:false}).toFile(sortie);
+  `;
+  try {
+    await executerFichier(process.execPath,["--input-type=module","-e",programme,source,sortie,String(largeurCadre),String(hauteurCadre),String(QUALITE)],{timeout:120000});
+    return await readFile(sortie);
+  } catch(erreur) {
+    throw Object.assign(new Error(erreur?.stderr || erreur?.message || "image illisible"),{code:"IMAGE_ILLISIBLE"});
+  } finally { await unlink(sortie).catch(()=>{}); }
 }
 
 async function preparerPhotos(modele, signalerEtape) {
