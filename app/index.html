@@ -3017,7 +3017,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
           var lecture=await supabaseClient.from("carnet_journees").select("*, carnet_faits_confirmes(*), carnet_photos_selectionnees(*)").eq("voyage_id",voyageId).eq("membre_id",utilisateurId);
           if(lecture.error) throw lecture.error;
           return CarnetPDFClient.generer({supabase:supabaseClient,supabaseUrl:supabaseUrl,voyageId:voyageId,construireModele:function(){
-            return CarnetPDFAdaptateur.adapter({carnet:CARNET,jours:JOURS,photosParJournee:PHOTOS_PAR_JOURNEE,preparations:lecture.data||[],utilisateurId:utilisateurId,urlPhoto:urlSigneePhotoPourExport,voyageId:voyageId,slug:slugVoyage});
+            return CarnetPDFAdaptateur.adapter({carnet:CARNET,jours:JOURS,photosParJournee:PHOTOS_PAR_JOURNEE,preparations:lecture.data||[],utilisateurId:utilisateurId,texteJournee:texteCarnetJournee,urlPhoto:urlSigneePhotoPourExport,voyageId:voyageId,slug:slugVoyage});
           }});
         }
       });

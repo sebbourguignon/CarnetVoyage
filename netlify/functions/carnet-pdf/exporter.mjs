@@ -19,8 +19,8 @@ const executerFichier=promisify(execFile);
 sharp.concurrency(1);
 sharp.cache(false);
 const DIMENSIONS = {
-  couverture:[1380,1035], principale:[706,529], secondaire:[690,517], petite:[548,411],
-  galerie0:[690,511], galerie1:[522,411], galerie2:[487,404], galerie3:[325,298], galerie4:[824,256], galerie5:[325,298]
+  couverture: [1380, 1035], principale: [706, 529], secondaire: [690, 517], petite: [548, 411],
+  galerie0: [690, 511], galerie1: [522, 411], galerie2: [487, 404], galerie3: [325, 298], galerie4: [824, 256]
 };
 
 async function telechargerVersFichier(url) {
@@ -77,17 +77,18 @@ async function preparerPhotos(modele, signalerEtape) {
   for(const journee of modele.journees) {
     const originales=journee.photos;
     const preparees=[];
-    const nombrePrincipal=Math.min(3,originales.length);
-    for(let i=0;i<nombrePrincipal;i++) {
+    for(let i=0;i<Math.min(3,originales.length);i++) {
       const role = i === 0 ? "principale" : i === 1 ? "secondaire" : i === 2 ? "petite" : `galerie${(i-3)%5}`;
       preparees.push(await variante(originales[i], role));
     }
     journee.photos=preparees;
-    const photosGalerie=originales.slice(nombrePrincipal);
+    let photosGalerie=[];
+    if(originales.length === 4) photosGalerie=[...originales, originales[0]];
+    else if(originales.length >= 5) photosGalerie=originales;
     journee.galeries=[];
-    for(let debut=0;debut<photosGalerie.length;debut+=6) {
+    for(let debut=0;debut<photosGalerie.length;debut+=5) {
       const groupe=[];
-      for(const [index,photo] of photosGalerie.slice(debut,debut+6).entries()) groupe.push(await variante(photo,`galerie${index}`));
+      for(const [index,photo] of photosGalerie.slice(debut,debut+5).entries()) groupe.push(await variante(photo,`galerie${index}`));
       journee.galeries.push(groupe);
     }
   }
