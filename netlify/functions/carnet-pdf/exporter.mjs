@@ -7,6 +7,10 @@ import { decodePDFRawStream, PDFDocument, PDFName, PDFRawStream } from "pdf-lib"
 import { construireHtml } from "./template.mjs";
 
 const QUALITE = 82;
+// Netlify alloue un conteneur borné : un seul worker libvips et aucun cache
+// natif évitent les arrêts brutaux lors de plusieurs déclinaisons d'une photo.
+sharp.concurrency(1);
+sharp.cache(false);
 const DIMENSIONS = {
   couverture: [1380, 1035], principale: [706, 529], secondaire: [690, 517], petite: [548, 411],
   galerie0: [690, 511], galerie1: [522, 411], galerie2: [487, 404], galerie3: [325, 298], galerie4: [824, 256]
@@ -26,17 +30,23 @@ async function jpegPourCadre(source, [largeurCadre, hauteurCadre]) {
   const largeur = Math.max(1, Math.round(meta.width * echelle));
   const hauteur = Math.max(1, Math.round(meta.height * echelle));
   return image.resize({ width: largeur, height: hauteur, fit: "fill", withoutEnlargement: true })
-    .jpeg({ quality: QUALITE, chromaSubsampling: "4:2:0", mozjpeg: true }).toBuffer();
+    .jpeg({ quality: QUALITE, chromaSubsampling: "4:2:0", progressive: false }).toBuffer();
 }
 
-async function preparerPhotos(modele) {
+async function preparerPhotos(modele, signalerEtape) {
   const sources = new Map();
+  const variantes = new Map();
   async function source(photo) {
     if(!sources.has(photo.id)) sources.set(photo.id, telecharger(photo.url));
     return sources.get(photo.id);
   }
   async function variante(photo, role) {
-    const jpeg = await jpegPourCadre(await source(photo), DIMENSIONS[role]);
+    const cle=`${photo.id}:${role}`;
+    if(!variantes.has(cle)) {
+      await signalerEtape(`optimisation_image:${variantes.size + 1}`);
+      variantes.set(cle,jpegPourCadre(await source(photo),DIMENSIONS[role]));
+    }
+    const jpeg = await variantes.get(cle);
     return { ...photo, url: undefined, storagePath: undefined, dataUrl: `data:image/jpeg;base64,${jpeg.toString("base64")}` };
   }
   for(const journee of modele.journees) {
@@ -82,7 +92,7 @@ async function recomprimerImagesLossless(octets) {
     const hauteur=Number(String(objet.dict.get(PDFName.of("Height"))));
     const pixels=decodePDFRawStream(objet).decode();
     if(pixels.length !== largeur*hauteur*3) continue;
-    const jpeg=await sharp(pixels,{raw:{width:largeur,height:hauteur,channels:3}}).jpeg({quality:QUALITE,chromaSubsampling:"4:2:0",mozjpeg:true}).toBuffer();
+    const jpeg=await sharp(pixels,{raw:{width:largeur,height:hauteur,channels:3}}).jpeg({quality:QUALITE,chromaSubsampling:"4:2:0",progressive:false}).toBuffer();
     const dictionnaire=objet.dict.clone(document.context);
     dictionnaire.set(PDFName.of("Filter"),PDFName.of("DCTDecode"));
     dictionnaire.delete(PDFName.of("DecodeParms"));
@@ -98,7 +108,7 @@ export async function exporterCarnet(modele, signalerEtape = async () => {}) {
   let navigateur;
   try {
     await signalerEtape("optimisation_images");
-    await preparerPhotos(modele);
+    await preparerPhotos(modele,signalerEtape);
     modele.polices={
       bodoni:extraireBase64(await readFile(new URL("../../../supabase/functions/generer-carnet/BodoniModa_Variable.ts",import.meta.url),"utf8")),
       plex:extraireBase64(await readFile(new URL("../../../supabase/functions/generer-carnet/IBMPlexSans_Variable.ts",import.meta.url),"utf8"))
