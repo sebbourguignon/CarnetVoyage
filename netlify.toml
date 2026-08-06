@@ -14,3 +14,6 @@
 [functions]
   directory = "netlify/functions"
   included_files = ["supabase/functions/generer-carnet/BodoniModa_Variable.ts", "supabase/functions/generer-carnet/IBMPlexSans_Variable.ts"]
+
+[functions.generer-carnet]
+  background = true
