@@ -22,7 +22,7 @@
    automatique côté app/index.html (controllerchange). Un simple compteur
    suffit, aucune signification particulière au-delà de "différent du
    précédent". */
-var VERSION = "v15";
+var VERSION = "v16";
 var CACHE_SHELL = "carnet-shell-" + VERSION;
 var CACHE_FONTS = "carnet-fonts-" + VERSION;
 var CACHE_DATA = "carnet-data-" + VERSION;
@@ -34,6 +34,9 @@ var FICHIERS_APP_SHELL = [
   "illustrations.js",
   "carnet-pdf/adaptateur.js",
   "carnet-pdf/client.js",
+  "carnet-pdf/modele.js",
+  "carnet-pdf/preparation.js",
+  "carnet-pdf/preparation.css",
   "manifest.json",
   "icones/apple-touch-icon.png",
   "icones/favicon.png",

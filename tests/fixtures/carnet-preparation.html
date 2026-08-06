@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Préparation du carnet — scénario de test</title>
+  <style>
+    :root{--paper:#f7f2e9;--ink:#292724;--pietra:#6d6861;--rosso:#b64a37;--lago:#7b8060;--rule:#bdb5a8;--rule-soft:#ded7cc}
+    *{box-sizing:border-box}body{margin:0;background:#ece8e0;color:var(--ink);font-family:Arial,sans-serif}.shell{max-width:980px;margin:auto;padding:28px}.eyebrow{text-transform:uppercase;color:var(--rosso);font-size:.72rem;font-weight:800;letter-spacing:.08em}.carnet-bouton-generer{padding:12px 18px;border:0;border-radius:10px;background:var(--rosso);color:#fff;font-weight:800}
+  </style>
+  <link rel="stylesheet" href="../../app/carnet-pdf/preparation.css">
+</head>
+<body>
+  <main class="shell"><div id="panel"></div></main>
+  <script src="../../app/carnet-pdf/modele.js"></script>
+  <script src="../../app/carnet-pdf/preparation.js"></script>
+  <script>
+    var utilisateur="membre-test";
+    var photos=Array.from({length:21},function(_,i){
+      var couleur=["b64a37","7b8060","557a8a","c28c45"][i%4];
+      return {id:"photo-"+(i+1),journee_id:"jour-1",membre_id:utilisateur,storage_path:"photo-"+(i+1),legende:"Souvenir "+(i+1),url:"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 300%27%3E%3Crect width=%27400%27 height=%27300%27 fill=%27%23"+couleur+"%27/%3E%3Ctext x=%27200%27 y=%27160%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2748%27%3E"+(i+1)+"%3C/text%3E%3C/svg%3E"};
+    });
+    var jours=[
+      {uuid:"jour-1",id:"d-1",dow:"Mar",num:"4",mois:"Août",titre:"Vérone — des arènes aux rives de l’Adige",rail1:"60 km",rail2:"45 min",regarder:[{id:"obs-1",ou:"Arena di Verona"},{id:"obs-2",ou:"Piazza delle Erbe"}],lieux:[{id:"lieu-1",nom:"Castelvecchio"}]},
+      {uuid:"jour-2",id:"d-2",dow:"Mer",num:"5",mois:"Août",titre:"Journée au bord du lac",rail1:"Sur place",rail2:"",regarder:[],lieux:[]},
+      {uuid:"jour-3",id:"d-3",dow:"Jeu",num:"6",mois:"Août",titre:"Route vers les Dolomites",rail1:"185 km",rail2:"3 h",regarder:[],lieux:[]}
+    ];
+    var preparations=[{id:"prep-1",journee_id:"jour-1",carnet_story:"Une ancienne proposition à relire avant de devenir notre souvenir.",carnet_story_source:"legacy",carnet_story_validated:false,afficher_programme_prevu:false,carnet_faits_confirmes:[],carnet_photos_selectionnees:[{photo_id:"photo-1",ordre:0,principale:true,focal_x:.5,focal_y:.5,legende_carnet:"Premier panorama"}]}];
+    var fauxSupabase={from:function(){throw new Error("La sauvegarde n’est pas utilisée dans cette fixture");}};
+    var controleur=CarnetPreparationEcran.creer({panel:document.getElementById("panel"),supabase:fauxSupabase,voyageId:"voyage-test",utilisateurId:utilisateur,jours:jours,photosParJournee:{"jour-1":photos},textesLegacy:[],preparations:preparations,urlPhoto:function(path){return Promise.resolve(photos.find(function(p){return p.storage_path===path;}).url);},observationReperee:function(jour,index){return jour.uuid==="jour-1"&&index===0;}});
+    controleur.rendre(document.getElementById("panel"));
+  </script>
+</body>
+</html>
+

@@ -1821,6 +1821,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
 }
 .baleine-cachee svg{display:block;width:100%;height:100%}
 </style>
+  <link rel="stylesheet" href="carnet-pdf/preparation.css">
 </head>
 <body>
 
@@ -1917,6 +1918,8 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
      plus bas, juste avant demarrerCarnet(). -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="illustrations.js"></script>
+<script src="carnet-pdf/modele.js"></script>
+<script src="carnet-pdf/preparation.js"></script>
 <script src="carnet-pdf/adaptateur.js"></script>
 <script src="carnet-pdf/client.js"></script>
 <script>
@@ -1928,7 +1931,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
    tel quel le corps de l'ancienne IIFE, en recevant JOURS/BADGES/CARNET
    en paramètres plutôt qu'en globales.
    ========================================================================== */
-function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin, photosInitiales, textesCarnetInitiaux, supabaseUrl){
+function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessionFamille, URGENCES, voyageId, utilisateurId, progressionInitiale, estAdmin, photosInitiales, textesCarnetInitiaux, preparationsCarnetInitiales, supabaseUrl){
   "use strict";
 
   /* --- constantes de filtres : propriété du moteur de rendu, pas du
@@ -2523,6 +2526,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      journee : il utilise toujours texteAutoJournee, voir generer-carnet. */
   var TEXTES_CARNET_PAR_JOURNEE = {};
   (textesCarnetInitiaux || []).forEach(function(t){ TEXTES_CARNET_PAR_JOURNEE[t.journee_id] = t; });
+  var CONTROLEUR_PREPARATION_CARNET = null;
 
   function texteAutoJournee(j){
     var morceaux = [sansHtml(j.titre)];
@@ -2997,28 +3001,21 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
   function rendrePanelCarnet(){
     var panel = document.getElementById("panel-carnet");
-    panel.innerHTML = "";
-    panel.appendChild(construireEnteteOnglet("Carnet"));
-
-    var stats = statistiquesPhotos();
-    var bloc = el("div", "block");
-    bloc.appendChild(el("p", "tagline",
-      stats.total
-        ? stats.total + (stats.total > 1 ? " photos ajoutées sur " : " photo ajoutée sur ") +
-          stats.joursAvecPhotos + (stats.joursAvecPhotos > 1 ? " journées." : " journée.")
-        : "Aucune photo ajoutée pour l'instant — ajoutez-en depuis une journée pour commencer votre carnet."
-    ));
-
-    var statutGeneration = el("p", "carnet-generation-statut");
-    statutGeneration.setAttribute("role", "status");
-    statutGeneration.setAttribute("aria-live", "polite");
-    bloc.appendChild(construireBoutonGeneration(statutGeneration));
-    bloc.appendChild(statutGeneration);
-
-    panel.appendChild(bloc);
-
-    var sections = construireSectionsCarnetJours();
-    if(sections) panel.appendChild(sections);
+    if(!CONTROLEUR_PREPARATION_CARNET){
+      CONTROLEUR_PREPARATION_CARNET = CarnetPreparationEcran.creer({
+        panel: panel,
+        supabase: supabaseClient,
+        voyageId: voyageId,
+        utilisateurId: utilisateurId,
+        jours: JOURS,
+        photosParJournee: PHOTOS_PAR_JOURNEE,
+        textesLegacy: textesCarnetInitiaux || [],
+        preparations: preparationsCarnetInitiales || [],
+        urlPhoto: urlSigneePhoto,
+        observationReperee: function(jour,index){ return estCoche(jour.id + "-r" + index); }
+      });
+    }
+    CONTROLEUR_PREPARATION_CARNET.rendre(panel);
   }
 
   /* une section par journee du voyage (pas seulement celles qui ont deja
@@ -6761,12 +6758,12 @@ function appliquerTheme(theme){
       regarder: (ligne.observations || [])
         .slice()
         .sort(function(a, b){ return a.ordre - b.ordre; })
-        .map(function(o){ return { ou: o.ou, niveau: o.niveau, quoi: o.quoi }; }),
+        .map(function(o){ return { id: o.id, ou: o.ou, niveau: o.niveau, quoi: o.quoi }; }),
       /* `lieux` (ancien donnees.js) = table lieux, triée par ordre. */
       lieux: (ligne.lieux || [])
         .slice()
         .sort(function(a, b){ return a.ordre - b.ordre; })
-        .map(function(l){ return { nom: l.nom, quoi: l.quoi, pratique: l.pratique, requete: l.requete }; }),
+        .map(function(l){ return { id: l.id, nom: l.nom, quoi: l.quoi, pratique: l.pratique, requete: l.requete }; }),
       optionsTitre: ligne.options_titre,
       options: ligne.options || [],
       notes: ligne.notes || [],
@@ -6927,12 +6924,23 @@ function appliquerTheme(theme){
                 ? supabase.from("carnet_textes").select("*").eq("voyage_id", voyage.id)
                 : Promise.resolve({ data: null });
 
-              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille, chargerPhotos, chargerTextesCarnet]).then(function(res){
+              /* Préparation additive du carnet (migration 0023). Le modèle
+                 historique reste chargé en parallèle pour la compatibilité
+                 et pour présenter ses textes comme brouillons `legacy`. */
+              var chargerPreparationsCarnet = utilisateurId
+                ? supabase.from("carnet_journees")
+                    .select("*, carnet_faits_confirmes(*), carnet_photos_selectionnees(*)")
+                    .eq("voyage_id", voyage.id)
+                : Promise.resolve({ data: null });
+
+              return Promise.all([chargerProgression, chargerRole, chargerUrgencesFamille, chargerPhotos, chargerTextesCarnet, chargerPreparationsCarnet]).then(function(res){
                 var resProgression = res[0];
                 var resRole = res[1];
                 var resUrgencesFamille = res[2];
                 var resPhotos = res[3];
                 var resTextesCarnet = res[4];
+                var resPreparationsCarnet = res[5];
+                if(resPreparationsCarnet.error) throw resPreparationsCarnet.error;
                 var estAdmin = !!(resRole.data && resRole.data.role === "admin");
                 var urgences = Object.assign({}, voyage.urgences || {});
                 if(resUrgencesFamille.data && resUrgencesFamille.data.assurance_auto){
@@ -6944,7 +6952,7 @@ function appliquerTheme(theme){
                    sur un noeud déjà détaché du DOM. */
                 demarrerCarnet(JOURS, BADGES, CARNET, slug, supabase, sessionFamille,
                   urgences, voyage.id, utilisateurId, resProgression.data || null, estAdmin,
-                  resPhotos.data || [], resTextesCarnet.data || [], URL_PROJET);
+                  resPhotos.data || [], resTextesCarnet.data || [], resPreparationsCarnet.data || [], URL_PROJET);
                 zoneChargement.remove();
               });
             });
