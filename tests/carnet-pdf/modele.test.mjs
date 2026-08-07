@@ -58,3 +58,10 @@ test("la passe ergonomique ajoute une validation finale et limite à dix photos"
   assert.match(sql,/maximum de 10 photos par journée/i);
   assert.doesNotMatch(sql,/delete from carnet_/i);
 });
+
+test("la migration corrective recrée idempotemment le statut de finalisation",async()=>{
+  const sql=await readFile(new URL("../../supabase/migrations/0026_repare_statut_finalisation_carnet.sql",import.meta.url),"utf8");
+  assert.match(sql,/add column if not exists carnet_terminee/i);
+  assert.match(sql,/add column if not exists recit_source_hash/i);
+  assert.match(sql,/maximum de 10 photos par journée/i);
+});
