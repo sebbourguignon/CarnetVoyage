@@ -12,7 +12,7 @@ export async function preparerVariantesPersistantes(client,modele,signaler=async
   const contenus=new Map(),debutLectures=performance.now();
   // Les variantes sont petites : six lectures parallèles réduisent fortement
   // la latence du chemin chaud, sans décoder plusieurs originaux en mémoire.
-  await concurrence(photos,6,async(photo,index)=>{
+  await concurrence(photos,10,async(photo,index)=>{
     await signaler(`variante_persistante:${index+1}/${photos.length}`);
     const contenu=(await client.storage.from("carnets").download(cheminVariante(modele,photo))).data;
     if(contenu){mesures.cache_persistant_hits++;contenus.set(photo.id,contenu);}else mesures.cache_persistant_misses++;
@@ -29,7 +29,7 @@ export async function preparerVariantesPersistantes(client,modele,signaler=async
       if(depot.error&&!/already exists|duplicate/i.test(depot.error.message||""))throw depot.error;
       mesures.depot_variantes_ms+=performance.now()-debutDepot;contenus.set(photo.id,new Blob([jpeg],{type:"image/jpeg"}));
   });
-  await concurrence(photos,6,async(photo)=>{
+  await concurrence(photos,10,async(photo)=>{
     const contenu=contenus.get(photo.id);
     const octets=Buffer.from(await contenu.arrayBuffer()),meta=await sharp(octets).metadata();
     if(!meta.width||!meta.height)throw Object.assign(new Error("dimensions d’image absentes"),{code:"IMAGE_ILLISIBLE"});

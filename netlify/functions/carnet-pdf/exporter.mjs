@@ -12,6 +12,7 @@ const QUALITE = 82;
 // natif évitent les arrêts brutaux lors de plusieurs déclinaisons d'une photo.
 sharp.concurrency(1);
 sharp.cache(false);
+const CHEMIN_CHROMIUM=process.env.PUPPETEER_EXECUTABLE_PATH?Promise.resolve(process.env.PUPPETEER_EXECUTABLE_PATH):chromium.executablePath();
 async function preparerPhotos(modele, signalerEtape, mesures) {
   const photoCouverture=modele.journees.flatMap((journee)=>journee.photos).find(Boolean);
   for(const journee of modele.journees){const originales=journee.photos||[],principales=originales.length<=4?originales:originales.slice(0,3),galerie=originales.length>=5?originales.slice(3):[];journee.photos=principales;journee.galeries=galerie.length?[galerie]:[];}
@@ -65,7 +66,7 @@ export async function exporterCarnet(modele, signalerEtape = async () => {}) {
     };});
     const html=await phase("construction_html",async()=>{verifierJourneesTerminees(modele);return construireHtml(modele);});
     await signalerEtape("demarrage_chromium");
-    const executablePath=process.env.PUPPETEER_EXECUTABLE_PATH || await chromium.executablePath();
+    const executablePath=await phase("preparation_chromium",()=>CHEMIN_CHROMIUM);
     navigateur=await phase("lancement_chromium",()=>puppeteer.launch({args:chromium.args,executablePath,headless:true}));
     await signalerEtape("rendu_html");
     const page=await navigateur.newPage();

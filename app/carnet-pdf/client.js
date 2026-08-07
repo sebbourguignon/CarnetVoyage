@@ -57,7 +57,7 @@
 
       var resultat;
       for(var tentative = 0; tentative < 450; tentative++){
-        await attendre(2000);
+        await attendre(750);
         var lecture = await options.supabase.from("carnet_travaux")
           .select("statut, chemin_pdf, erreur, diagnostic, maj_le").eq("id", travail.id).single();
         if(lecture.error) throw lecture.error;
