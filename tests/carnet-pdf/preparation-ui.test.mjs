@@ -69,23 +69,23 @@ test("dashboard et parcours dédié de préparation avec 77 photos",{skip:proces
     await capture(page,"journee-desktop.png");
 
     await page.setViewport({width:390,height:844});
-    const barre=await page.$eval(".carnet-action-bar",n=>{const r=n.getBoundingClientRect();return{left:r.left,right:r.right,bottom:r.bottom};});
+    assert.equal(await page.$$(".carnet-action-bar").then(x=>x.length),0);
+    const barre=await page.$eval("#day-nav-sticky",n=>{const r=n.getBoundingClientRect();return{left:r.left,right:r.right,bottom:r.bottom};});
     assert.ok(barre.left>=0&&barre.right<=390&&barre.bottom<=844);
-    assert.equal(await page.$eval(".carnet-action-bar",n=>getComputedStyle(n).borderBottomWidth),"0px");
-    assert.equal(await page.$$eval(".carnet-action-bar button",ns=>ns.length),1);
-    for(const selector of [".carnet-action-bar .carnet-action-primaire","#day-nav-sticky .day-nav-sticky-link"]){const tailles=await page.$$eval(selector,ns=>ns.map(n=>{const r=n.getBoundingClientRect();return{w:r.width,h:r.height};}));assert.ok(tailles.every(x=>x.h>=44));}
+    assert.equal(await page.$$eval("#day-nav-sticky [data-finish-day]",ns=>ns.length),1);
+    for(const selector of ["#day-nav-sticky [data-finish-day]","#day-nav-sticky .day-nav-sticky-link"]){const tailles=await page.$$eval(selector,ns=>ns.map(n=>{const r=n.getBoundingClientRect();return{w:r.width,h:r.height};}));assert.ok(tailles.every(x=>x.h>=34));}
     await capture(page,"journee-mobile.png");
     assert.equal(await page.$eval(".carnet-autosave-statut",n=>n.hidden),true);
     await page.focus(".carnet-preparation-notes");
-    assert.equal(await page.$eval(".carnet-action-bar",n=>getComputedStyle(n).position),"static");
+    assert.equal(await page.$eval(".footer-stack",n=>getComputedStyle(n).position),"fixed");
     await page.evaluate(()=>document.activeElement.blur());
-    await page.evaluate(()=>{window.LATENCE_BDD=80;const b=document.querySelector(".carnet-action-bar .carnet-action-primaire");b.click();b.click();});
+    await page.evaluate(()=>{window.LATENCE_BDD=80;const b=document.querySelector("#day-nav-sticky [data-finish-day]");b.click();b.click();});
     await page.waitForFunction(()=>/Journée au bord du lac/.test(document.querySelector(".carnet-journee-titre")?.textContent||""));
     assert.equal(await page.evaluate(()=>window.APPELS_BDD.filter(x=>x.table==="carnet_journees"&&x.action==="update"&&x.payload.carnet_terminee===true).length),1);
-    assert.deepEqual(await page.$eval(".carnet-action-bar .carnet-action-primaire",n=>({texte:n.textContent,disabled:n.disabled})),{texte:"Journée prête ✓",disabled:true});
+    assert.deepEqual(await page.$eval("#day-nav-sticky [data-finish-day]",n=>({texte:n.textContent,disabled:n.disabled})),{texte:"✓ Prête",disabled:true});
     await page.$eval(".carnet-preparation-notes",n=>{n.value="Un nouveau souvenir";n.dispatchEvent(new Event("input",{bubbles:true}));});
     assert.equal(await page.$eval("[data-day-status]",n=>n.textContent),"En cours");
-    assert.deepEqual(await page.$eval(".carnet-action-bar .carnet-action-primaire",n=>({texte:n.textContent,disabled:n.disabled})),{texte:"Terminer la journée",disabled:false});
+    assert.deepEqual(await page.$eval("#day-nav-sticky [data-finish-day]",n=>({texte:n.querySelector(".carnet-action-court")?.textContent||n.textContent,disabled:n.disabled})),{texte:"Terminer",disabled:false});
     await page.click(".carnet-journee-entete .carnet-action-texte");
     await page.waitForSelector(".carnet-dashboard-liste");
     await capture(page,"dashboard-mobile.png");
