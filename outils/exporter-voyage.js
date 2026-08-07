@@ -14,12 +14,12 @@
    le pourquoi).
    ========================================================================== */
 
-"use strict";
+import fs from "fs";
+import path from "path";
+import https from "https";
+import { URL, fileURLToPath } from "url";
 
-const fs = require("fs");
-const path = require("path");
-const https = require("https");
-const { URL } = require("url");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function echouer(message) {
   console.error("\nERREUR — " + message);

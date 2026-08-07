@@ -97,7 +97,8 @@
           "horaires": "Lun-ven 9h-13h et 15h-19h"
         }
       ]
-    }
+    },
+    "theme": null
   },
   "journees": [
     {
@@ -144,22 +145,22 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "À anticiper",
-          "texte": "Réserver l'hébergement et le restaurant. Le Vieux Lyon est pavé : prévoir de porter le chien."
+          "texte": "Réserver l'hébergement et le restaurant. Le Vieux Lyon est pavé : prévoir de porter le chien.",
+          "titre": "À anticiper"
         }
       ],
       "chapitre": {
-        "numero": "Chapitre I",
-        "titre": "La descente"
+        "titre": "La descente",
+        "numero": "Chapitre I"
       },
       "ordre": 0,
       "anniversaire": false,
       "pratique": {
-        "parking": "Vieux Lyon est piéton : viser le Parking Saint-Jean, en souterrain sous le quartier, ou Célestins de l'autre côté de la Saône.",
         "ztl": "Lyon applique une ZFE. Vérifiez votre vignette Crit'Air avant de partir — c'est le genre de détail qui gâche une arrivée.",
-        "reserver": "Le bouchon du soir. Un vendredi de fin juillet, sans réservation vous dînerez mal.",
+        "chien": "facile",
+        "parking": "Vieux Lyon est piéton : viser le Parking Saint-Jean, en souterrain sous le quartier, ou Célestins de l'autre côté de la Saône.",
         "emporter": "De quoi tenir dans les bouchons : eau, en-cas, et de l'eau pour le chien.",
-        "chien": "facile"
+        "reserver": "Le bouchon du soir. Un vendredi de fin juillet, sans réservation vous dînerez mal."
       },
       "carte": [
         {
@@ -193,42 +194,48 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Sur la route",
           "ou": "Aire d'autoroute ou pique-nique — l'arrêt long coûte cher un vendredi d'A6",
+          "nom": "Sur la route",
           "note": "Garder l'appétit pour le soir."
         },
+        "plat": "Quenelle de brochet, salade lyonnaise, cervelle de canut.",
         "soir": {
-          "nom": "Notre Maison",
           "ou": "2 rue de Gadagne, Vieux Lyon",
+          "nom": "Notre Maison",
           "tel": "+33472417848",
           "note": "Bouchon authentique, 4,7/5. Ouvert le vendredi soir uniquement à partir de 19 h. Réserver."
-        },
-        "plat": "Quenelle de brochet, salade lyonnaise, cervelle de canut."
+        }
       },
+      "lat": 45.764,
+      "lon": 4.8357,
       "observations": [
         {
           "ou": "Les traboules du Vieux Lyon",
           "niveau": 2,
-          "quoi": "Ces passages traversent les immeubles de cour en cour. Ils datent de la Renaissance et servaient aux canuts à transporter les pièces de soie à l'abri de la pluie. Une plaque signale celles ouvertes au public : commencez par le 54 rue Saint-Jean.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Ces passages traversent les immeubles de cour en cour. Ils datent de la Renaissance et servaient aux canuts à transporter les pièces de soie à l'abri de la pluie. Une plaque signale celles ouvertes au public : commencez par le 54 rue Saint-Jean."
         },
         {
           "ou": "Horloge astronomique, cathédrale Saint-Jean",
           "niveau": 2,
-          "quoi": "Une machine du XIV siècle qui donne la date, la position de la Lune, du Soleil et des étoiles au-dessus de Lyon. Elle est programmée jusqu'en 2019 — donc techniquement à la retraite depuis peu.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Une machine du XIV siècle qui donne la date, la position de la Lune, du Soleil et des étoiles au-dessus de Lyon. Elle est programmée jusqu'en 2019 — donc techniquement à la retraite depuis peu."
         },
         {
           "ou": "Fourvière, vue de la ville",
           "niveau": 1,
-          "quoi": "Les Lyonnais surnomment la basilique l'éléphant renversé : quatre tours plantées comme des pattes en l'air. Une fois qu'on vous l'a dit, on ne voit plus que ça.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Les Lyonnais surnomment la basilique l'éléphant renversé : quatre tours plantées comme des pattes en l'air. Une fois qu'on vous l'a dit, on ne voit plus que ça."
         },
         {
           "ou": "Depuis l'esplanade",
           "niveau": 3,
-          "quoi": "Par temps clair, on distingue le mont Blanc à l'est. C'est la première fois du voyage que vous voyez les Alpes — vous les traverserez demain.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Par temps clair, on distingue le mont Blanc à l'est. C'est la première fois du voyage que vous voyez les Alpes — vous les traverserez demain."
         }
       ],
       "quiz_questions": [
@@ -306,9 +313,7 @@
           "requete": "Mur des Canuts Lyon",
           "ordre": 5
         }
-      ],
-      "lat": 45.764,
-      "lon": 4.8357
+      ]
     },
     {
       "ancre": "d-0801",
@@ -358,19 +363,19 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Attention",
-          "texte": "Le tunnel du Fréjus coûte cher (~55 € l'aller). <b>ZTL</b> de Turin : moins active le samedi, mais vérifiez avant de vous engager dans le centre."
+          "texte": "Le tunnel du Fréjus coûte cher (~55 € l'aller). <b>ZTL</b> de Turin : moins active le samedi, mais vérifiez avant de vous engager dans le centre.",
+          "titre": "Attention"
         }
       ],
       "chapitre": null,
       "ordre": 1,
       "anniversaire": false,
       "pratique": {
-        "parking": "Turin : parking souterrain sous Via Roma / Piazza San Carlo, au pied de tout ce que vous voulez voir.",
         "ztl": "ZTL centrale active en semaine le matin. En principe inactive le samedi, mais vérifiez la signalisation à l'entrée : les amendes arrivent des mois plus tard.",
-        "reserver": "Ascenseur panoramique de la Mole Antonelliana. Le tunnel du Fréjus coûte environ 55 € l'aller — prévoyez la carte.",
+        "chien": "à gérer",
+        "parking": "Turin : parking souterrain sous Via Roma / Piazza San Carlo, au pied de tout ce que vous voulez voir.",
         "emporter": "Une petite laine : le tunnel débouche à 1 300 m, et le Val de Suse est frais même en août.",
-        "chien": "à gérer"
+        "reserver": "Ascenseur panoramique de la Mole Antonelliana. Le tunnel du Fréjus coûte environ 55 € l'aller — prévoyez la carte."
       },
       "carte": [
         {
@@ -407,43 +412,49 @@
       ],
       "manger": {
         "midi": {
-          "nom": "crostone.it",
           "ou": "Piazza Castello 72, Turin",
+          "nom": "crostone.it",
           "tel": "+390114299365",
           "note": "Sandwichs piémontais de qualité, 4,7/5, à deux pas de la Mole. Rapide, pratique le jour d'arrivée."
         },
+        "plat": "Vitello tonnato, agnolotti del plin, et l'apéritif turinois avec son buffet compris.",
         "soir": {
-          "nom": "Ristorante Circolo dei Lettori",
           "ou": "Via Bogino 9, dans le Palazzo Graneri della Roccia",
+          "nom": "Ristorante Circolo dei Lettori",
           "tel": "+393482416367",
           "note": "Cuisine piémontaise dans un palais historique, 4,6/5. Fermé lundi et dimanche — le samedi est bon. Réserver."
-        },
-        "plat": "Vitello tonnato, agnolotti del plin, et l'apéritif turinois avec son buffet compris."
+        }
       },
+      "lat": 45.0703,
+      "lon": 7.6869,
       "observations": [
         {
           "ou": "Le Val de Suse, à la sortie du tunnel",
           "niveau": 3,
-          "quoi": "Regardez à droite en descendant : la voie ferrée qui s'enfonce sous la montagne emprunte le tunnel du Fréjus ferroviaire, percé entre 1857 et 1871. C'est le premier grand tunnel alpin, et le premier chantier au monde à utiliser des perforatrices pneumatiques.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Regardez à droite en descendant : la voie ferrée qui s'enfonce sous la montagne emprunte le tunnel du Fréjus ferroviaire, percé entre 1857 et 1871. C'est le premier grand tunnel alpin, et le premier chantier au monde à utiliser des perforatrices pneumatiques."
         },
         {
           "ou": "Sacra di San Michele",
           "niveau": 1,
-          "quoi": "L'abbaye accrochée au piton, visible depuis l'autoroute, a inspiré à Umberto Eco le décor du Nom de la rose. Si vous montez, cherchez le Scalone dei Morti — l'escalier des morts, bordé de niches où reposaient les moines.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "L'abbaye accrochée au piton, visible depuis l'autoroute, a inspiré à Umberto Eco le décor du Nom de la rose. Si vous montez, cherchez le Scalone dei Morti — l'escalier des morts, bordé de niches où reposaient les moines."
         },
         {
           "ou": "La Mole Antonelliana",
           "niveau": 1,
-          "quoi": "Elle a été commencée en 1863 comme synagogue pour la communauté juive de Turin. Le chantier a dérapé, la communauté a renoncé, la ville a repris le bâtiment. Le symbole de Turin est un lieu de culte qui n'a jamais servi.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Elle a été commencée en 1863 comme synagogue pour la communauté juive de Turin. Le chantier a dérapé, la communauté a renoncé, la ville a repris le bâtiment. Le symbole de Turin est un lieu de culte qui n'a jamais servi."
         },
         {
           "ou": "Les arcades",
           "niveau": 1,
-          "quoi": "Turin compte 18 km de portiques continus. Ils ont été construits pour que la famille royale et la cour puissent traverser la ville sans jamais prendre la pluie. Vous en profiterez pour les mêmes raisons.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Turin compte 18 km de portiques continus. Ils ont été construits pour que la famille royale et la cour puissent traverser la ville sans jamais prendre la pluie. Vous en profiterez pour les mêmes raisons."
         }
       ],
       "quiz_questions": [
@@ -521,9 +532,7 @@
           "requete": "Parco del Valentino Torino",
           "ordre": 5
         }
-      ],
-      "lat": 45.0703,
-      "lon": 7.6869
+      ]
     },
     {
       "ancre": "d-0802",
@@ -570,10 +579,10 @@
       "ordre": 2,
       "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Repérez en arrivant où vous garer durablement près de l'appartement : à Salò, la place se raréfie vers 18 h.",
-        "reserver": "Rien aujourd'hui. Mais réservez ce soir le restaurant du 15 août : c'est le seul jour du séjour où vous ne trouverez pas de table.",
         "emporter": "Prévoir de quoi tenir jusqu'au lendemain midi — les courses se feront lundi.",
-        "chien": "facile"
+        "reserver": "Rien aujourd'hui. Mais réservez ce soir le restaurant du 15 août : c'est le seul jour du séjour où vous ne trouverez pas de table."
       },
       "carte": [
         {
@@ -611,43 +620,49 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Ristorante Al Porticciolo",
           "ou": "Via del Porto 9, Padenghe sul Garda",
+          "nom": "Ristorante Al Porticciolo",
           "tel": "+390309173372",
           "note": "4,8/5, tables sur le port de plaisance, poisson du lac. Service 12 h 30 - 14 h 30 tous les jours. Petite salle : appeler en route pour réserver. Repli sans contrainte d'horaire : Garda Restaurant & Pizza à Desenzano, service continu 11 h 30 - 22 h 30, +390305503933."
         },
+        "plat": "Le lavarello ou le coregone, poissons du lac de Garde.",
         "soir": {
-          "nom": "Lungolago 64",
           "ou": "Lungolago Zanardelli 64, Salò",
+          "nom": "Lungolago 64",
           "tel": "+390365290030",
           "note": "Pizzeria au bord de l'eau, sans façon, ouverte le dimanche. Parfait pour un premier soir sans ambition."
-        },
-        "plat": "Le lavarello ou le coregone, poissons du lac de Garde."
+        }
       },
+      "lat": 45.6083,
+      "lon": 10.5231,
       "observations": [
         {
           "ou": "Les collines, en approchant du lac",
           "niveau": 2,
-          "quoi": "Ces bosses régulières au sud du lac ne sont pas des collines ordinaires : c'est la moraine terminale du glacier qui a creusé le Garda. Il s'est arrêté là et a déposé tout ce qu'il charriait, en amphithéâtre. Vous vivrez deux semaines dans son empreinte.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Ces bosses régulières au sud du lac ne sont pas des collines ordinaires : c'est la moraine terminale du glacier qui a creusé le Garda. Il s'est arrêté là et a déposé tout ce qu'il charriait, en amphithéâtre. Vous vivrez deux semaines dans son empreinte."
         },
         {
           "ou": "Le Duomo de Salò",
           "niveau": 1,
-          "quoi": "La façade est restée en briques nues. Le revêtement de marbre prévu n'a jamais été posé, faute d'argent — depuis le XV siècle. À l'intérieur, l'inverse : gothique tardif, riche, complet.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "La façade est restée en briques nues. Le revêtement de marbre prévu n'a jamais été posé, faute d'argent — depuis le XV siècle. À l'intérieur, l'inverse : gothique tardif, riche, complet."
         },
         {
           "ou": "Le lungolago",
           "niveau": 1,
-          "quoi": "Trois kilomètres : c'est la plus longue promenade au bord du lac de Garde. Faites-la une fois en entier le premier soir, vous aurez la mesure de votre base.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Trois kilomètres : c'est la plus longue promenade au bord du lac de Garde. Faites-la une fois en entier le premier soir, vous aurez la mesure de votre base."
         },
         {
           "ou": "Les villas autour du golfe",
           "niveau": 3,
-          "quoi": "Entre 1943 et 1945, les ministères de la République sociale italienne étaient dispersés dans ces villas — d'où le nom de République de Salò. Le ministère des Affaires étrangères occupait une villa de Gardone.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Entre 1943 et 1945, les ministères de la République sociale italienne étaient dispersés dans ces villas — d'où le nom de République de Salò. Le ministère des Affaires étrangères occupait une villa de Gardone."
         }
       ],
       "quiz_questions": [
@@ -725,9 +740,7 @@
           "requete": "Porto di Padenghe sul Garda",
           "ordre": 5
         }
-      ],
-      "lat": 45.6083,
-      "lon": 10.5231
+      ]
     },
     {
       "ancre": "d-0803",
@@ -772,25 +785,25 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Courses",
-          "texte": "Le Carrefour Market ouvre dès 7 h, tous les jours — pas de problème de fermeture le lundi matin. Les surgelés en dernier : la voiture restera au soleil pendant le Vittoriale."
+          "texte": "Le Carrefour Market ouvre dès 7 h, tous les jours — pas de problème de fermeture le lundi matin. Les surgelés en dernier : la voiture restera au soleil pendant le Vittoriale.",
+          "titre": "Courses"
         },
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Admis en laisse dans le parc du Vittoriale, <b>pas dans la maison</b>. Se relayer pour la visite intérieure (45 min). Billets à réserver en ligne, les créneaux partent vite en août."
+          "texte": "Admis en laisse dans le parc du Vittoriale, <b>pas dans la maison</b>. Se relayer pour la visite intérieure (45 min). Billets à réserver en ligne, les créneaux partent vite en août.",
+          "titre": "Chien"
         }
       ],
       "chapitre": {
-        "numero": "Chapitre II",
-        "titre": "Quatorze jours autour du lac"
+        "titre": "Quatorze jours autour du lac",
+        "numero": "Chapitre II"
       },
       "ordre": 3,
       "anniversaire": false,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Parking payant à l'entrée du Vittoriale, en contrebas. Arrivez tôt : il sature vers 10 h 30 en août.",
-        "emporter": "Le parc est en pente forte et pavé : chaussures fermées. Sacs de courses réutilisables — les sacs sont payants en Italie. Prévoir de la place dans le coffre.",
-        "chien": "à gérer"
+        "emporter": "Le parc est en pente forte et pavé : chaussures fermées. Sacs de courses réutilisables — les sacs sont payants en Italie. Prévoir de la place dans le coffre."
       },
       "carte": [
         {
@@ -828,49 +841,56 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Il Fiore di Zucca",
           "ou": "Via Trieste 16, Gardone Riviera",
+          "nom": "Il Fiore di Zucca",
           "tel": "+393382868788",
           "note": "4,6/5, terrasse sous les feuillages. ATTENTION : ouvre à 19 h — pour un déjeuner, préférer un bar du lungolago de Gardone."
         },
+        "plat": "Tagliatelle al ragù, et l'huile d'olive du Garda — l'une des plus septentrionales du monde.",
         "soir": {
-          "nom": "Ristorante La Taverna",
           "ou": "Corso della Repubblica 34, Gardone Riviera",
+          "nom": "Ristorante La Taverna",
           "tel": "+393896617889",
           "note": "4,8/5, la meilleure note du secteur. Tenu par un couple, petite salle : réserver impérativement."
-        },
-        "plat": "Tagliatelle al ragù, et l'huile d'olive du Garda — l'une des plus septentrionales du monde."
+        }
       },
+      "lat": 45.6083,
+      "lon": 10.5231,
       "observations": [
         {
           "ou": "Le navire Puglia",
           "niveau": 1,
-          "quoi": "Ce n'est pas une réplique. C'est un vrai croiseur de la Marine italienne, découpé, transporté et remonté dans la colline, proue tournée vers l'Adriatique. D'Annunzio l'a obtenu par simple demande à la Marine, qui a obéi.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Ce n'est pas une réplique. C'est un vrai croiseur de la Marine italienne, découpé, transporté et remonté dans la colline, proue tournée vers l'Adriatique. D'Annunzio l'a obtenu par simple demande à la Marine, qui a obéi."
         },
         {
           "ou": "La zone alpine, au milieu du jardin",
           "niveau": 2,
-          "quoi": "Rien n'est naturel ici : la rocaille a été entièrement bâtie et disposée pour reproduire un éboulis de montagne, avec ses poches de terre et ses expositions. Le jardin est à 100 m d'altitude au bord d'un lac tempéré — cette zone est une fabrication complète, destinée à faire pousser des espèces qui n'ont rien à faire là.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Rien n'est naturel ici : la rocaille a été entièrement bâtie et disposée pour reproduire un éboulis de montagne, avec ses poches de terre et ses expositions. Le jardin est à 100 m d'altitude au bord d'un lac tempéré — cette zone est une fabrication complète, destinée à faire pousser des espèces qui n'ont rien à faire là."
         },
         {
           "ou": "Ce qui ne devrait pas pousser ici",
           "niveau": 2,
-          "quoi": "Cherchez les bananiers, les palmiers et les fougères arborescentes. À 45° de latitude nord, ils devraient geler chaque hiver. Ils survivent grâce à la masse d'eau du lac, qui restitue la nuit et en hiver la chaleur accumulée l'été — la même inertie thermique qui permet les citronniers de Limone, que vous verrez le 14.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Cherchez les bananiers, les palmiers et les fougères arborescentes. À 45° de latitude nord, ils devraient geler chaque hiver. Ils survivent grâce à la masse d'eau du lac, qui restitue la nuit et en hiver la chaleur accumulée l'été — la même inertie thermique qui permet les citronniers de Limone, que vous verrez le 14."
         },
         {
           "ou": "Le biplan SVA suspendu dans l'auditorium",
           "niveau": 1,
-          "quoi": "C'est l'appareil du vol sur Vienne d'août 1918 : mille kilomètres aller-retour au-dessus des lignes ennemies pour larguer des tracts, sans une bombe. Un raid entièrement symbolique, et c'est bien pour ça qu'il l'a gardé.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "C'est l'appareil du vol sur Vienne d'août 1918 : mille kilomètres aller-retour au-dessus des lignes ennemies pour larguer des tracts, sans une bombe. Un raid entièrement symbolique, et c'est bien pour ça qu'il l'a gardé."
         },
         {
           "ou": "Le mausolée, tout en haut",
           "niveau": 1,
-          "quoi": "Sa tombe est surélevée au centre, et ses compagnons d'armes disposés en cercle autour, plus bas. Il a mis en scène sa propre mort comme le reste : au centre, en hauteur, entouré.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "Sa tombe est surélevée au centre, et ses compagnons d'armes disposés en cercle autour, plus bas. Il a mis en scène sa propre mort comme le reste : au centre, en hauteur, entouré."
         }
       ],
       "quiz_questions": [
@@ -948,9 +968,7 @@
           "requete": "Carrefour Market Salò Via Eugenio Montale",
           "ordre": 5
         }
-      ],
-      "lat": 45.6083,
-      "lon": 10.5231
+      ]
     },
     {
       "ancre": "d-0804",
@@ -1012,29 +1030,29 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "14 h, plein soleil",
-          "texte": "Le sommet de la tour est entièrement exposé et 14 h est l'heure la plus chaude d'août. Chapeaux, eau, et prévoir Castelvecchio juste après pour retrouver de la fraîcheur."
+          "texte": "Le sommet de la tour est entièrement exposé et 14 h est l'heure la plus chaude d'août. Chapeaux, eau, et prévoir Castelvecchio juste après pour retrouver de la fraîcheur.",
+          "titre": "14 h, plein soleil"
         },
         {
           "ton": "alerte",
-          "titre": "Réglisse",
-          "texte": "Ni la tour ni le musée de Castelvecchio n'admettront le chien. Prévoir que l'un de nous reste dehors à l'ombre pendant ces deux visites, ou alterner. {{chien}}"
+          "texte": "Ni la tour ni le musée de Castelvecchio n'admettront le chien. Prévoir que l'un de nous reste dehors à l'ombre pendant ces deux visites, ou alterner. {{chien}}",
+          "titre": "Réglisse"
         },
         {
           "ton": "alerte",
-          "titre": "Attention",
-          "texte": "<b>ZTL très stricte</b> à Vérone, caméras partout. Se garer au <b>Parcheggio Arena / Cittadella</b> ou <b>Centro Porta Palio</b> et tout faire à pied. Le centre est plat et compact. {{chien}}"
+          "texte": "<b>ZTL très stricte</b> à Vérone, caméras partout. Se garer au <b>Parcheggio Arena / Cittadella</b> ou <b>Centro Porta Palio</b> et tout faire à pied. Le centre est plat et compact. {{chien}}",
+          "titre": "Attention"
         }
       ],
       "chapitre": null,
       "ordre": 4,
       "anniversaire": false,
       "pratique": {
-        "parking": "Parcheggio Cittadella (Piazza Cittadella) : 750 places sur plusieurs niveaux, ouvert 24h/24, juste avant Piazza Bra. Cher, et plein dès la fin de matinée en août. Repli à 5 min de plus et moins cher : Parcheggio Arena (SABA), côté Campo Marzo.",
         "ztl": "Stricte. Portiques à caméras sur Piazza Bra, Piazza delle Erbe et tout le pourtour de l'Arena. Les deux parkings sont juste en dehors : ne franchissez aucun portique.",
-        "reserver": "Torre dei Lamberti réservée à 14 h. Déjeuner Osteria Al Duomo et dîner Trattoria al Pompiere : réserver la veille.",
+        "chien": "à gérer",
+        "parking": "Parcheggio Cittadella (Piazza Cittadella) : 750 places sur plusieurs niveaux, ouvert 24h/24, juste avant Piazza Bra. Cher, et plein dès la fin de matinée en août. Repli à 5 min de plus et moins cher : Parcheggio Arena (SABA), côté Campo Marzo.",
         "emporter": "Chapeaux — Piazza Bra et l'Arena sont sans une ombre. Le sac du chien pour l'Arena et la tour.",
-        "chien": "à gérer"
+        "reserver": "Torre dei Lamberti réservée à 14 h. Déjeuner Osteria Al Duomo et dîner Trattoria al Pompiere : réserver la veille."
       },
       "carte": [
         {
@@ -1084,55 +1102,63 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Osteria Trattoria Al Duomo",
           "ou": "Via Duomo 7, Vérone",
+          "nom": "Osteria Trattoria Al Duomo",
           "tel": "+390458004505",
           "note": "4,6/5, cuisine véronaise authentique. Fermé jeudi et dimanche — le mardi est bon. Réserver la veille."
         },
+        "plat": "Pastissada de caval, bigoli con ragù d'asino, risotto all'Amarone.",
         "soir": {
-          "nom": "Trattoria al Pompiere",
           "ou": "Vicolo Regina d'Ungheria 5, Vérone",
+          "nom": "Trattoria al Pompiere",
           "tel": "+390458030537",
           "note": "4,6/5, institution véronaise, charcuteries maison, 300 vins. Fermé le dimanche. Réserver."
-        },
-        "plat": "Pastissada de caval, bigoli con ragù d'asino, risotto all'Amarone."
+        }
       },
+      "lat": 45.4384,
+      "lon": 10.9916,
       "observations": [
         {
           "ou": "L'Ala, Piazza Bra",
           "niveau": 2,
-          "quoi": "Le pan de mur isolé à côté de l'Arena, haut de quatre arches, est le seul fragment de l'anneau extérieur. Le reste s'est effondré au tremblement de terre de 1117. Ce que vous visitez aujourd'hui, c'est l'anneau intérieur : l'amphithéâtre était bien plus haut.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Le pan de mur isolé à côté de l'Arena, haut de quatre arches, est le seul fragment de l'anneau extérieur. Le reste s'est effondré au tremblement de terre de 1117. Ce que vous visitez aujourd'hui, c'est l'anneau intérieur : l'amphithéâtre était bien plus haut."
         },
         {
           "ou": "Arco della Costa",
           "niveau": 3,
-          "quoi": "Sous l'arche qui relie Piazza delle Erbe à Piazza dei Signori pend une énorme côte de baleine, suspendue là depuis des siècles. La légende dit qu'elle tombera sur le premier honnête homme à passer dessous. Elle n'est jamais tombée.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Sous l'arche qui relie Piazza delle Erbe à Piazza dei Signori pend une énorme côte de baleine, suspendue là depuis des siècles. La légende dit qu'elle tombera sur le premier honnête homme à passer dessous. Elle n'est jamais tombée."
         },
         {
           "ou": "Fontaine de Piazza delle Erbe",
           "niveau": 2,
-          "quoi": "La statue qui la surmonte, la Madonna Verona, est une sculpture romaine du IV siècle — récupérée et remontée sur une fontaine du XIV. Une Romaine recyclée en Madone.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "La statue qui la surmonte, la Madonna Verona, est une sculpture romaine du IV siècle — récupérée et remontée sur une fontaine du XIV. Une Romaine recyclée en Madone."
         },
         {
           "ou": "Balcon de Juliette",
           "niveau": 1,
-          "quoi": "Il a été ajouté dans les années 1930, assemblé à partir d'un vieux sarcophage. Shakespeare n'a jamais écrit de scène de balcon : il parle d'une fenêtre. Bonne nouvelle à annoncer aux ados avant la file d'attente.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Il a été ajouté dans les années 1930, assemblé à partir d'un vieux sarcophage. Shakespeare n'a jamais écrit de scène de balcon : il parle d'une fenêtre. Bonne nouvelle à annoncer aux ados avant la file d'attente."
         },
         {
           "ou": "Castelvecchio et Ponte Scaligero",
           "niveau": 2,
-          "quoi": "Les créneaux en queue d'aronde sont la signature des gibelins, le parti de l'Empereur ; les créneaux carrés désignent les guelfes, du côté du Pape. Les Scaliger étaient gibelins. Vous reverrez ces queues d'aronde à Sirmione, Malcesine et Desenzano.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "Les créneaux en queue d'aronde sont la signature des gibelins, le parti de l'Empereur ; les créneaux carrés désignent les guelfes, du côté du Pape. Les Scaliger étaient gibelins. Vous reverrez ces queues d'aronde à Sirmione, Malcesine et Desenzano."
         },
         {
           "ou": "Cangrande, musée de Castelvecchio",
           "niveau": 2,
-          "quoi": "La statue équestre n'est pas posée sur un socle mais projetée dans le vide sur une console de béton, de biais et à mi-hauteur, pour qu'on la croise depuis plusieurs niveaux. C'est le geste le plus célèbre de Carlo Scarpa, et l'une des raisons pour lesquelles ce musée est étudié dans le monde entier.",
-          "ordre": 5
+          "ordre": 5,
+          "visibilite": "amis",
+          "quoi": "La statue équestre n'est pas posée sur un socle mais projetée dans le vide sur une console de béton, de biais et à mi-hauteur, pour qu'on la croise depuis plusieurs niveaux. C'est le geste le plus célèbre de Carlo Scarpa, et l'une des raisons pour lesquelles ce musée est étudié dans le monde entier."
         }
       ],
       "quiz_questions": [
@@ -1217,9 +1243,7 @@
           "requete": "Torre dei Lamberti Verona",
           "ordre": 6
         }
-      ],
-      "lat": 45.4384,
-      "lon": 10.9916
+      ]
     },
     {
       "ancre": "d-0805",
@@ -1269,18 +1293,18 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Journée 100 % compatible, tout est en extérieur. Prévoir beaucoup d'eau et éviter la roche brûlante en milieu de journée. {{chien}}"
+          "texte": "Journée 100 % compatible, tout est en extérieur. Prévoir beaucoup d'eau et éviter la roche brûlante en milieu de journée. {{chien}}",
+          "titre": "Chien"
         }
       ],
       "chapitre": null,
       "ordre": 5,
       "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Cascata del Varone : parking payant à l'entrée. Ponale : se garer à Riva, vers Porto San Nicolò, et partir à pied.",
-        "reserver": "Rien. C'est une journée qui s'improvise.",
         "emporter": "Maillots — Tenno et Ledro sont bien plus frais que le Garda. Un coupe-vent pour la gorge du Varone : il y fait froid et humide en permanence. Chaussures fermées pour le Ponale.",
-        "chien": "facile"
+        "reserver": "Rien. C'est une journée qui s'improvise."
       },
       "carte": [
         {
@@ -1330,49 +1354,56 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Ristorante Pizzeria Leon d'Oro",
           "ou": "Via Fiume 28, Riva del Garda",
+          "nom": "Ristorante Pizzeria Leon d'Oro",
           "tel": "+390464552341",
           "note": "4,7/5 sur plus de 9 000 avis, ouvert tous les jours en continu de 11 h 30. Nonna Sandra accueille elle-même."
         },
+        "plat": "Carne salada, canederli, strangolapreti — la cuisine du Trentin, très différente de celle du lac.",
         "soir": {
-          "nom": "Osteria degli Artisti",
           "ou": "Via dei Disciplini 30, Riva del Garda",
+          "nom": "Osteria degli Artisti",
           "tel": "+393297411982",
           "note": "Pâtes fraîches, ambiance moins touristique, ouvert tous les jours."
-        },
-        "plat": "Carne salada, canederli, strangolapreti — la cuisine du Trentin, très différente de celle du lac."
+        }
       },
+      "lat": 45.8862,
+      "lon": 10.8407,
       "observations": [
         {
           "ou": "La gorge de la Cascata del Varone",
           "niveau": 1,
-          "quoi": "La cascade a creusé sa gorge en reculant : près d'un kilomètre grignoté dans la roche depuis le retrait du glacier, il y a environ vingt mille ans. Vous marchez dans un couloir que l'eau a taillé, mètre par mètre, en remontant.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "La cascade a creusé sa gorge en reculant : près d'un kilomètre grignoté dans la roche depuis le retrait du glacier, il y a environ vingt mille ans. Vous marchez dans un couloir que l'eau a taillé, mètre par mètre, en remontant."
         },
         {
           "ou": "La couleur du lac de Tenno",
           "niveau": 1,
-          "quoi": "Ce turquoise ne vient pas du ciel mais de la farine glaciaire : des poussières de roche broyée, si fines qu'elles restent en suspension et renvoient les bleus. Quand le niveau baisse, une langue de terre émerge et relie la rive à l'îlot.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Ce turquoise ne vient pas du ciel mais de la farine glaciaire : des poussières de roche broyée, si fines qu'elles restent en suspension et renvoient les bleus. Quand le niveau baisse, une langue de terre émerge et relie la rive à l'îlot."
         },
         {
           "ou": "Canale di Tenno",
           "niveau": 2,
-          "quoi": "Les ruelles sont couvertes sur une partie de leur longueur. Ce n'était pas un choix esthétique : le village se serre et se couvre pour garder la chaleur, à 500 m d'altitude, avec des hivers longs.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Les ruelles sont couvertes sur une partie de leur longueur. Ce n'était pas un choix esthétique : le village se serre et se couvre pour garder la chaleur, à 500 m d'altitude, avec des hivers longs."
         },
         {
           "ou": "Le sentier du Ponale",
           "niveau": 2,
-          "quoi": "Ce n'est pas un sentier mais une route, ouverte en 1851 : le seul lien entre Riva et la vallée de Ledro pendant plus d'un siècle. Elle a été fermée au trafic quand le tunnel moderne a ouvert. Les niches et les galeries que vous traversez sont celles des attelages.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Ce n'est pas un sentier mais une route, ouverte en 1851 : le seul lien entre Riva et la vallée de Ledro pendant plus d'un siècle. Elle a été fermée au trafic quand le tunnel moderne a ouvert. Les niches et les galeries que vous traversez sont celles des attelages."
         },
         {
           "ou": "Le vent, vers midi",
           "niveau": 2,
-          "quoi": "Chaque jour d'été, l'Ora se lève du sud vers la mi-journée et remonte le lac. C'est un vent thermique, si régulier qu'on règle sa journée dessus. C'est lui qui a fait de Torbole et Riva une capitale mondiale de la planche à voile — et il vous poussera le dos au retour.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "Chaque jour d'été, l'Ora se lève du sud vers la mi-journée et remonte le lac. C'est un vent thermique, si régulier qu'on règle sa journée dessus. C'est lui qui a fait de Torbole et Riva une capitale mondiale de la planche à voile — et il vous poussera le dos au retour."
         }
       ],
       "quiz_questions": [
@@ -1443,9 +1474,7 @@
           "requete": "Riva del Garda centro storico",
           "ordre": 4
         }
-      ],
-      "lat": 45.8862,
-      "lon": 10.8407
+      ]
     },
     {
       "ancre": "d-0806",
@@ -1505,24 +1534,24 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Les deux musées Ferrari acceptent les <b>petits chiens tenus dans les bras ou en sac de transport</b> pendant toute la visite. Maranello a même des niches gardées à l'ombre du jardin, derrière la cafétéria. <b>Réserver Maranello dès maintenant</b> : mi-août est saturé. Mercato Albinelli fermé en fin d'après-midi — ne construisez pas la journée dessus."
+          "texte": "Les deux musées Ferrari acceptent les <b>petits chiens tenus dans les bras ou en sac de transport</b> pendant toute la visite. Maranello a même des niches gardées à l'ombre du jardin, derrière la cafétéria. <b>Réserver Maranello dès maintenant</b> : mi-août est saturé. Mercato Albinelli fermé en fin d'après-midi — ne construisez pas la journée dessus.",
+          "titre": "Chien"
         },
         {
           "ton": "alerte",
-          "titre": "Réglisse",
-          "texte": "L'acetaia est un lieu de production alimentaire : le chien n'y sera probablement pas admis. Prévoir que quelqu'un reste avec lui, ou l'appeler avant pour demander. {{chien}}"
+          "texte": "L'acetaia est un lieu de production alimentaire : le chien n'y sera probablement pas admis. Prévoir que quelqu'un reste avec lui, ou l'appeler avant pour demander. {{chien}}",
+          "titre": "Réglisse"
         }
       ],
       "chapitre": null,
       "ordre": 6,
       "anniversaire": false,
       "pratique": {
-        "parking": "Maranello : parking du musée, devant l'entrée. Modène : Parcheggio Novi Sad, grande surface juste hors ZTL, 10 min à pied de Piazza Grande.",
         "ztl": "Modène : ZTL sur tout le centre historique. Novi Sad est juste en dehors — n'allez pas plus loin en voiture.",
-        "reserver": "Musée Ferrari Maranello : réservé. Acetaia La Vecchia Dispensa, Castelvetro : réservé à 15 h, paiement sur place.",
+        "chien": "à gérer",
+        "parking": "Maranello : parking du musée, devant l'entrée. Modène : Parcheggio Novi Sad, grande surface juste hors ZTL, 10 min à pied de Piazza Grande.",
         "emporter": "Le sac de transport du chien — obligatoire à l'intérieur des deux musées Ferrari.",
-        "chien": "à gérer"
+        "reserver": "Musée Ferrari Maranello : réservé. Acetaia La Vecchia Dispensa, Castelvetro : réservé à 15 h, paiement sur place."
       },
       "carte": [
         {
@@ -1563,55 +1592,63 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Ristorante Montana",
           "ou": "Via XX Settembre 3, Fiorano Modenese",
+          "nom": "Ristorante Montana",
           "tel": "+390536843910",
           "note": "4,7/5. Pas de menu écrit le midi : le serveur annonce le jour. Repaire historique des pilotes, Schumacher y était habitué. RÉSERVATION OBLIGATOIRE, ils refusent sans."
         },
+        "plat": "Tortellini in brodo, gnocco fritto, tigelle, et le balsamique traditionnel vieilli.",
         "soir": {
-          "nom": "Trattoria Il Fantino",
           "ou": "Via Donzi 7, Modène centre",
+          "nom": "Trattoria Il Fantino",
           "tel": "+39059223646",
           "note": "4,4/5, à deux pas de Piazza Grande. Fermé le lundi — le jeudi est bon. Réserver."
-        },
-        "plat": "Tortellini in brodo, gnocco fritto, tigelle, et le balsamique traditionnel vieilli."
+        }
       },
+      "lat": 44.6471,
+      "lon": 10.9252,
       "observations": [
         {
           "ou": "Façade du Duomo, panneaux de Wiligelmo",
           "niveau": 1,
-          "quoi": "Quatre reliefs racontent la Genèse de gauche à droite : création d'Adam et Ève, la faute, l'expulsion, Caïn et Abel. Wiligelmo a signé son travail vers 1100 — un des tout premiers sculpteurs du Moyen Âge à le faire.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Quatre reliefs racontent la Genèse de gauche à droite : création d'Adam et Ève, la faute, l'expulsion, Caïn et Abel. Wiligelmo a signé son travail vers 1100 — un des tout premiers sculpteurs du Moyen Âge à le faire."
         },
         {
           "ou": "Porta della Pescheria, flanc nord du Duomo",
           "niveau": 3,
-          "quoi": "Sur l'archivolte, des chevaliers assiègent un château pour délivrer une femme. Les noms sont gravés : Artus de Bretania, Isdernus, Galvagin. C'est une scène arthurienne sculptée vers 1130 — antérieure à la plupart des romans qui racontent la légende. Le plus stupéfiant de la journée, et presque personne ne s'arrête devant.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Sur l'archivolte, des chevaliers assiègent un château pour délivrer une femme. Les noms sont gravés : Artus de Bretania, Isdernus, Galvagin. C'est une scène arthurienne sculptée vers 1130 — antérieure à la plupart des romans qui racontent la légende. Le plus stupéfiant de la journée, et presque personne ne s'arrête devant."
         },
         {
           "ou": "La Ghirlandina",
           "niveau": 2,
-          "quoi": "Reculez au milieu de Piazza Grande et comparez-la à la verticale du Duomo. Elle penche, nettement.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Reculez au milieu de Piazza Grande et comparez-la à la verticale du Duomo. Elle penche, nettement."
         },
         {
           "ou": "Preda Ringadora, au pied du Duomo",
           "niveau": 2,
-          "quoi": "Ce gros bloc de marbre rose servait de tribune : on y montait pour proclamer les décisions publiques. On y exposait aussi les débiteurs insolvables.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Ce gros bloc de marbre rose servait de tribune : on y montait pour proclamer les décisions publiques. On y exposait aussi les débiteurs insolvables."
         },
         {
           "ou": "La Bonissima, angle du Palazzo Comunale",
           "niveau": 3,
-          "quoi": "Une petite statue de femme, perchée à l'angle au-dessus de la place depuis le XIV siècle. Personne ne s'accorde sur qui elle représente.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "Une petite statue de femme, perchée à l'angle au-dessus de la place depuis le XIV siècle. Personne ne s'accorde sur qui elle représente."
         },
         {
           "ou": "Le jaune de l'écusson Ferrari",
           "niveau": 1,
-          "quoi": "Le fond jaune n'est pas un choix esthétique : c'est la couleur de la ville de Modène, où Enzo est né. Le cheval cabré, lui, vient de Francesco Baracca, aviateur de la Grande Guerre : c'est sa mère qui a suggéré à Enzo de le reprendre.",
-          "ordre": 5
+          "ordre": 5,
+          "visibilite": "amis",
+          "quoi": "Le fond jaune n'est pas un choix esthétique : c'est la couleur de la ville de Modène, où Enzo est né. Le cheval cabré, lui, vient de Francesco Baracca, aviateur de la Grande Guerre : c'est sa mère qui a suggéré à Enzo de le reprendre."
         }
       ],
       "quiz_questions": [
@@ -1717,65 +1754,88 @@
           "requete": "Acetaia La Vecchia Dispensa Castelvetro di Modena",
           "ordre": 9
         }
-      ],
-      "lat": 44.6471,
-      "lon": 10.9252
+      ]
     },
     {
       "ancre": "d-0807",
       "date": "2026-08-07",
-      "rail1": "20 km",
-      "rail2": "≈ 20 min",
+      "rail1": "65 km",
+      "rail2": "≈ 1 h 35",
       "categorie": "lac",
       "badge": "Repos",
       "intensite": 1,
       "star": false,
       "eclipse": false,
-      "titre": "Valtenesi, baignade — et repérage de l'éclipse",
-      "accroche": "Journée de récupération après Modène. Avec une mission discrète en fin de soirée.",
+      "titre": "Valtenesi et Lonato — repérage de l'éclipse le matin",
+      "accroche": "La Rocca le matin — c'est là qu'on choisit le spot de l'éclipse. Puis les collines, et Lonato l'après-midi.",
       "fil": [
         {
-          "h": "10 h 00",
-          "texte": "<b>Rocca di Manerba</b> — parc archéologique et naturel sur un promontoire dominant le lac. Sentiers courts, vue à 360°, ruines d'une forteresse. Une heure suffit."
+          "h": "9 h 00",
+          "texte": "Départ de Salò. Vingt minutes jusqu'à Manerba del Garda."
         },
         {
-          "h": "11 h 30",
-          "texte": "Baignade — <b>Baia dei Vergini</b> ou plage de Manerba, en contrebas."
+          "h": "9 h 30",
+          "texte": "<b>Museo Civico Archeologico della Valtenesi</b>, au pied de la Rocca. Petit, et il donne le sens de ce qu'on va voir en haut : quatre mille ans d'occupation du même rocher."
         },
         {
-          "h": "14 h 30",
-          "texte": "Boucle en Valtenesi : Moniga del Garda, Padenghe et son château, Polpenazze. Collines, oliviers, vignes de Lugana."
+          "h": "10 h 15",
+          "texte": "<b>Montée à la Rocca di Manerba.</b> Vingt à trente minutes par un sentier pierreux et sans ombre."
         },
         {
-          "h": "18 h 30",
-          "texte": "<b>Repérage du spot d'éclipse.</b> Remonter à la Rocca di Manerba et observer où le soleil se couche, quel relief se met en travers, où se garer. Photographier l'horizon ouest."
+          "h": "10 h 45",
+          "texte": "<b>Repérage du spot d'éclipse.</b> Mercredi, le maximum est à 20 h 20 avec le Soleil à 4-6° au-dessus de l'horizon OUEST. Tourner le dos au lac et vérifier : une crête ou une ligne d'arbres suffirait à tout masquer. Repérer aussi où se garer et par où monter en fin de journée."
         },
         {
-          "h": "20 h 30",
-          "texte": "Coucher de soleil. C'est presque le même azimut que le 12 — ce que vous voyez ce soir, c'est ce que vous verrez mercredi prochain."
+          "h": "11 h 45",
+          "texte": "<b>Boucle en Valtenesi</b> par les petites routes : Moniga del Garda, puis Padenghe (Rocca et port, arrêt court), Soiano del Lago et Polpenazze del Garda. Une vingtaine de kilomètres, cinq à dix minutes entre chaque village."
+        },
+        {
+          "h": "13 h 15",
+          "texte": "<b>Déjeuner à Polpenazze.</b>"
+        },
+        {
+          "h": "14 h 45",
+          "texte": "Route vers <b>Lonato del Garda</b>, 12 km."
+        },
+        {
+          "h": "15 h 15",
+          "texte": "<b>Rocca di Lonato</b> — l'une des plus vastes forteresses de Lombardie — et la <b>Casa del Podestà</b>, avec sa bibliothèque de 50 000 volumes léguée à la nation."
+        },
+        {
+          "h": "17 h 30",
+          "texte": "Retour vers Salò, 20 km. <b>Dîner à l'appartement.</b>"
         }
       ],
       "options_titre": "Si vous avez plus de temps",
       "options": [
         "<b>Rocca di Lonato</b> — deuxième candidat pour l'éclipse : plus haut, forteresse dominant directement la plaine du Pô, horizon ouest le plus dégagé du secteur. <b>À tester ce soir aussi</b>, et vérifier l'accès en soirée",
-        "<b>Dégustation</b> de Valtènesi (le rosé local, le Chiaretto) ou de Lugana",
         "<b>Castello di Padenghe</b> — enceinte médiévale habitée, gratuite"
       ],
       "notes": [
         {
           "ton": "soleil",
-          "titre": "Pourquoi ce soir",
-          "texte": "Avec un soleil à 4-6° de hauteur le 12 août, une colline anodine à trois kilomètres suffit à tout gâcher. Le repérage ne se remplace pas par une carte. {{chien}}"
+          "texte": "C'est la seule chose vraiment importante de la journée. Mercredi soir, il sera trop tard pour découvrir qu'une colline bouche l'ouest. Photographier l'horizon depuis le sommet pour pouvoir comparer avec Lonato l'après-midi.",
+          "titre": "Le repérage, c'est ce matin"
+        },
+        {
+          "ton": "alerte",
+          "texte": "Quatre villages et Lonato dans l'après-midi, c'est dense. Padenghe est un arrêt court — la Rocca et le port, une demi-heure. Si le retard s'accumule, Soiano est celui qu'on saute.",
+          "titre": "Journée chargée"
+        },
+        {
+          "ton": "alerte",
+          "texte": "La Rocca de Manerba est une réserve naturelle : chien en laisse admis, mais le sentier est pierreux et brûlant en milieu de journée. À Lonato, l'enceinte de la forteresse est en plein air ; la Casa del Podestà se visite avec un guide et ne l'admettra probablement pas — appeler le +39 030 913 0060 pour confirmer.",
+          "titre": "Réglisse"
         }
       ],
       "chapitre": null,
       "ordre": 7,
       "anniversaire": false,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Parking au pied de la Rocca di Manerba, côté parc. Le soir, pour le repérage, il se vide.",
-        "reserver": "Rien à réserver. Mais vérifier l'accès en soirée à la Rocca di Lonato : c'est le second spot envisagé pour l'éclipse du 12.",
-        "emporter": "Maillots. Et pour le soir : une application de position du Soleil, et de quoi photographier l'horizon ouest depuis chaque point testé.",
-        "chien": "facile"
+        "emporter": "Eau et chapeaux — la montée à la Rocca est exposée et sans ombre. Chaussures fermées pour le sentier.",
+        "reserver": "Rien d'obligatoire. Réserver si vous visez l'Antica Trattoria Miravalle : le service s'arrête à 13 h 30."
       },
       "carte": [
         {
@@ -1783,16 +1843,24 @@
           "requete": "Rocca di Manerba del Garda parco"
         },
         {
-          "label": "Rocca di Lonato",
-          "requete": "Rocca di Lonato del Garda"
-        },
-        {
-          "label": "Baia dei Vergini",
-          "requete": "Baia dei Vergini Manerba del Garda"
+          "label": "Moniga",
+          "requete": "Moniga del Garda centro storico"
         },
         {
           "label": "Padenghe",
-          "requete": "Castello di Padenghe sul Garda"
+          "requete": "Rocca di Padenghe sul Garda"
+        },
+        {
+          "label": "Polpenazze",
+          "requete": "Polpenazze del Garda centro"
+        },
+        {
+          "label": "Osteria del Borgo",
+          "requete": "Osteria del Borgo Polpenazze del Garda"
+        },
+        {
+          "label": "Rocca di Lonato",
+          "requete": "Rocca di Lonato del Garda"
         }
       ],
       "quiz_controle": "h1zc42",
@@ -1805,43 +1873,47 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Osteria Da Marì con cucina",
-          "ou": "Piazzale Porto Dusano 3, Manerba del Garda",
-          "tel": "+390365551236",
-          "note": "4,4/5, terrasse directement sur l'eau, poisson du lac. Fermé le mercredi — le vendredi est bon."
+          "ou": "Via Giuseppe Zanardelli 10, Polpenazze del Garda",
+          "nom": "Osteria del Borgo",
+          "tel": "+393332083064",
+          "note": "4,6/5, cuisine familiale sans chichi, terrasse sous un arbre, prix très bas. Service jusqu'à 14 h. Plus soigné, à 300 m : Antica Trattoria Miravalle, +390365679078, 4,7/5 sur 1 005 avis avec vue sur le lac — mais service arrêté à 13 h 30 et réservation nécessaire."
         },
         "soir": {
-          "nom": "Osteria Dalie e Fagioli",
-          "ou": "Via Campagnola 45, Manerba del Garda",
-          "tel": "+393342233360",
-          "note": "4,3/5, Bib Gourmand Michelin, desserts maison remarquables. Ouvert tous les jours."
-        },
-        "plat": "Le Chiaretto de Valtènesi, rosé de macération courte, et le Lugana blanc."
+          "ou": "Salò",
+          "nom": "À l'appartement",
+          "note": "Rien de prévu au restaurant."
+        }
       },
+      "lat": 45.6083,
+      "lon": 10.5231,
       "observations": [
         {
           "ou": "Le nom de la Rocca",
           "niveau": 3,
-          "quoi": "Manerba vient de Minerve. On pense qu'un sanctuaire dédié à la déesse occupait ce promontoire à l'époque romaine — la position, dominant tout le bassin, est exactement celle qu'ils choisissaient.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Manerba vient de Minerve. On pense qu'un sanctuaire dédié à la déesse occupait ce promontoire à l'époque romaine — la position, dominant tout le bassin, est exactement celle qu'ils choisissaient."
         },
         {
           "ou": "Les oliviers de la Valtenesi",
           "niveau": 1,
-          "quoi": "Vous êtes dans l'une des zones oléicoles les plus septentrionales du monde. Ce n'est possible que grâce à la masse d'eau du lac, qui emmagasine la chaleur l'été et empêche le gel l'hiver. Sans le Garda, ces arbres n'existeraient pas ici.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Vous êtes dans l'une des zones oléicoles les plus septentrionales du monde. Ce n'est possible que grâce à la masse d'eau du lac, qui emmagasine la chaleur l'été et empêche le gel l'hiver. Sans le Garda, ces arbres n'existeraient pas ici."
         },
         {
-          "ou": "Le Chiaretto",
+          "ou": "Le clocher de Polpenazze",
           "niveau": 1,
-          "quoi": "Le rosé local se fait par macération très courte, une nuit à peine. La Valtènesi est l'une des rares appellations italiennes construites autour d'un rosé plutôt que d'un rouge.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Regardez sa base : les mêmes galets de rivière et la même maçonnerie grossière que le rempart voisin, alors que le beffroi à colonnettes du haut est en pierre taillée régulière. Le clocher a été bâti sur une tour du château, puis surélevé quand l'église est arrivée à l'intérieur des murs. Le même geste qu'à la Ghirlandina de Modène, en beaucoup plus modeste."
         },
         {
-          "ou": "Le coucher de soleil, ce soir",
+          "ou": "L'horizon ouest, depuis Lonato",
           "niveau": 1,
-          "quoi": "Repérez précisément le point où le Soleil touche l'horizon, et le relief qui s'y trouve. Le 12 août, cinq jours plus tard, il sera à peu près au même azimut — mais un peu plus haut, puisque le maximum de l'éclipse tombe avant le coucher. Photographiez, comparez, choisissez votre spot ce soir.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Depuis le haut de la Rocca, tournez le dos au lac : la plaine s'étend sans le moindre relief jusqu'à l'horizon. Comparez avec ce que vous avez vu ce matin à Manerba — c'est exactement ce qui décidera d'où vous regarderez l'éclipse mercredi."
         }
       ],
       "quiz_questions": [
@@ -1856,14 +1928,14 @@
           "reponse_correcte": 1
         },
         {
-          "question": "Le Lugana, blanc du sud du lac, est produit à partir de quel cépage ?",
+          "question": "Quel cépage rouge ne pousse pratiquement qu'en Valtenesi ?",
           "choix": [
-            "Le garganega",
-            "Le turbiana",
-            "Le pinot grigio"
+            "Le groppello",
+            "Le nebbiolo",
+            "La barbera"
           ],
           "ordre": 1,
-          "reponse_correcte": 1
+          "reponse_correcte": 0
         }
       ],
       "lieux": [
@@ -1882,13 +1954,6 @@
           "ordre": 1
         },
         {
-          "nom": "Punta Belvedere et Isola San Biagio",
-          "quoi": "Depuis la pointe, une langue de sable affleure à quelques dizaines de centimètres sous l'eau et rejoint l'île San Biagio, dite l'île aux Lapins. Quand le niveau est bas, on y va à pied, avec de l'eau à mi-cuisse. C'est un ancien cordon morainique laissé par le glacier.",
-          "pratique": "Accès à la plage payant en saison. La traversée dépend du niveau du lac — se renseigner sur place.",
-          "requete": "Isola San Biagio Manerba del Garda",
-          "ordre": 2
-        },
-        {
           "nom": "Rocca di Lonato",
           "quoi": "L'une des plus grandes forteresses de Lombardie, sur une colline dominant la plaine au sud du lac. Elle offre un horizon dégagé vers l'ouest, sans relief pour masquer le soleil couchant — c'est ce qui en fait un candidat pour l'éclipse du 12. La Casa del Podestà voisine abrite une bibliothèque de 50 000 volumes léguée à la nation.",
           "pratique": "Payant. Vérifiez les horaires de fermeture le soir si vous envisagez d'y observer l'éclipse.",
@@ -1896,22 +1961,41 @@
           "ordre": 3
         },
         {
-          "nom": "San Felice del Benaco",
-          "quoi": "Un village de la Valtenesi resté à l'écart du tourisme de masse, entouré d'oliviers et de vignes de Chiaretto. Le sanctuaire de la Madonna del Carmine, du XV siècle, conserve un cloître et des fresques votives. C'est de là que partent les bateaux pour l'Isola del Garda.",
-          "pratique": "Accès libre au village. Stationnement facile hors du centre.",
-          "requete": "San Felice del Benaco",
-          "ordre": 4
-        },
-        {
           "nom": "Le vignoble de Valtènesi",
           "quoi": "La zone produit le Chiaretto, un rosé obtenu par une macération très courte — une nuit à peine — mise au point en 1896 par un sénateur vénitien qui appliqua au raisin local une méthode bordelaise. Le sol morainique et l'influence thermique du lac donnent ici un climat presque méditerranéen à 45° de latitude.",
           "pratique": "Nombreuses caves ouvertes, la plupart sur réservation.",
           "requete": "cantine Valtenesi Chiaretto",
           "ordre": 5
+        },
+        {
+          "nom": "Moniga del Garda",
+          "quoi": "Un village fortifié du X siècle, bâti contre les incursions hongroises : l'enceinte abritait les maisons des villageois, pas un seigneur. C'est ici qu'est né le Chiaretto en 1896, quand Pompeo Molmenti a appliqué au raisin local une méthode de vinification apprise à Bordeaux.",
+          "pratique": "Accès libre au bourg. Se garer en contrebas.",
+          "requete": "Moniga del Garda centro storico",
+          "ordre": 6
+        },
+        {
+          "nom": "Rocca di Padenghe",
+          "quoi": "Une forteresse-refuge du X siècle, bâtie elle aussi contre les incursions hongroises. Sa particularité : l'enceinte abritait de petites maisons où les villageois se réfugiaient avec leurs réserves — c'est un village fortifié, pas un château seigneurial. Plusieurs sont encore habitées aujourd'hui.",
+          "pratique": "Accès libre en permanence. Se garer en contrebas, montée de dix minutes. Vue dégagée sur le bas lac.",
+          "requete": "Rocca di Padenghe sul Garda",
+          "ordre": 7
+        },
+        {
+          "nom": "Polpenazze del Garda",
+          "quoi": "Village perché avec une terrasse devant l'église qui domine toute la vallée. En contrebas, le site du Lucone : un village sur pilotis de l'âge du bronze, fouillé depuis les années 1960.",
+          "pratique": "Accès libre. Parking sur la place basse.",
+          "requete": "Polpenazze del Garda centro",
+          "ordre": 8
+        },
+        {
+          "nom": "Casa del Podestà — Fondation Ugo Da Como",
+          "quoi": "La demeure d'un sénateur et bibliophile, laissée exactement en l'état à sa mort en 1941 et léguée à la nation. Sa bibliothèque compte 50 000 volumes, dont des incunables. On la visite avec un guide, et c'est ce qui en fait tout l'intérêt : rien n'y est reconstitué.",
+          "pratique": "Via Rocca 2, Lonato del Garda. Tél. +39 030 913 0060. Tous les jours 10 h - 12 h 30 et 14 h - 18 h. Visite guidée.",
+          "requete": "Fondazione Ugo Da Como Lonato del Garda",
+          "ordre": 10
         }
-      ],
-      "lat": 45.6083,
-      "lon": 10.5231
+      ]
     },
     {
       "ancre": "d-0808",
@@ -1957,18 +2041,18 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "À prévoir",
-          "texte": "10 à 15° de moins qu'au bord du lac : prendre une petite laine, même en août. Chaussures fermées. {{chien}}"
+          "texte": "10 à 15° de moins qu'au bord du lac : prendre une petite laine, même en août. Chaussures fermées. {{chien}}",
+          "titre": "À prévoir"
         }
       ],
       "chapitre": null,
       "ordre": 8,
       "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "L'accès en voiture au Val di Genova est réglementé en été, avec navette depuis Carisolo au-delà d'un certain point. À vérifier la veille : les modalités changent chaque saison.",
-        "reserver": "Rien, sauf si vous visez un refuge pour déjeuner un samedi d'août.",
         "emporter": "Une polaire pour tout le monde, même par 35° au bord du lac : il fera 10 à 15° de moins. Chaussures fermées. Maillots pour Molveno, l'eau est glaciale.",
-        "chien": "facile"
+        "reserver": "Rien, sauf si vous visez un refuge pour déjeuner un samedi d'août."
       },
       "carte": [
         {
@@ -2009,43 +2093,49 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Rifugio Malga Ritorto",
           "ou": "Località Ritorto, au-dessus de Pinzolo",
+          "nom": "Rifugio Malga Ritorto",
           "tel": "+393496398070",
           "note": "4,4/5, cuisine de montagne, terrasse face au Brenta. Ouvert tous les jours dès 9 h."
         },
+        "plat": "Polenta, canederli, cerf, et le strudel aux pommes.",
         "soir": {
-          "nom": "Osteria del Maso",
           "ou": "Via Lungolago 7A, Molveno",
+          "nom": "Osteria del Maso",
           "tel": "+390461586345",
           "note": "4,7/5, produits locaux du Trentin, gibier. Ouvert tous les jours. Réserver."
-        },
-        "plat": "Polenta, canederli, cerf, et le strudel aux pommes."
+        }
       },
+      "lat": 46.159,
+      "lon": 10.7649,
       "observations": [
         {
           "ou": "Cascata di Nardis",
           "niveau": 2,
-          "quoi": "À la base de la chute, deux masses sombres émergent de la roche. La tradition locale y voit deux démons pétrifiés. Ce sont des intrusions de roche plus dure que le granite alentour, mises à nu par l'eau.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "À la base de la chute, deux masses sombres émergent de la roche. La tradition locale y voit deux démons pétrifiés. Ce sont des intrusions de roche plus dure que le granite alentour, mises à nu par l'eau."
         },
         {
           "ou": "D'où vient l'eau",
           "niveau": 2,
-          "quoi": "Tout ce que vous entendez gronder dans cette vallée descend du glacier de l'Adamello, le plus étendu d'Italie. Vous touchez de l'eau qui était de la glace il y a peu, et le débit varie avec la chaleur de la journée.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Tout ce que vous entendez gronder dans cette vallée descend du glacier de l'Adamello, le plus étendu d'Italie. Vous touchez de l'eau qui était de la glace il y a peu, et le débit varie avec la chaleur de la journée."
         },
         {
           "ou": "Les parois du Brenta",
           "niveau": 2,
-          "quoi": "Ce sont bien des Dolomites, mais isolées : le massif se trouve à l'ouest de l'Adige, séparé de tout le reste des Dolomites. Un îlot de roche claire au milieu des Alpes cristallines.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Ce sont bien des Dolomites, mais isolées : le massif se trouve à l'ouest de l'Adige, séparé de tout le reste des Dolomites. Un îlot de roche claire au milieu des Alpes cristallines."
         },
         {
           "ou": "Les malghe",
           "niveau": 1,
-          "quoi": "Les fermes d'alpage ne sont occupées que l'été : on monte les bêtes en juin, on redescend en septembre. Le fromage que vous mangerez à midi a été fait à quelques centaines de mètres, ce mois-ci.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Les fermes d'alpage ne sont occupées que l'été : on monte les bêtes en juin, on redescend en septembre. Le fromage que vous mangerez à midi a été fait à quelques centaines de mètres, ce mois-ci."
         }
       ],
       "quiz_questions": [
@@ -2123,9 +2213,7 @@
           "requete": "Lago di Molveno",
           "ordre": 5
         }
-      ],
-      "lat": 46.159,
-      "lon": 10.7649
+      ]
     },
     {
       "ancre": "d-0809",
@@ -2162,18 +2250,18 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Réglisse",
-          "texte": "Autorisé sur l'île : en laisse dans les jardins, en sac ailleurs. Prévoir le sac de transport, de l'eau, et de quoi le porter à l'embarquement — c'est le moment où un petit chien s'agite le plus. Trois heures dix sur place, l'ombre n'est pas partout. {{chien}}"
+          "texte": "Autorisé sur l'île : en laisse dans les jardins, en sac ailleurs. Prévoir le sac de transport, de l'eau, et de quoi le porter à l'embarquement — c'est le moment où un petit chien s'agite le plus. Trois heures dix sur place, l'ombre n'est pas partout. {{chien}}",
+          "titre": "Réglisse"
         }
       ],
       "chapitre": null,
       "ordre": 9,
       "anniversaire": false,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Journée sans voiture : tout part du port de Salò.",
-        "reserver": "Visite de l'Isola del Garda réservée, départ 9 h.",
         "emporter": "Crème solaire haute protection — sur l'eau, la réverbération double tout. De l'ombre pour le chien à bord. Sac de transport pour Réglisse et une gourde d'eau pour lui.",
-        "chien": "à gérer"
+        "reserver": "Visite de l'Isola del Garda réservée, départ 9 h."
       },
       "carte": [
         {
@@ -2215,42 +2303,48 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Pique-nique à bord",
           "ou": "À acheter la veille — c'est le meilleur déjeuner de la semaine",
+          "nom": "Pique-nique à bord",
           "note": "Sinon escale à Gardone ou San Felice."
         },
+        "plat": "Les garganelli du Gallo, et le poisson de lac grillé.",
         "soir": {
-          "nom": "Osteria Al Gallo",
           "ou": "Via S. Firmina 25, Salò",
+          "nom": "Osteria Al Gallo",
           "tel": "+390365525944",
           "note": "4,4/5, tables dans un jardin, très bon rapport qualité-prix. Fermé le mardi ; ouvert le dimanche midi ET soir. Réserver."
-        },
-        "plat": "Les garganelli du Gallo, et le poisson de lac grillé."
+        }
       },
+      "lat": 45.6083,
+      "lon": 10.5231,
       "observations": [
         {
           "ou": "Le lac, vu depuis l'île",
           "niveau": 2,
-          "quoi": "Depuis l'île, le lac s'ouvre vers le nord entre deux murailles de montagnes, alors qu'il s'évase largement vers le sud. Cette dissymétrie raconte sa formation : au nord, un glacier enserré dans une vallée étroite ; au sud, sa langue étalée dans la plaine, qui a laissé les collines morainiques que vous traversez en voiture depuis Desenzano.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Depuis l'île, le lac s'ouvre vers le nord entre deux murailles de montagnes, alors qu'il s'évase largement vers le sud. Cette dissymétrie raconte sa formation : au nord, un glacier enserré dans une vallée étroite ; au sud, sa langue étalée dans la plaine, qui a laissé les collines morainiques que vous traversez en voiture depuis Desenzano."
         },
         {
           "ou": "Les vents, dans la journée",
           "niveau": 2,
-          "quoi": "Le Peler souffle du nord le matin, l'Ora remonte du sud l'après-midi. Les marins d'ici organisent leur journée là-dessus depuis des siècles : partir vers le nord au matin, rentrer poussé par l'Ora. Faites pareil.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Le Peler souffle du nord le matin, l'Ora remonte du sud l'après-midi. Les marins d'ici organisent leur journée là-dessus depuis des siècles : partir vers le nord au matin, rentrer poussé par l'Ora. Faites pareil."
         },
         {
           "ou": "Le style de la villa, sur l'île",
           "niveau": 3,
-          "quoi": "Néogothique vénitien, bâtie vers 1900 : loggias, arcs brisés, fenêtres géminées. Venise est à 150 km, et pourtant la famille a fait citer explicitement le Grand Canal. Ce n'est pas un caprice — tout ce rivage a vécu trois siècles sous protection vénitienne, et Salò en était le siège administratif. Le bâtiment revendique un héritage politique, pas seulement un goût.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Néogothique vénitien, bâtie vers 1900 : loggias, arcs brisés, fenêtres géminées. Venise est à 150 km, et pourtant la famille a fait citer explicitement le Grand Canal. Ce n'est pas un caprice — tout ce rivage a vécu trois siècles sous protection vénitienne, et Salò en était le siège administratif. Le bâtiment revendique un héritage politique, pas seulement un goût."
         },
         {
           "ou": "Les jardins en terrasses",
           "niveau": 1,
-          "quoi": "L'île est un affleurement rocheux : il n'y avait presque pas de terre. Tout ce qui pousse ici a été installé sur des terrasses bâties de main d'homme. Demandez au guide d'où vient la terre — c'est la question à laquelle personne ne pense.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "L'île est un affleurement rocheux : il n'y avait presque pas de terre. Tout ce qui pousse ici a été installé sur des terrasses bâties de main d'homme. Demandez au guide d'où vient la terre — c'est la question à laquelle personne ne pense."
         }
       ],
       "quiz_questions": [
@@ -2335,9 +2429,7 @@
           "requete": "Spiaggia per cani Via Tavine Salò",
           "ordre": 6
         }
-      ],
-      "lat": 45.6083,
-      "lon": 10.5231
+      ]
     },
     {
       "ancre": "d-0810",
@@ -2395,19 +2487,19 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "À vérifier absolument",
-          "texte": "Le Labirinto est annoncé <b>fermé le mardi</b> par le site officiel, mais une autre source indique le jeudi : <b>confirmez avant de bloquer la date</b>. Horaire d'été 10 h 30 – 19 h, caisses fermées à 18 h, <b>réservation en ligne obligatoire</b> (~18-20 €, 12 € pour les 6-12 ans), parking gratuit. Duomo et Baptistère de Parme ferment vers 18 h 30 — d'où l'ordre labyrinthe puis ville. ZTL à Parme."
+          "texte": "Le Labirinto est annoncé <b>fermé le mardi</b> par le site officiel, mais une autre source indique le jeudi : <b>confirmez avant de bloquer la date</b>. Horaire d'été 10 h 30 – 19 h, caisses fermées à 18 h, <b>réservation en ligne obligatoire</b> (~18-20 €, 12 € pour les 6-12 ans), parking gratuit. Duomo et Baptistère de Parme ferment vers 18 h 30 — d'où l'ordre labyrinthe puis ville. ZTL à Parme.",
+          "titre": "À vérifier absolument"
         }
       ],
       "chapitre": null,
       "ordre": 10,
       "anniversaire": false,
       "pratique": {
-        "parking": "Fontanellato : parking gratuit devant l'entrée du Labirinto. Parme : Parcheggio Toschi, souterrain, à deux pas de la Pilotta et hors ZTL.",
         "ztl": "Parme : ZTL sur le centre historique. Depuis le Toschi, tout se fait à pied.",
-        "reserver": "Labirinto della Masone : réservation en ligne obligatoire. Confirmer le jour de fermeture avant de bloquer la date.",
+        "chien": "à gérer",
+        "parking": "Fontanellato : parking gratuit devant l'entrée du Labirinto. Parme : Parcheggio Toschi, souterrain, à deux pas de la Pilotta et hors ZTL.",
         "emporter": "Casquettes et beaucoup d'eau : 3 km de labyrinthe en plein soleil, dans la plaine du Pô.",
-        "chien": "à gérer"
+        "reserver": "Labirinto della Masone : réservation en ligne obligatoire. Confirmer le jour de fermeture avant de bloquer la date."
       },
       "carte": [
         {
@@ -2453,55 +2545,63 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Cibarium Salsamenteria",
           "ou": "Via Luigi Sanvitale 42, Fontanellato",
+          "nom": "Cibarium Salsamenteria",
           "tel": "+390521821675",
           "note": "4,6/5, planches de charcuterie et torta fritta, à 3 min de la Rocca. Fermé le jeudi — le lundi est bon."
         },
+        "plat": "Culatello, torta fritta, tortelli d'erbetta, et le Lambrusco sec.",
         "soir": {
-          "nom": "Trattoria Corrieri",
           "ou": "Strada Conservatorio 1, Parme",
+          "nom": "Trattoria Corrieri",
           "tel": "+390521234426",
           "note": "4,5/5, institution parmesane, ouverte tous les jours de midi à minuit. Le prosciutto y est exceptionnel."
-        },
-        "plat": "Culatello, torta fritta, tortelli d'erbetta, et le Lambrusco sec."
+        }
       },
+      "lat": 44.8015,
+      "lon": 10.3279,
       "observations": [
         {
           "ou": "Coupole du Duomo, l'Assomption du Corrège",
           "niveau": 1,
-          "quoi": "Une spirale de corps vue en contre-plongée, peinte entre 1526 et 1530. Un chanoine de l'époque l'aurait rejetée en la traitant de ragoût de cuisses de grenouilles — parce que d'en bas, on voit surtout des plantes de pieds et des jambes repliées. Regardez, et jugez.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Une spirale de corps vue en contre-plongée, peinte entre 1526 et 1530. Un chanoine de l'époque l'aurait rejetée en la traitant de ragoût de cuisses de grenouilles — parce que d'en bas, on voit surtout des plantes de pieds et des jambes repliées. Regardez, et jugez."
         },
         {
           "ou": "Transept droit du Duomo, la Déposition",
           "niveau": 2,
-          "quoi": "Le relief en marbre d'Antelami, signé et daté 1178. Un sculpteur qui signe et date son œuvre au XII siècle, c'est presque une revendication d'auteur.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Le relief en marbre d'Antelami, signé et daté 1178. Un sculpteur qui signe et date son œuvre au XII siècle, c'est presque une revendication d'auteur."
         },
         {
           "ou": "Baptistère, cycle des Mois",
           "niveau": 3,
-          "quoi": "Chaque mois est figuré par le travail qu'on y accomplit. Cherchez août : vous verrez ce que faisaient les paysans de la plaine à la date exacte où vous passez.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Chaque mois est figuré par le travail qu'on y accomplit. Cherchez août : vous verrez ce que faisaient les paysans de la plaine à la date exacte où vous passez."
         },
         {
           "ou": "Le marbre du Baptistère",
           "niveau": 3,
-          "quoi": "Ce rose, c'est le marbre de Vérone — la même pierre que les monuments que vous aurez vus six jours plus tôt. Elle a descendu la vallée de l'Adige puis le Pô.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Ce rose, c'est le marbre de Vérone — la même pierre que les monuments que vous aurez vus six jours plus tôt. Elle a descendu la vallée de l'Adige puis le Pô."
         },
         {
           "ou": "Teatro Farnese",
           "niveau": 1,
-          "quoi": "Le bois que vous touchez est neuf. Le théâtre de 1618 a été détruit par les bombardements de 1944 et reconstruit dans les années 1950 à partir des fragments sauvés et des relevés. C'est une résurrection, pas une conservation.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "Le bois que vous touchez est neuf. Le théâtre de 1618 a été détruit par les bombardements de 1944 et reconstruit dans les années 1950 à partir des fragments sauvés et des relevés. C'est une résurrection, pas une conservation."
         },
         {
           "ou": "La Scapigliata, Galleria Nazionale",
           "niveau": 2,
-          "quoi": "Une tête de femme de Léonard, minuscule et inachevée. Le visage est abouti, la chevelure à peine esquissée — on voit exactement où il s'est arrêté.",
-          "ordre": 5
+          "ordre": 5,
+          "visibilite": "amis",
+          "quoi": "Une tête de femme de Léonard, minuscule et inachevée. Le visage est abouti, la chevelure à peine esquissée — on voit exactement où il s'est arrêté."
         }
       ],
       "quiz_questions": [
@@ -2600,9 +2700,7 @@
           "requete": "Rocca Sanvitale Fontanellato",
           "ordre": 8
         }
-      ],
-      "lat": 44.8015,
-      "lon": 10.3279
+      ]
     },
     {
       "ancre": "d-0811",
@@ -2664,19 +2762,19 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Réglisse",
-          "texte": "Journée pensée pour lui : tout se fait dehors. Le château, les places, les Torbiere et les caves de Franciacorta lui sont ouverts. Prévoir de l'eau, la montée du Cidneo est exposée. {{chien}}"
+          "texte": "Journée pensée pour lui : tout se fait dehors. Le château, les places, les Torbiere et les caves de Franciacorta lui sont ouverts. Prévoir de l'eau, la montée du Cidneo est exposée. {{chien}}",
+          "titre": "Réglisse"
         }
       ],
       "chapitre": null,
       "ordre": 11,
       "anniversaire": false,
       "pratique": {
-        "parking": "Se garer en périphérie du centre de Brescia et finir à pied ou en métro : la ligne dessert le centre historique.",
         "ztl": "ZTL sur le centre de Brescia. Ne vous y engagez pas.",
-        "reserver": "Réservez la dégustation en Franciacorta : en août, les domaines reçoivent sur rendez-vous.",
+        "chien": "à gérer",
+        "parking": "Se garer en périphérie du centre de Brescia et finir à pied ou en métro : la ligne dessert le centre historique.",
         "emporter": "Chaussures confortables pour les passerelles des Torbiere. Anti-moustiques pour la fin de journée au bord de l'eau.",
-        "chien": "à gérer"
+        "reserver": "Réservez la dégustation en Franciacorta : en août, les domaines reçoivent sur rendez-vous."
       },
       "carte": [
         {
@@ -2714,49 +2812,56 @@
       ],
       "manger": {
         "midi": {
-          "nom": "La Vineria",
           "ou": "Via X Giornate 4, Brescia",
+          "nom": "La Vineria",
           "tel": "+39030280543",
           "note": "4,4/5, terrasse avec vue sur Piazza della Loggia, menu déjeuner à prix doux. Fermé lundi et dimanche — le mardi est bon. Les chiens y sont bien accueillis d'après les avis."
         },
+        "plat": "Casoncelli bresciani au Bagòss, manzo all'olio, et un Franciacorta brut.",
         "soir": {
-          "nom": "Al Dossello",
           "ou": "Via per Monterotondo 24, Provaglio d'Iseo",
+          "nom": "Al Dossello",
           "tel": "+393922095064",
           "note": "4,6/5, terrasse au milieu des vignes de Franciacorta, à 10 min des Torbiere. Ouvert tous les jours. Réserver."
-        },
-        "plat": "Casoncelli bresciani au Bagòss, manzo all'olio, et un Franciacorta brut."
+        }
       },
+      "lat": 45.5416,
+      "lon": 10.2118,
       "observations": [
         {
           "ou": "La tour de l'horloge, Piazza della Loggia",
           "niveau": 1,
-          "quoi": "Deux automates de bronze frappent la cloche au sommet. Les Brescians les appellent i Macc de le ure — les fous des heures. Le cadran ne donne pas que l'heure : il indique aussi les phases de la lune et le signe du zodiaque en cours.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Deux automates de bronze frappent la cloche au sommet. Les Brescians les appellent i Macc de le ure — les fous des heures. Le cadran ne donne pas que l'heure : il indique aussi les phases de la lune et le signe du zodiaque en cours."
         },
         {
           "ou": "Le Duomo Vecchio",
           "niveau": 1,
-          "quoi": "Une rotonde romane, circulaire, à côté de la cathédrale baroque. On descend en y entrant : le sol de la basilique antérieure est plus bas. Deux mille ans de sédiment urbain sous vos pieds.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Une rotonde romane, circulaire, à côté de la cathédrale baroque. On descend en y entrant : le sol de la basilique antérieure est plus bas. Deux mille ans de sédiment urbain sous vos pieds."
         },
         {
           "ou": "Le mur du Monte di Pietà",
           "niveau": 3,
-          "quoi": "Sur la façade, des blocs de pierre gravés en latin sont encastrés dans la maçonnerie — des inscriptions romaines retrouvées en creusant la ville, remontées là en 1480 pour être exposées. C'est probablement le premier musée archéologique d'Europe, et il est en pleine rue, gratuit, sans aucune signalisation.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Sur la façade, des blocs de pierre gravés en latin sont encastrés dans la maçonnerie — des inscriptions romaines retrouvées en creusant la ville, remontées là en 1480 pour être exposées. C'est probablement le premier musée archéologique d'Europe, et il est en pleine rue, gratuit, sans aucune signalisation."
         },
         {
           "ou": "Les Torbiere del Sebino",
           "niveau": 2,
-          "quoi": "Ces étangs ne sont pas naturels : ce sont les fosses laissées par l'extraction de la tourbe à partir du XVIII siècle. L'exploitation a créé le paysage, l'abandon en a fait une réserve. En août, les nénuphars couvrent les bassins.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Ces étangs ne sont pas naturels : ce sont les fosses laissées par l'extraction de la tourbe à partir du XVIII siècle. L'exploitation a créé le paysage, l'abandon en a fait une réserve. En août, les nénuphars couvrent les bassins."
         },
         {
           "ou": "Le nom Franciacorta",
           "niveau": 3,
-          "quoi": "L'étymologie la plus retenue vient des « curtes francae », les terres monastiques exemptées d'impôt au Moyen Âge. Une région viticole qui doit son nom à une niche fiscale.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "L'étymologie la plus retenue vient des « curtes francae », les terres monastiques exemptées d'impôt au Moyen Âge. Une région viticole qui doit son nom à une niche fiscale."
         }
       ],
       "quiz_questions": [
@@ -2834,9 +2939,7 @@
           "requete": "Franciacorta cantine Erbusco",
           "ordre": 5
         }
-      ],
-      "lat": 45.5416,
-      "lon": 10.2118
+      ]
     },
     {
       "ancre": "d-0812",
@@ -2888,24 +2991,24 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Météo — décision le matin",
-          "texte": "La plaine du Pô produit de violents orages de chaleur en soirée d'été, et le Soleil sera à 4-6° sur l'horizon : une couche basse à l'ouest suffit à tout masquer. Si les prévisions sont mauvaises, le repli est de monter en altitude — Tremosine ou le Monte Baldo — pour passer au-dessus. À trancher le matin même, pas à 19 h."
+          "texte": "La plaine du Pô produit de violents orages de chaleur en soirée d'été, et le Soleil sera à 4-6° sur l'horizon : une couche basse à l'ouest suffit à tout masquer. Si les prévisions sont mauvaises, le repli est de monter en altitude — Tremosine ou le Monte Baldo — pour passer au-dessus. À trancher le matin même, pas à 19 h.",
+          "titre": "Météo — décision le matin"
         },
         {
           "ton": "soleil",
-          "titre": "Matériel",
-          "texte": "Lunettes certifiées <b>ISO 12312-2</b> pour tout le monde, à commander maintenant : les stocks fondent à l'approche de la date. <b>Filtre solaire indispensable</b> pour tout appareil photo ou téléphone — sans filtre adapté, le capteur peut être endommagé définitivement. Et vérifiez l'azimut exact du maximum avec une application d'éclipse : avec 4° de hauteur, une colline de rien du tout à trois kilomètres vous fait tout rater."
+          "texte": "Lunettes certifiées <b>ISO 12312-2</b> pour tout le monde, à commander maintenant : les stocks fondent à l'approche de la date. <b>Filtre solaire indispensable</b> pour tout appareil photo ou téléphone — sans filtre adapté, le capteur peut être endommagé définitivement. Et vérifiez l'azimut exact du maximum avec une application d'éclipse : avec 4° de hauteur, une colline de rien du tout à trois kilomètres vous fait tout rater.",
+          "titre": "Matériel"
         }
       ],
       "chapitre": null,
       "ordre": 12,
       "anniversaire": false,
       "pratique": {
-        "parking": "Sirmione : se garer avant la presqu'île, elle est fermée aux voitures. Le soir : au spot, avant 19 h, vous ne serez pas seuls.",
         "ztl": "Presqu'île de Sirmione interdite aux véhicules non autorisés.",
-        "reserver": "Grotte di Catullo. Et surtout : les lunettes ISO 12312-2 pour cinq, plus un filtre solaire d'appareil photo, à commander bien avant.",
+        "chien": "facile",
+        "parking": "Sirmione : se garer avant la presqu'île, elle est fermée aux voitures. Le soir : au spot, avant 19 h, vous ne serez pas seuls.",
         "emporter": "Lunettes d'éclipse, filtre photo, pique-nique, sièges, une laine pour le soir. Vérifiez la météo 48 h avant : c'est le vrai risque.",
-        "chien": "facile"
+        "reserver": "Grotte di Catullo. Et surtout : les lunettes ISO 12312-2 pour cinq, plus un filtre solaire d'appareil photo, à commander bien avant."
       },
       "carte": [
         {
@@ -2930,48 +3033,55 @@
       "illustration": null,
       "manger": {
         "midi": {
-          "nom": "Ristorante Casa dei Pescatori",
           "ou": "Via XXV Aprile 71, Sirmione",
+          "nom": "Ristorante Casa dei Pescatori",
           "tel": "+390309196107",
           "note": "4,3/5, tables au bord de l'eau, ouvert tous les jours — la plupart des tables de Sirmione ferment le mercredi."
         },
+        "plat": "Les olives et l'huile de Sirmione, et un Lugana bien frais pour l'apéritif du spot.",
         "soir": {
-          "nom": "Pique-nique au spot d'éclipse",
           "ou": "Rocca di Manerba ou Rocca di Lonato",
+          "nom": "Pique-nique au spot d'éclipse",
           "note": "Le soir de l'éclipse, ne pas dépendre d'un restaurant : le maximum est à 20 h 20 et il faut être installé à 19 h. Acheter de quoi dîner sur place l'après-midi à Desenzano."
-        },
-        "plat": "Les olives et l'huile de Sirmione, et un Lugana bien frais pour l'apéritif du spot."
+        }
       },
+      "lat": 45.6083,
+      "lon": 10.5231,
       "observations": [
         {
           "ou": "Sous un arbre, pendant l'éclipse",
           "niveau": 3,
-          "quoi": "C'est le plus beau phénomène de la journée, et presque tout le monde le rate en fixant le ciel. Les interstices entre les feuilles fonctionnent comme des sténopés et projettent au sol des centaines de petits croissants de soleil. Regardez par terre.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "C'est le plus beau phénomène de la journée, et presque tout le monde le rate en fixant le ciel. Les interstices entre les feuilles fonctionnent comme des sténopés et projettent au sol des centaines de petits croissants de soleil. Regardez par terre."
         },
         {
           "ou": "La qualité des ombres",
           "niveau": 2,
-          "quoi": "À mesure que le Soleil se réduit à un croissant, la source lumineuse rétrécit et les ombres deviennent anormalement nettes, presque découpées. La lumière prend une teinte métallique qu'aucun coucher de soleil ne produit.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "À mesure que le Soleil se réduit à un croissant, la source lumineuse rétrécit et les ombres deviennent anormalement nettes, presque découpées. La lumière prend une teinte métallique qu'aucun coucher de soleil ne produit."
         },
         {
           "ou": "Les animaux, vers 20 h",
           "niveau": 3,
-          "quoi": "Écoutez plutôt que de regarder : les oiseaux se taisent, les insectes du soir démarrent en avance. La chute de température est perceptible à la peau.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Écoutez plutôt que de regarder : les oiseaux se taisent, les insectes du soir démarrent en avance. La chute de température est perceptible à la peau."
         },
         {
           "ou": "Les Grotte di Catullo, le matin",
           "niveau": 1,
-          "quoi": "Malgré le nom, ce ne sont pas des grottes mais les ruines de la plus vaste villa romaine du nord de l'Italie. L'oliveraie qui les recouvre compte environ mille cinq cents arbres — le site produit encore son huile.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Malgré le nom, ce ne sont pas des grottes mais les ruines de la plus vaste villa romaine du nord de l'Italie. L'oliveraie qui les recouvre compte environ mille cinq cents arbres — le site produit encore son huile."
         },
         {
           "ou": "Le château de Sirmione",
           "niveau": 2,
-          "quoi": "Cherchez la darsena : un bassin fortifié fermé, où la flotte scaligère mouillait à l'abri des murs. Très peu de châteaux médiévaux ont conservé leur port intérieur.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "Cherchez la darsena : un bassin fortifié fermé, où la flotte scaligère mouillait à l'abri des murs. Très peu de châteaux médiévaux ont conservé leur port intérieur."
         }
       ],
       "quiz_questions": [
@@ -3042,9 +3152,7 @@
           "requete": "Rocca di Manerba del Garda",
           "ordre": 4
         }
-      ],
-      "lat": 45.6083,
-      "lon": 10.5231
+      ]
     },
     {
       "ancre": "d-0813",
@@ -3099,19 +3207,19 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Attention",
-          "texte": "<b>Area C</b>, le péage urbain du centre de Milan, est actif en semaine. Garez-vous à un parking-relais (<b>Lampugnano</b>, <b>Molino Dorino</b>, <b>Cascina Gobba</b>) et prenez le métro : c'est moins cher, plus rapide, et sans stress. Le chien voyage en sac dans le métro. Terrasses du Duomo : billet séparé à réserver, ascenseur ou escalier."
+          "texte": "<b>Area C</b>, le péage urbain du centre de Milan, est actif en semaine. Garez-vous à un parking-relais (<b>Lampugnano</b>, <b>Molino Dorino</b>, <b>Cascina Gobba</b>) et prenez le métro : c'est moins cher, plus rapide, et sans stress. Le chien voyage en sac dans le métro. Terrasses du Duomo : billet séparé à réserver, ascenseur ou escalier.",
+          "titre": "Attention"
         }
       ],
       "chapitre": null,
       "ordre": 13,
       "anniversaire": false,
       "pratique": {
-        "parking": "Area C : péage urbain en semaine sur le centre. Se garer à un parking-relais — Lampugnano, Molino Dorino ou Cascina Gobba — puis métro.",
         "ztl": "N'entrez pas en voiture dans le centre. Le métro fait tout, et le chien y voyage en sac.",
-        "reserver": "Terrasses du Duomo : billet séparé, à réserver. Cenacolo Vinciano : des mois à l'avance, très probablement complet.",
+        "chien": "à gérer",
+        "parking": "Area C : péage urbain en semaine sur le centre. Se garer à un parking-relais — Lampugnano, Molino Dorino ou Cascina Gobba — puis métro.",
         "emporter": "Épaules et genoux couverts : le Duomo applique un code vestimentaire, refus à l'entrée sinon. Sac du chien pour le métro.",
-        "chien": "à gérer"
+        "reserver": "Terrasses du Duomo : billet séparé, à réserver. Cenacolo Vinciano : des mois à l'avance, très probablement complet."
       },
       "carte": [
         {
@@ -3165,49 +3273,56 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Osteria da Fortunata Navigli",
           "ou": "Via Casale 4, Milan",
+          "nom": "Osteria da Fortunata Navigli",
           "tel": "+390245472283",
           "note": "4,6/5, pâtes fraîches faites en vitrine, ouvert tous les jours de midi à 1 h. File d'attente fréquente, pas de réservation."
         },
+        "plat": "Risotto alla milanese au safran, ossobuco, cotoletta.",
         "soir": {
-          "nom": "Damm-atrà Ristorante Milanese",
           "ou": "Via Elia Lombardini 1, Milan",
+          "nom": "Damm-atrà Ristorante Milanese",
           "tel": "+390258111224",
           "note": "4,4/5, cuisine milanaise classique à 10 min des Navigli, moins touristique. Réserver — souvent complet."
-        },
-        "plat": "Risotto alla milanese au safran, ossobuco, cotoletta."
+        }
       },
+      "lat": 45.4642,
+      "lon": 9.19,
       "observations": [
         {
           "ou": "Saint Barthélemy écorché, transept droit du Duomo",
           "niveau": 1,
-          "quoi": "Le saint porte sa propre peau drapée sur l'épaule comme une étole, muscles à nu. Marco d'Agrate, 1562. L'inscription du socle précise qu'il n'est pas de Praxitèle, mais de lui.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Le saint porte sa propre peau drapée sur l'épaule comme une étole, muscles à nu. Marco d'Agrate, 1562. L'inscription du socle précise qu'il n'est pas de Praxitèle, mais de lui."
         },
         {
           "ou": "La méridienne, sol du Duomo près de l'entrée",
           "niveau": 3,
-          "quoi": "Une ligne de laiton incrustée dans le dallage, bordée des signes du zodiaque, posée en 1786 par les astronomes de Brera. Un trou percé dans la voûte laisse tomber une tache de soleil qui vient croiser la ligne à midi vrai.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Une ligne de laiton incrustée dans le dallage, bordée des signes du zodiaque, posée en 1786 par les astronomes de Brera. Un trou percé dans la voûte laisse tomber une tache de soleil qui vient croiser la ligne à midi vrai."
         },
         {
           "ou": "La Madonnina, terrasses du Duomo",
           "niveau": 1,
-          "quoi": "Pendant longtemps, aucun bâtiment milanais ne devait la dépasser. Quand les tours modernes l'ont fait, on a posé une réplique de la Madonnina à leur sommet plutôt que de rompre la règle.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Pendant longtemps, aucun bâtiment milanais ne devait la dépasser. Quand les tours modernes l'ont fait, on a posé une réplique de la Madonnina à leur sommet plutôt que de rompre la règle."
         },
         {
           "ou": "Le taureau de la Galleria",
           "niveau": 2,
-          "quoi": "Dans l'octogone central, cherchez la mosaïque du taureau de Turin. La tradition veut qu'on pivote sur le talon à un endroit précis pour porter chance. Le résultat : un trou permanent dans la mosaïque, rebouché à intervalles réguliers.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Dans l'octogone central, cherchez la mosaïque du taureau de Turin. La tradition veut qu'on pivote sur le talon à un endroit précis pour porter chance. Le résultat : un trou permanent dans la mosaïque, rebouché à intervalles réguliers."
         },
         {
           "ou": "Pietà Rondanini, Castello Sforzesco",
           "niveau": 3,
-          "quoi": "La dernière sculpture de Michel-Ange, travaillée jusqu'à quelques jours de sa mort à 88 ans. Regardez le bras droit du Christ : il appartient à une version antérieure, restée attachée au bloc quand il a tout repris. Deux sculptures dans la même pierre.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "La dernière sculpture de Michel-Ange, travaillée jusqu'à quelques jours de sa mort à 88 ans. Regardez le bras droit du Christ : il appartient à une version antérieure, restée attachée au bloc quand il a tout repris. Deux sculptures dans la même pierre."
         }
       ],
       "quiz_questions": [
@@ -3306,9 +3421,7 @@
           "requete": "Navigli Milano",
           "ordre": 8
         }
-      ],
-      "lat": 45.4642,
-      "lon": 9.19
+      ]
     },
     {
       "ancre": "d-0814",
@@ -3358,24 +3471,24 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Si la Forra est fermée",
-          "texte": "Elle est parfois fermée, en alternat, ou interdite aux véhicules larges. Repli : montée à Tignale par la route normale, avec le Santuario di Montecastello. Presque aussi beau, sans le stress."
+          "texte": "Elle est parfois fermée, en alternat, ou interdite aux véhicules larges. Repli : montée à Tignale par la route normale, avec le Santuario di Montecastello. Presque aussi beau, sans le stress.",
+          "titre": "Si la Forra est fermée"
         },
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Journée entièrement en extérieur. Attention aux dénivelés en plein soleil sur le sentier de Limone. {{chien}}"
+          "texte": "Journée entièrement en extérieur. Attention aux dénivelés en plein soleil sur le sentier de Limone. {{chien}}",
+          "titre": "Chien"
         }
       ],
       "chapitre": null,
       "ordre": 14,
       "anniversaire": false,
       "pratique": {
-        "parking": "Se garer à Pieve di Tremosine, puis tout à pied. Limone : parkings à l'entrée du village, il est piéton.",
         "ztl": "La Strada della Forra est étroite, parfois en sens alterné, et interdite aux véhicules larges. Vérifiez l'état et le sens la veille — sinon, montez par Tignale.",
-        "reserver": "Rien à réserver. Mais vérifier la veille l'état et le sens de circulation de la Strada della Forra.",
+        "chien": "facile",
+        "parking": "Se garer à Pieve di Tremosine, puis tout à pied. Limone : parkings à l'entrée du village, il est piéton.",
         "emporter": "Maillots pour Limone. La Terrazza del Brivido est un plancher de verre au-dessus du vide : prévenez ceux que ça angoisse.",
-        "chien": "facile"
+        "reserver": "Rien à réserver. Mais vérifier la veille l'état et le sens de circulation de la Strada della Forra."
       },
       "carte": [
         {
@@ -3417,49 +3530,56 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Ristorante Pizzeria Brasa",
           "ou": "Via Benaco 22, Tremosine sul Garda",
+          "nom": "Ristorante Pizzeria Brasa",
           "tel": "+390365918119",
           "note": "4,6/5, souvent cité comme la meilleure table de la rive ouest. Fermé le lundi — le vendredi est bon."
         },
+        "plat": "Tout ce qui est au citron de Limone — et la trota du lac.",
         "soir": {
-          "nom": "Hostaria Al Buongusto",
           "ou": "Via Fontana 2, Limone sul Garda",
+          "nom": "Hostaria Al Buongusto",
           "tel": "+390365388123",
           "note": "4,7/5, jardin à l'écart de la route, ouvert tous les jours. Réserver."
-        },
-        "plat": "Tout ce qui est au citron de Limone — et la trota du lac."
+        }
       },
+      "lat": 45.83,
+      "lon": 10.69,
       "observations": [
         {
           "ou": "La Strada della Forra",
           "niveau": 1,
-          "quoi": "Elle a été creusée en 1913 dans la gorge du torrent Brasa, à une époque où Tremosine n'était accessible qu'à pied ou par bateau. Six kilomètres entre deux parois qui se referment au-dessus de la voiture.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Elle a été creusée en 1913 dans la gorge du torrent Brasa, à une époque où Tremosine n'était accessible qu'à pied ou par bateau. Six kilomètres entre deux parois qui se referment au-dessus de la voiture."
         },
         {
           "ou": "Les limonaie de Limone",
           "niveau": 1,
-          "quoi": "Ces piliers de pierre alignés sur les terrasses portaient l'ossature des serres à citronniers. L'hiver, on les fermait de planches et de vitres pour protéger les arbres du gel. C'était l'une des cultures d'agrumes les plus septentrionales d'Europe, exportée jusqu'en Russie.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Ces piliers de pierre alignés sur les terrasses portaient l'ossature des serres à citronniers. L'hiver, on les fermait de planches et de vitres pour protéger les arbres du gel. C'était l'une des cultures d'agrumes les plus septentrionales d'Europe, exportée jusqu'en Russie."
         },
         {
           "ou": "Le nom de Limone",
           "niveau": 3,
-          "quoi": "Il ne vient pas des citrons, malgré les apparences : les étymologistes le rattachent à limes, la frontière, ou à limen, le seuil. Le village était une limite. Les citrons sont arrivés après.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Il ne vient pas des citrons, malgré les apparences : les étymologistes le rattachent à limes, la frontière, ou à limen, le seuil. Le village était une limite. Les citrons sont arrivés après."
         },
         {
           "ou": "Limone en médecine",
           "niveau": 3,
-          "quoi": "Dans les années 1970, on a découvert chez des habitants une mutation génétique rare — l'apolipoprotéine A-1 Milano — qui protège les artères malgré un cholestérol élevé. Tous les porteurs descendent d'un même couple de Limone du XVIII siècle. Un village isolé transformé en laboratoire.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Dans les années 1970, on a découvert chez des habitants une mutation génétique rare — l'apolipoprotéine A-1 Milano — qui protège les artères malgré un cholestérol élevé. Tous les porteurs descendent d'un même couple de Limone du XVIII siècle. Un village isolé transformé en laboratoire."
         },
         {
           "ou": "La Terrazza del Brivido",
           "niveau": 1,
-          "quoi": "350 mètres de vide sous le plancher. Regardez plutôt en face : d'ici, on embrasse d'un coup toute la partie étroite du lac, celle que le glacier a creusée en couloir.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "350 mètres de vide sous le plancher. Regardez plutôt en face : d'ici, on embrasse d'un coup toute la partie étroite du lac, celle que le glacier a creusée en couloir."
         }
       ],
       "quiz_questions": [
@@ -3537,9 +3657,7 @@
           "requete": "Gardesana Occidentale SS45bis",
           "ordre": 5
         }
-      ],
-      "lat": 45.83,
-      "lon": 10.69
+      ]
     },
     {
       "ancre": "d-0815",
@@ -3585,18 +3703,18 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Le jour à ne pas rater",
-          "texte": "Entre 10 h et 20 h, les routes du lac sont impraticables. Beaucoup de commerces ferment. <b>Réservez le restaurant du soir dès votre arrivée le 2 août</b>, ou prévoyez de dîner chez vous. Faites les courses la veille."
+          "texte": "Entre 10 h et 20 h, les routes du lac sont impraticables. Beaucoup de commerces ferment. <b>Réservez le restaurant du soir dès votre arrivée le 2 août</b>, ou prévoyez de dîner chez vous. Faites les courses la veille.",
+          "titre": "Le jour à ne pas rater"
         }
       ],
       "chapitre": null,
       "ordre": 15,
       "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Se garer à Toscolano-Maderno, à l'entrée de la vallée, et remonter à pied. Arrivez avant 9 h : ensuite, plus une place nulle part sur le lac.",
-        "reserver": "Le restaurant du soir, s'il n'est pas déjà pris depuis le 2 août.",
         "emporter": "Rien de spécial : la vallée est plate et ombragée. C'est le seul endroit frais du lac aujourd'hui.",
-        "chien": "facile"
+        "reserver": "Le restaurant du soir, s'il n'est pas déjà pris depuis le 2 août."
       },
       "carte": [
         {
@@ -3626,42 +3744,48 @@
       ],
       "manger": {
         "midi": {
-          "nom": "À la maison",
           "ou": "Courses faites la veille — impératif",
+          "nom": "À la maison",
           "note": "Le 15 août, ne comptez sur aucune table sans réservation."
         },
+        "plat": "Les pâtes aux myrtilles de la maison — improbable et réussi.",
         "soir": {
-          "nom": "Osteria Gatto d'Oro",
           "ou": "Via Fratelli Bianchi 41, Toscolano Maderno",
+          "nom": "Osteria Gatto d'Oro",
           "tel": "+390365540975",
           "note": "4,5/5, décor excentrique entièrement félin, cuisine soignée, ouvert tous les jours. Les chiens y sont bienvenus d'après les avis. RÉSERVER DÈS VOTRE ARRIVÉE LE 2 AOÛT."
-        },
-        "plat": "Les pâtes aux myrtilles de la maison — improbable et réussi."
+        }
       },
+      "lat": 45.6083,
+      "lon": 10.5231,
       "observations": [
         {
           "ou": "Le nom de la fête",
           "niveau": 2,
-          "quoi": "Ferragosto vient des Feriae Augusti, les repos d'Auguste, instituées en 18 avant notre ère pour marquer la fin des grands travaux agricoles. Vous célébrez, sans le savoir, un décret vieux de deux mille ans — et toute l'Italie avec vous, dans les bouchons.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Ferragosto vient des Feriae Augusti, les repos d'Auguste, instituées en 18 avant notre ère pour marquer la fin des grands travaux agricoles. Vous célébrez, sans le savoir, un décret vieux de deux mille ans — et toute l'Italie avec vous, dans les bouchons."
         },
         {
           "ou": "La Valle delle Cartiere",
           "niveau": 1,
-          "quoi": "On y fabrique du papier depuis le XIV siècle. À l'apogée, des dizaines de moulins s'échelonnaient le long du torrent, et la République de Venise s'y fournissait pour son administration. Les ruines que vous longez sont des usines, pas des maisons.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "On y fabrique du papier depuis le XIV siècle. À l'apogée, des dizaines de moulins s'échelonnaient le long du torrent, et la République de Venise s'y fournissait pour son administration. Les ruines que vous longez sont des usines, pas des maisons."
         },
         {
           "ou": "Pourquoi ici",
           "niveau": 2,
-          "quoi": "Il fallait trois choses pour faire du papier : de l'eau courante pour la force motrice, de l'eau pure pour la pâte, et un torrent qui ne gèle pas. Cette gorge les réunissait toutes les trois. La géographie a fabriqué l'industrie.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Il fallait trois choses pour faire du papier : de l'eau courante pour la force motrice, de l'eau pure pour la pâte, et un torrent qui ne gèle pas. Cette gorge les réunissait toutes les trois. La géographie a fabriqué l'industrie."
         },
         {
           "ou": "La fraîcheur",
           "niveau": 1,
-          "quoi": "Il fera cinq à huit degrés de moins que sur le lungolago. La gorge est étroite, orientée nord-sud, et le torrent refroidit l'air en permanence. C'est exactement pour ça qu'on vient ici le 15 août.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Il fera cinq à huit degrés de moins que sur le lungolago. La gorge est étroite, orientée nord-sud, et le torrent refroidit l'air en permanence. C'est exactement pour ça qu'on vient ici le 15 août."
         }
       ],
       "quiz_questions": [
@@ -3732,9 +3856,7 @@
           "requete": "Toscolano Maderno lungolago",
           "ordre": 4
         }
-      ],
-      "lat": 45.6083,
-      "lon": 10.5231
+      ]
     },
     {
       "ancre": "d-0816",
@@ -3787,19 +3909,19 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Journée idéale : tout est en extérieur et <b>les deux funiculaires acceptent les chiens</b>. Pensez à préparer les valises la veille au soir, la route de demain est longue. {{chien}}"
+          "texte": "Journée idéale : tout est en extérieur et <b>les deux funiculaires acceptent les chiens</b>. Pensez à préparer les valises la veille au soir, la route de demain est longue. {{chien}}",
+          "titre": "Chien"
         }
       ],
       "chapitre": null,
       "ordre": 16,
       "anniversaire": false,
       "pratique": {
-        "parking": "Ne montez pas en voiture en Città Alta. Se garer en ville basse et prendre le funiculaire depuis Viale Vittorio Emanuele II.",
         "ztl": "Città Alta en ZTL, ruelles étroites et sens uniques. Le funiculaire est la seule bonne réponse.",
-        "reserver": "Rien d'obligatoire. C'est la journée la plus facile à improviser — ou à annuler la veille sans rien perdre.",
+        "chien": "facile",
+        "parking": "Ne montez pas en voiture en Città Alta. Se garer en ville basse et prendre le funiculaire depuis Viale Vittorio Emanuele II.",
         "emporter": "Chaussures confortables : les 6 km de remparts, ce sont des pavés.",
-        "chien": "facile"
+        "reserver": "Rien d'obligatoire. C'est la journée la plus facile à improviser — ou à annuler la veille sans rien perdre."
       },
       "carte": [
         {
@@ -3845,55 +3967,63 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Circolino Città Alta",
           "ou": "Vicolo Sant'Agata 19, Bergame haute",
+          "nom": "Circolino Città Alta",
           "tel": "+39035218568",
           "note": "4,4/5, immense terrasse-jardin dans une ancienne prison, ouvert tous les jours dès 8 h. Idéal avec le chien."
         },
+        "plat": "Casoncelli alla bergamasca, scarpinocc, polenta taragna.",
         "soir": {
-          "nom": "Nonna Alda — cucina bergamasca",
           "ou": "Via Solata 7, Bergame haute",
+          "nom": "Nonna Alda — cucina bergamasca",
           "tel": "+39035302770",
           "note": "4,7/5, petite salle, cuisine bergamasque stricte. Ouvert tous les jours. Réserver."
-        },
-        "plat": "Casoncelli alla bergamasca, scarpinocc, polenta taragna."
+        }
       },
+      "lat": 45.6983,
+      "lon": 9.6773,
       "observations": [
         {
           "ou": "Grille de la Cappella Colleoni",
           "niveau": 2,
-          "quoi": "Les armoiries du condottiere portent trois formes qu'on prend pour des cœurs renversés. Ce sont des testicules — un jeu de mots sur son nom, Colleoni. On les frotte pour la chance : ils brillent comme un miroir.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Les armoiries du condottiere portent trois formes qu'on prend pour des cœurs renversés. Ce sont des testicules — un jeu de mots sur son nom, Colleoni. On les frotte pour la chance : ils brillent comme un miroir."
         },
         {
           "ou": "L'entrée de Santa Maria Maggiore",
           "niveau": 3,
-          "quoi": "On y pénètre par un portail latéral, parce que l'église n'a pas de façade : Colleoni a fait démolir la sacristie qui occupait cet emplacement, sans autorisation, pour y bâtir sa chapelle funéraire.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "On y pénètre par un portail latéral, parce que l'église n'a pas de façade : Colleoni a fait démolir la sacristie qui occupait cet emplacement, sans autorisation, pour y bâtir sa chapelle funéraire."
         },
         {
           "ou": "Les stalles du chœur, Santa Maria Maggiore",
           "niveau": 2,
-          "quoi": "Les marqueteries ont été dessinées par Lorenzo Lotto et exécutées par Capoferri. Des scènes bibliques entières, en bois incrusté, protégées par des panneaux allégoriques qu'on soulevait.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Les marqueteries ont été dessinées par Lorenzo Lotto et exécutées par Capoferri. Des scènes bibliques entières, en bois incrusté, protégées par des panneaux allégoriques qu'on soulevait."
         },
         {
           "ou": "La tombe de Donizetti, Santa Maria Maggiore",
           "niveau": 2,
-          "quoi": "Bergame est sa ville natale. Il est enterré à quelques mètres des stalles de Lotto.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Bergame est sa ville natale. Il est enterré à quelques mètres des stalles de Lotto."
         },
         {
           "ou": "Le Campanone, à 22 h",
           "niveau": 3,
-          "quoi": "La grosse cloche de la tour civique sonne cent coups chaque soir à 22 h — l'ancien signal de fermeture des portes de la ville. Si vous êtes encore là, attendez-la : cent coups au-dessus d'une place vide, c'est un souvenir.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "La grosse cloche de la tour civique sonne cent coups chaque soir à 22 h — l'ancien signal de fermeture des portes de la ville. Si vous êtes encore là, attendez-la : cent coups au-dessus d'une place vide, c'est un souvenir."
         },
         {
           "ou": "Les murailles vénitiennes",
           "niveau": 1,
-          "quoi": "Six kilomètres de fortifications inscrites à l'UNESCO en 2017, construites par Venise au XVI siècle. Elles n'ont jamais été attaquées. Un ouvrage militaire parfait qui n'a jamais servi.",
-          "ordre": 5
+          "ordre": 5,
+          "visibilite": "amis",
+          "quoi": "Six kilomètres de fortifications inscrites à l'UNESCO en 2017, construites par Venise au XVI siècle. Elles n'ont jamais été attaquées. Un ouvrage militaire parfait qui n'a jamais servi."
         }
       ],
       "quiz_questions": [
@@ -3985,9 +4115,7 @@
           "requete": "Accademia Carrara Bergamo",
           "ordre": 7
         }
-      ],
-      "lat": 45.6983,
-      "lon": 9.6773
+      ]
     },
     {
       "ancre": "d-0817",
@@ -4032,26 +4160,26 @@
       "notes": [
         {
           "ton": "soleil",
-          "titre": "Anniversaire",
-          "texte": "Les jumeaux. Dîner réservé le soir après une longue journée de route : partir à l'heure le matin."
+          "texte": "Les jumeaux. Dîner réservé le soir après une longue journée de route : partir à l'heure le matin.",
+          "titre": "Anniversaire"
         },
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Pause toutes les deux heures, jamais seul dans la voiture même cinq minutes à cette période. Vérifiez la clim avant de partir."
+          "texte": "Pause toutes les deux heures, jamais seul dans la voiture même cinq minutes à cette période. Vérifiez la clim avant de partir.",
+          "titre": "Chien"
         }
       ],
       "chapitre": {
-        "numero": "Chapitre III",
-        "titre": "La remontée par le sud"
+        "titre": "La remontée par le sud",
+        "numero": "Chapitre III"
       },
       "ordre": 17,
       "anniversaire": true,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Journée de transit. Prévoyez les arrêts plutôt que les parkings.",
-        "reserver": "Restaurant de l'hôtel réservé pour le dîner d'anniversaire.",
         "emporter": "Eau pour tout le monde et pour le chien, à portée de main. Pause toutes les deux heures, jamais le chien seul dans la voiture.",
-        "chien": "à gérer"
+        "reserver": "Restaurant de l'hôtel réservé pour le dîner d'anniversaire."
       },
       "carte": [
         {
@@ -4084,36 +4212,41 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Osteria dei Sognatori",
           "ou": "Via Macrino 8, Alba",
+          "nom": "Osteria dei Sognatori",
           "tel": "+393889592000",
           "note": "4,5/5, menu différent chaque jour, très fréquenté par les locaux. Fermé le mardi — le lundi est bon. Détour d'environ 30 min depuis l'A21."
         },
+        "plat": "Dans les Langhe : tajarin, vitello tonnato, et un Barbera d'Alba.",
         "soir": {
-          "nom": "Restaurant de l'hôtel",
           "ou": "Valbonne",
+          "nom": "Restaurant de l'hôtel",
           "note": "Réservé pour le dîner d'anniversaire des jumeaux."
-        },
-        "plat": "Dans les Langhe : tajarin, vitello tonnato, et un Barbera d'Alba."
+        }
       },
+      "lat": 43.6392,
+      "lon": 7.0086,
       "observations": [
         {
           "ou": "Les Langhe",
           "niveau": 3,
-          "quoi": "Ces collines de vignes sont inscrites à l'UNESCO depuis 2014. Regardez le sens des rangs : ils descendent la pente au lieu de la suivre. C'est le ritocchino, choisi pour le drainage — au prix d'un travail beaucoup plus dur.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Ces collines de vignes sont inscrites à l'UNESCO depuis 2014. Regardez le sens des rangs : ils descendent la pente au lieu de la suivre. C'est le ritocchino, choisi pour le drainage — au prix d'un travail beaucoup plus dur."
         },
         {
           "ou": "L'autoroute ligure",
           "niveau": 1,
-          "quoi": "L'A10 est presque entièrement en viaducs et en tunnels : les Apennins tombent droit dans la mer, il n'y avait pas un kilomètre de plat où la poser. C'est l'un des tracés autoroutiers les plus construits d'Europe.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "L'A10 est presque entièrement en viaducs et en tunnels : les Apennins tombent droit dans la mer, il n'y avait pas un kilomètre de plat où la poser. C'est l'un des tracés autoroutiers les plus construits d'Europe."
         },
         {
           "ou": "La frontière, à Vintimille",
           "niveau": 1,
-          "quoi": "Vous quittez l'Italie après seize jours. Faites le plein avant : le carburant y est en général moins cher que du côté français.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Vous quittez l'Italie après seize jours. Faites le plein avant : le carburant y est en général moins cher que du côté français."
         }
       ],
       "quiz_questions": [
@@ -4177,9 +4310,7 @@
           "requete": "Place des Arcades Valbonne",
           "ordre": 3
         }
-      ],
-      "lat": 43.6392,
-      "lon": 7.0086
+      ]
     },
     {
       "ancre": "d-0818",
@@ -4224,23 +4355,23 @@
       "notes": [
         {
           "ton": "soleil",
-          "titre": "Anniversaire",
-          "texte": "Fête le soir chez les grands-parents, à Soumont : prévoir un cadeau et ne pas traîner en route."
+          "texte": "Fête le soir chez les grands-parents, à Soumont : prévoir un cadeau et ne pas traîner en route.",
+          "titre": "Anniversaire"
         },
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Le site du Pont du Gard accepte les chiens tenus en laisse sur les espaces extérieurs. Ombre rare : y aller plutôt en fin d'après-midi."
+          "texte": "Le site du Pont du Gard accepte les chiens tenus en laisse sur les espaces extérieurs. Ombre rare : y aller plutôt en fin d'après-midi.",
+          "titre": "Chien"
         }
       ],
       "chapitre": null,
       "ordre": 18,
       "anniversaire": true,
       "pratique": {
+        "chien": "facile",
         "parking": "Pont du Gard : parkings payants sur les deux rives, celui de la rive gauche est plus proche de l'aqueduc.",
-        "reserver": "Rien. Le site du Pont du Gard se prend à l'entrée.",
         "emporter": "Maillots pour le Gardon. Chapeaux : le site est très exposé, l'ombre est rare.",
-        "chien": "facile"
+        "reserver": "Rien. Le site du Pont du Gard se prend à l'entrée."
       },
       "carte": [
         {
@@ -4278,42 +4409,48 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Terra Rossa",
           "ou": "10 place des Arcades, Valbonne",
+          "nom": "Terra Rossa",
           "tel": "+33493129511",
           "note": "4,6/5, sur la même place. Fermé le jeudi — le mardi est bon. Déjeuner à midi avant de reprendre la route."
         },
+        "plat": "Brandade de Nîmes, et un rosé des Costières.",
         "soir": {
-          "nom": "Chez les grands-parents",
           "ou": "Soumont",
+          "nom": "Chez les grands-parents",
           "note": "Fête d'anniversaire des jumeaux."
-        },
-        "plat": "Brandade de Nîmes, et un rosé des Costières."
+        }
       },
+      "lat": 43.68,
+      "lon": 3.42,
       "observations": [
         {
           "ou": "Le plan de Valbonne",
           "niveau": 2,
-          "quoi": "Le village est bâti en damier, ce qui est rare en Provence — les bourgs y sont presque toujours concentriques autour d'un château. Celui-ci a été dessiné au XVI siècle par les moines de Chalais, à la règle.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Le village est bâti en damier, ce qui est rare en Provence — les bourgs y sont presque toujours concentriques autour d'un château. Celui-ci a été dessiné au XVI siècle par les moines de Chalais, à la règle."
         },
         {
           "ou": "Le Pont du Gard, sans mortier",
           "niveau": 2,
-          "quoi": "Les blocs, dont certains pèsent six tonnes, tiennent par leur seul poids et leur taille. Aucun liant sur les grandes arches. Deux mille ans plus tard, l'ouvrage est debout.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Les blocs, dont certains pèsent six tonnes, tiennent par leur seul poids et leur taille. Aucun liant sur les grandes arches. Deux mille ans plus tard, l'ouvrage est debout."
         },
         {
           "ou": "Les pierres qui dépassent",
           "niveau": 3,
-          "quoi": "Ces blocs saillants sur les piles ne sont pas un accident : ce sont les corbeaux qui portaient les échafaudages. Les Romains les ont laissés en place, pour pouvoir remonter des échafaudages lors des entretiens futurs.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Ces blocs saillants sur les piles ne sont pas un accident : ce sont les corbeaux qui portaient les échafaudages. Les Romains les ont laissés en place, pour pouvoir remonter des échafaudages lors des entretiens futurs."
         },
         {
           "ou": "La pente de l'aqueduc",
           "niveau": 3,
-          "quoi": "L'ouvrage amenait l'eau d'Uzès à Nîmes sur cinquante kilomètres, en descendant en tout de 12,6 mètres. Soit environ 25 centimètres par kilomètre. Une nappe d'eau presque horizontale, calée à la main.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "L'ouvrage amenait l'eau d'Uzès à Nîmes sur cinquante kilomètres, en descendant en tout de 12,6 mètres. Soit environ 25 centimètres par kilomètre. Une nappe d'eau presque horizontale, calée à la main."
         }
       ],
       "quiz_questions": [
@@ -4377,9 +4514,7 @@
           "requete": "Musée Pont du Gard",
           "ordre": 3
         }
-      ],
-      "lat": 43.68,
-      "lon": 3.42
+      ]
     },
     {
       "ancre": "d-0819",
@@ -4420,18 +4555,18 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Les deux sites sont parfaitement adaptés. Attention aux cailloux coupants à Mourèze pour les coussinets. {{chien}}"
+          "texte": "Les deux sites sont parfaitement adaptés. Attention aux cailloux coupants à Mourèze pour les coussinets. {{chien}}",
+          "titre": "Chien"
         }
       ],
       "chapitre": null,
       "ordre": 19,
       "anniversaire": false,
       "pratique": {
+        "chien": "facile",
         "parking": "Salagou : plusieurs accès aux berges, celui de la Plage des Vailhés est le plus simple avec des ados. Mourèze : parking au village, en bas du cirque.",
-        "reserver": "Rien.",
         "emporter": "Maillots, chapeaux, beaucoup d'eau. Le Salagou est sans ombre, et Mourèze réverbère.",
-        "chien": "facile"
+        "reserver": "Rien."
       },
       "carte": [
         {
@@ -4464,49 +4599,56 @@
       ],
       "manger": {
         "midi": {
-          "nom": "La Terrasse Salagou",
           "ou": "Route du lac, rive de Clermont-l'Hérault",
+          "nom": "La Terrasse Salagou",
           "tel": "+33984216234",
           "note": "Terrasse ouverte face au lac, ouvert tous les jours de 10 h à 1 h. Simple, bien placé pour la baignade."
         },
+        "plat": "Le vin de Terrasses du Larzac, et le pélardon des Cévennes.",
         "soir": {
-          "nom": "Le Mas de Riri",
           "ou": "Lieu-dit Le Mas de Riri, Celles",
+          "nom": "Le Mas de Riri",
           "tel": "+33467967780",
           "note": "4,4/5, face au lac, cuisine soignée malgré l'emplacement en camping. Ouvert tous les jours. Réserver, souvent complet."
-        },
-        "plat": "Le vin de Terrasses du Larzac, et le pélardon des Cévennes."
+        }
       },
+      "lat": 43.65,
+      "lon": 3.38,
       "observations": [
         {
           "ou": "Les ruffes",
           "niveau": 1,
-          "quoi": "Cette terre rouge sang a environ 250 millions d'années : des boues du Permien, teintées par l'oxyde de fer. À l'époque, la région était une plaine d'inondation sous un climat aride — l'inverse exact de ce que la couleur évoque.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Cette terre rouge sang a environ 250 millions d'années : des boues du Permien, teintées par l'oxyde de fer. À l'époque, la région était une plaine d'inondation sous un climat aride — l'inverse exact de ce que la couleur évoque."
         },
         {
           "ou": "Le noir sur le rouge",
           "niveau": 2,
-          "quoi": "Les tables sombres qui coiffent certains reliefs sont des coulées basaltiques, bien plus récentes. Elles ont protégé la ruffe sous elles pendant que le reste s'érodait : c'est pour ça qu'elles sont en hauteur aujourd'hui.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Les tables sombres qui coiffent certains reliefs sont des coulées basaltiques, bien plus récentes. Elles ont protégé la ruffe sous elles pendant que le reste s'érodait : c'est pour ça qu'elles sont en hauteur aujourd'hui."
         },
         {
           "ou": "Le lac est artificiel",
           "niveau": 1,
-          "quoi": "Il a été mis en eau en 1969, en barrant la rivière Salagou. L'idée était d'irriguer pour sortir la région de la monoculture viticole. Le paysage le plus étrange du Languedoc est un ouvrage d'aménagement du territoire.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Il a été mis en eau en 1969, en barrant la rivière Salagou. L'idée était d'irriguer pour sortir la région de la monoculture viticole. Le paysage le plus étrange du Languedoc est un ouvrage d'aménagement du territoire."
         },
         {
           "ou": "Le village de Celles",
           "niveau": 2,
-          "quoi": "Il a été exproprié en prévision d'un niveau d'eau qui n'est jamais monté jusqu'à lui. Le village est resté vide pendant des décennies, à sec, au bord d'un lac qui ne l'a jamais atteint. Il se repeuple depuis peu.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Il a été exproprié en prévision d'un niveau d'eau qui n'est jamais monté jusqu'à lui. Le village est resté vide pendant des décennies, à sec, au bord d'un lac qui ne l'a jamais atteint. Il se repeuple depuis peu."
         },
         {
           "ou": "Le cirque de Mourèze",
           "niveau": 2,
-          "quoi": "Ces aiguilles sont de la dolomie : un calcaire magnésien qui se dissout de façon très irrégulière. L'eau attaque les fissures et laisse debout les blocs les plus résistants. On appelle ça un relief ruiniforme — une ruine que personne n'a construite.",
-          "ordre": 4
+          "ordre": 4,
+          "visibilite": "amis",
+          "quoi": "Ces aiguilles sont de la dolomie : un calcaire magnésien qui se dissout de façon très irrégulière. L'eau attaque les fissures et laisse debout les blocs les plus résistants. On appelle ça un relief ruiniforme — une ruine que personne n'a construite."
         }
       ],
       "quiz_questions": [
@@ -4577,9 +4719,7 @@
           "requete": "Cirque de Mourèze",
           "ordre": 4
         }
-      ],
-      "lat": 43.65,
-      "lon": 3.38
+      ]
     },
     {
       "ancre": "d-0820",
@@ -4625,18 +4765,18 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Attention",
-          "texte": "Saint-Guilhem se gare mal en août : arrivez avant 11 h ou utilisez les parkings-relais en aval. Le Pont du Diable est bondé de 14 h à 17 h. {{chien}}"
+          "texte": "Saint-Guilhem se gare mal en août : arrivez avant 11 h ou utilisez les parkings-relais en aval. Le Pont du Diable est bondé de 14 h à 17 h. {{chien}}",
+          "titre": "Attention"
         }
       ],
       "chapitre": null,
       "ordre": 20,
       "anniversaire": false,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Saint-Guilhem : arrivez avant 11 h ou utilisez les parkings-relais en aval, avec navette. Le village est piéton et se gare très mal en août.",
-        "reserver": "Grotte de Clamouse si vous la faites — et sachez que les chiens n'y sont pas admis.",
         "emporter": "Maillots et chaussures qui tiennent dans l'eau : les galets du Gardon roulent.",
-        "chien": "à gérer"
+        "reserver": "Grotte de Clamouse si vous la faites — et sachez que les chiens n'y sont pas admis."
       },
       "carte": [
         {
@@ -4678,43 +4818,49 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Les Terrasses de Saint Guilhem",
           "ou": "16bis rue Cor de Nostra Dona, Saint-Guilhem-le-Désert",
+          "nom": "Les Terrasses de Saint Guilhem",
           "tel": "+33619791154",
           "note": "4,7/5, terrasse dominant l'abbaye, ouvert tous les jours midi et soir."
         },
+        "plat": "L'agneau du Larzac, et le roquefort à quelques kilomètres de sa cave.",
         "soir": {
-          "nom": "Chez Philippe",
           "ou": "80 rue du Four à Chaux, Lodève",
+          "nom": "Chez Philippe",
           "tel": "+33621853623",
           "note": "5,0/5 sur 94 avis — la meilleure table du secteur, dans une maison, vue sur la cathédrale. Ouvert mercredi à vendredi uniquement : le jeudi est bon. Petite capacité, RÉSERVER TÔT."
-        },
-        "plat": "L'agneau du Larzac, et le roquefort à quelques kilomètres de sa cave."
+        }
       },
+      "lat": 43.7439,
+      "lon": 3.5502,
       "observations": [
         {
           "ou": "Le cloître absent",
           "niveau": 2,
-          "quoi": "Le cloître de l'abbaye de Gellone a été démonté et vendu au XIX siècle. Une grande partie se trouve aujourd'hui à New York, aux Cloisters du Metropolitan Museum. Ce que vous voyez sur place, ce sont les vestiges de ce qui n'est pas parti.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Le cloître de l'abbaye de Gellone a été démonté et vendu au XIX siècle. Une grande partie se trouve aujourd'hui à New York, aux Cloisters du Metropolitan Museum. Ce que vous voyez sur place, ce sont les vestiges de ce qui n'est pas parti."
         },
         {
           "ou": "Qui était Guilhem",
           "niveau": 1,
-          "quoi": "Guillaume de Gellone, compagnon de Charlemagne et duc d'Aquitaine, a fondé l'abbaye en 804 puis s'y est retiré comme simple moine. Un chef de guerre qui choisit la cellule : le Moyen Âge en a fait un héros de chansons de geste.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Guillaume de Gellone, compagnon de Charlemagne et duc d'Aquitaine, a fondé l'abbaye en 804 puis s'y est retiré comme simple moine. Un chef de guerre qui choisit la cellule : le Moyen Âge en a fait un héros de chansons de geste."
         },
         {
           "ou": "Le Pont du Diable",
           "niveau": 1,
-          "quoi": "Bâti entre 1025 et 1031 par les moines d'Aniane et de Gellone, c'est l'un des plus anciens ponts médiévaux de France encore debout. Il porte encore la route, mille ans plus tard.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Bâti entre 1025 et 1031 par les moines d'Aniane et de Gellone, c'est l'un des plus anciens ponts médiévaux de France encore debout. Il porte encore la route, mille ans plus tard."
         },
         {
           "ou": "L'eau verte des gorges",
           "niveau": 2,
-          "quoi": "Cette couleur vient du calcaire dissous : l'Hérault traverse un massif karstique et se charge en carbonates, qui diffusent la lumière verte. C'est la même chimie qui creuse les grottes juste à côté.",
-          "ordre": 3
+          "ordre": 3,
+          "visibilite": "amis",
+          "quoi": "Cette couleur vient du calcaire dissous : l'Hérault traverse un massif karstique et se charge en carbonates, qui diffusent la lumière verte. C'est la même chimie qui creuse les grottes juste à côté."
         }
       ],
       "quiz_questions": [
@@ -4785,9 +4931,7 @@
           "requete": "Gorges de l'Hérault baignade",
           "ordre": 4
         }
-      ],
-      "lat": 43.7439,
-      "lon": 3.5502
+      ]
     },
     {
       "ancre": "d-0821",
@@ -4829,16 +4973,16 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Journée idéale. Attention seulement à la chaleur des dalles autour de la piscine en milieu de journée. {{chien}}"
+          "texte": "Journée idéale. Attention seulement à la chaleur des dalles autour de la piscine en milieu de journée. {{chien}}",
+          "titre": "Chien"
         }
       ],
       "chapitre": null,
       "ordre": 21,
       "anniversaire": false,
       "pratique": {
-        "emporter": "Rien. Maillots et crème solaire, au pire.",
-        "chien": "facile"
+        "chien": "facile",
+        "emporter": "Rien. Maillots et crème solaire, au pire."
       },
       "carte": [
         {
@@ -4860,35 +5004,40 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Chez les grands-parents",
           "ou": "Soumont",
+          "nom": "Chez les grands-parents",
           "note": "Rien à réserver, rien à chercher."
         },
+        "plat": "Le pélardon des Cévennes, et un Terrasses du Larzac.",
         "soir": {
-          "nom": "Chez les grands-parents",
           "ou": "Soumont",
+          "nom": "Chez les grands-parents",
           "note": "Prévoir peut-être d'apporter quelque chose du marché."
-        },
-        "plat": "Le pélardon des Cévennes, et un Terrasses du Larzac."
+        }
       },
+      "lat": 43.68,
+      "lon": 3.42,
       "observations": [
         {
           "ou": "Les cigales, à la tombée du jour",
           "niveau": 1,
-          "quoi": "Elles s'arrêtent d'un coup, presque toutes en même temps. Ce n'est pas la lumière qui les fait taire mais la température : sous environ 22 °C, leurs muscles ne vibrent plus assez vite. Écoutez le moment exact où le silence tombe.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "Elles s'arrêtent d'un coup, presque toutes en même temps. Ce n'est pas la lumière qui les fait taire mais la température : sous environ 22 °C, leurs muscles ne vibrent plus assez vite. Écoutez le moment exact où le silence tombe."
         },
         {
           "ou": "Les hirondelles sur les fils",
           "niveau": 2,
-          "quoi": "Fin août, elles se rassemblent par dizaines sur les câbles avant de partir vers l'Afrique. Ce que vous voyez cette semaine, c'est une migration en train de se préparer.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Fin août, elles se rassemblent par dizaines sur les câbles avant de partir vers l'Afrique. Ce que vous voyez cette semaine, c'est une migration en train de se préparer."
         },
         {
           "ou": "Le ciel, une fois la nuit tombée",
           "niveau": 2,
-          "quoi": "Le Lodévois est l'un des secteurs les moins pollués de lumière du sud de la France. Cherchez la Voie lactée à la verticale, et vers le nord-est la traînée des dernières Perséides — l'essaim est passé le 12, mais il en reste.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Le Lodévois est l'un des secteurs les moins pollués de lumière du sud de la France. Cherchez la Voie lactée à la verticale, et vers le nord-est la traînée des dernières Perséides — l'essaim est passé le 12, mais il en reste."
         }
       ],
       "quiz_questions": [
@@ -4935,9 +5084,7 @@
           "requete": "Cirque de Navacelles belvédère",
           "ordre": 2
         }
-      ],
-      "lat": 43.68,
-      "lon": 3.42
+      ]
     },
     {
       "ancre": "d-0822",
@@ -4983,17 +5130,17 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "À ne pas oublier",
-          "texte": "Le plein de carburant et les valises ce soir. Un départ à 7 h un dimanche de fin août, c'est ce qui évite l'A10 saturée en fin de journée."
+          "texte": "Le plein de carburant et les valises ce soir. Un départ à 7 h un dimanche de fin août, c'est ce qui évite l'A10 saturée en fin de journée.",
+          "titre": "À ne pas oublier"
         }
       ],
       "chapitre": null,
       "ordre": 22,
       "anniversaire": false,
       "pratique": {
-        "reserver": "Rien à réserver. Mais faire le plein de carburant ce soir : demain le départ est à 7 h.",
+        "chien": "facile",
         "emporter": "Préparer les valises la veille au soir, pas le dimanche matin.",
-        "chien": "facile"
+        "reserver": "Rien à réserver. Mais faire le plein de carburant ce soir : demain le départ est à 7 h."
       },
       "carte": [
         {
@@ -5011,34 +5158,39 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Chez les grands-parents",
-          "ou": "Soumont"
-        },
-        "soir": {
-          "nom": "Dernier dîner en famille",
           "ou": "Soumont",
-          "note": "Coucher tôt : la route de demain fait huit heures."
+          "nom": "Chez les grands-parents"
         },
-        "plat": "Ce qui reste du marché — et le roquefort avant de quitter la région."
+        "plat": "Ce qui reste du marché — et le roquefort avant de quitter la région.",
+        "soir": {
+          "ou": "Soumont",
+          "nom": "Dernier dîner en famille",
+          "note": "Coucher tôt : la route de demain fait huit heures."
+        }
       },
+      "lat": 43.68,
+      "lon": 3.42,
       "observations": [
         {
           "ou": "Les murs des maisons, à Soumont",
           "niveau": 1,
-          "quoi": "La pierre rouge des murs, c'est la même ruffe que celle des berges du Salagou. Ici on n'a jamais fait venir la pierre de loin : les maisons sont de la couleur du sol sur lequel elles sont posées.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "La pierre rouge des murs, c'est la même ruffe que celle des berges du Salagou. Ici on n'a jamais fait venir la pierre de loin : les maisons sont de la couleur du sol sur lequel elles sont posées."
         },
         {
           "ou": "D'où souffle le vent",
           "niveau": 3,
-          "quoi": "Deux vents se partagent la région. Le marin vient du sud-est, chargé d'humidité, et annonce la pluie ; la tramontane descend du nord-ouest, sèche, et nettoie le ciel. Demandez aux grands-parents lequel souffle : ils le savent sans regarder.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "Deux vents se partagent la région. Le marin vient du sud-est, chargé d'humidité, et annonce la pluie ; la tramontane descend du nord-ouest, sèche, et nettoie le ciel. Demandez aux grands-parents lequel souffle : ils le savent sans regarder."
         },
         {
           "ou": "L'heure du coucher de soleil",
           "niveau": 2,
-          "quoi": "Comparez avec le 31 juillet, au départ. Vous avez perdu près d'une heure de jour en trois semaines. C'est la mesure la plus concrète du temps passé.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Comparez avec le 31 juillet, au départ. Vous avez perdu près d'une heure de jour en trois semaines. C'est la mesure la plus concrète du temps passé."
         }
       ],
       "quiz_questions": [
@@ -5085,9 +5237,7 @@
           "requete": "Marché Clermont-l'Hérault samedi",
           "ordre": 2
         }
-      ],
-      "lat": 43.68,
-      "lon": 3.42
+      ]
     },
     {
       "ancre": "d-0823",
@@ -5136,18 +5286,18 @@
       "notes": [
         {
           "ton": "alerte",
-          "titre": "Chien",
-          "texte": "Longue journée. Pause toutes les deux heures, eau à chaque arrêt, jamais seul dans la voiture. L'aire du viaduc de Millau est un bon endroit pour une vraie pause."
+          "texte": "Longue journée. Pause toutes les deux heures, eau à chaque arrêt, jamais seul dans la voiture. L'aire du viaduc de Millau est un bon endroit pour une vraie pause.",
+          "titre": "Chien"
         }
       ],
       "chapitre": null,
       "ordre": 23,
       "anniversaire": false,
       "pratique": {
+        "chien": "à gérer",
         "parking": "Aire du viaduc de Millau, côté sud : belvédère aménagé et vue d'ensemble. Vingt minutes bien employées.",
-        "reserver": "Rien. Mais un vendredi de retour de vacances, l'A10 à l'approche de Paris peut ajouter une heure sèche.",
         "emporter": "Le nécessaire pour ne pas s'arrêter trop souvent, et de l'eau à chaque pause pour le chien.",
-        "chien": "à gérer"
+        "reserver": "Rien. Mais un vendredi de retour de vacances, l'A10 à l'approche de Paris peut ajouter une heure sèche."
       },
       "carte": [
         {
@@ -5177,36 +5327,41 @@
       ],
       "manger": {
         "midi": {
-          "nom": "Espace Gourmand",
           "ou": "Aire du Viaduc de Millau, Brocuejouls",
+          "nom": "Espace Gourmand",
           "tel": "+33565603670",
           "note": "Sur l'aire du viaduc, ouvert tous les jours 9 h - 18 h. Pratique et bien placé pour l'arrêt belvédère."
         },
+        "plat": "Un dernier morceau de roquefort acheté sur le Larzac.",
         "soir": {
-          "nom": "À la maison",
           "ou": "Arrivée prévue vers 17 h 30",
+          "nom": "À la maison",
           "note": "Prévoir de quoi dîner sans courses — ou commander."
-        },
-        "plat": "Un dernier morceau de roquefort acheté sur le Larzac."
+        }
       },
+      "lat": 48.8779,
+      "lon": 2.1898,
       "observations": [
         {
           "ou": "Le viaduc de Millau",
           "niveau": 1,
-          "quoi": "2 460 mètres de long. La pile P2 culmine à 343 mètres, davantage que la tour Eiffel. Conçu par l'ingénieur Michel Virlogeux avec Norman Foster, ouvert en 2004. Le franchir prend quarante secondes ; le regarder d'en bas mérite l'arrêt.",
-          "ordre": 0
+          "ordre": 0,
+          "visibilite": "amis",
+          "quoi": "2 460 mètres de long. La pile P2 culmine à 343 mètres, davantage que la tour Eiffel. Conçu par l'ingénieur Michel Virlogeux avec Norman Foster, ouvert en 2004. Le franchir prend quarante secondes ; le regarder d'en bas mérite l'arrêt."
         },
         {
           "ou": "Le causse du Larzac",
           "niveau": 1,
-          "quoi": "L'A75 traverse un plateau calcaire à près de 800 mètres d'altitude, sans un arbre et sans un village. Ce vide n'est pas naturel : c'est un paysage de pastoralisme millénaire, entretenu par les brebis dont le lait fait le roquefort.",
-          "ordre": 1
+          "ordre": 1,
+          "visibilite": "amis",
+          "quoi": "L'A75 traverse un plateau calcaire à près de 800 mètres d'altitude, sans un arbre et sans un village. Ce vide n'est pas naturel : c'est un paysage de pastoralisme millénaire, entretenu par les brebis dont le lait fait le roquefort."
         },
         {
           "ou": "La chaîne des Puys",
           "niveau": 2,
-          "quoi": "Au nord de Clermont, la ligne de cônes réguliers sur la crête est une chaîne de volcans, inscrite à l'UNESCO en 2018. Le plus récent est entré en éruption il y a environ sept mille ans — l'homme était là pour le voir.",
-          "ordre": 2
+          "ordre": 2,
+          "visibilite": "amis",
+          "quoi": "Au nord de Clermont, la ligne de cônes réguliers sur la crête est une chaîne de volcans, inscrite à l'UNESCO en 2018. Le plus récent est entré en éruption il y a environ sept mille ans — l'homme était là pour le voir."
         }
       ],
       "quiz_questions": [
@@ -5270,9 +5425,7 @@
           "requete": "Chaîne des Puys puy de Dôme",
           "ordre": 3
         }
-      ],
-      "lat": 48.8779,
-      "lon": 2.1898
+      ]
     }
   ],
   "badges": [
@@ -5285,6 +5438,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 0,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0806",
@@ -5321,6 +5475,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 1,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0812",
@@ -5353,6 +5508,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 2,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0801",
@@ -5381,6 +5537,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 3,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0804",
@@ -5401,6 +5558,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 4,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0806",
@@ -5421,6 +5579,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 5,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0804",
@@ -5445,6 +5604,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 6,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0802",
@@ -5481,6 +5641,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 7,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0805",
@@ -5501,6 +5662,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 8,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0814",
@@ -5521,6 +5683,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 9,
+      "seuil_photos": null,
       "conditions_brutes": [
         {
           "jour": "d-0804",
@@ -5549,7 +5712,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 10,
-      "conditions_brutes": []
+      "seuil_photos": null
     },
     {
       "nom": "Carnet complet",
@@ -5560,7 +5723,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
       "ordre": 11,
-      "conditions_brutes": []
+      "seuil_photos": null
     },
     {
       "nom": "Assidu",
@@ -5571,7 +5734,7 @@
       "seuil_journees_corrigees": 24,
       "seuil_points_quiz": null,
       "ordre": 12,
-      "conditions_brutes": []
+      "seuil_photos": null
     },
     {
       "nom": "Érudit",
@@ -5582,7 +5745,7 @@
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": 150,
       "ordre": 13,
-      "conditions_brutes": []
+      "seuil_photos": null
     },
     {
       "nom": "Le Photographe",
@@ -5592,9 +5755,8 @@
       "seuil_total": null,
       "seuil_journees_corrigees": null,
       "seuil_points_quiz": null,
-      "seuil_photos": 50,
       "ordre": 14,
-      "conditions_brutes": []
+      "seuil_photos": 50
     }
   ]
 }

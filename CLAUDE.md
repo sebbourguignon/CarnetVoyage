@@ -168,7 +168,7 @@ Repris quasi à l'identique du format `JOURS` d'Italie2026 (voir son
 | `visibilite` | `amis` (public, par défaut) ou `famille` (réservé) |
 | `observations` | `[{ou, niveau, quoi}]` — `niveau` 1 à 3, sert aux badges |
 | `lieux` | `[{nom, quoi, pratique, requete, ordre}]` — fiches lieu |
-| `quiz_questions` | `[{question, choix: [texte...], reponse_correcte, ordre}]` — `reponse_correcte` = index dans `choix`, jamais republié dans le JSON exporté (il vit dans `quiz_reponses`, réservé aux admins) |
+| `quiz_questions` | `[{question, choix: [texte...], reponse_correcte, ordre}]` — `reponse_correcte` = index dans `choix`, stocké en base dans `quiz_reponses` (table à part) et republié tel quel par `outils/exporter-voyage.js` dans le JSON : décision assumée, les réponses sont de toute façon en clair dans Supabase, la restriction RLS aux admins ne visait qu'à empêcher la triche via l'app, pas à garder le JSON silencieux dessus |
 
 Dans les champs texte, HTML simple autorisé : `<b>`, `<i>`, `<sup>`. Le
 jeton `{{chien}}` est remplacé par la pastille « Chien ok ».
@@ -246,19 +246,23 @@ conservé pour l'historique mais jamais appelé par le bouton actif.
 trois maquettes de référence (couverture, page récit « Vérone », page
 galerie « Les plus beaux points de vue ») font foi comme spécification
 visuelle exacte — reproduire leur composition, pas s'en inspirer
-librement. Palette : `PAPER #F7F2E9`, `INK #242321`, `TERRACOTTA #B64332`,
-`OLIVE #7E8560`, `SAGE #A7AD91`, `SAND #DDD2C3`, `MAP_FILL #F0E7DA`,
-`MAP_STROKE #D5C8B7`, `MUTED_TEXT #69655F`. Polices déjà embarquées
-(fichiers `BodoniModa_*.ts` / `IBMPlexSans_*.ts`, base64) : Bodoni Moda
-pour titres/accroches, IBM Plex Sans pour corps/légendes — ne pas changer
-de police, seulement leur hiérarchie/usage.
+librement. Palette (valeurs lues dans `template.mjs`, source de vérité —
+si tu retouches la palette, corrige-la ici aussi) : `PAPER #F7F2E9`,
+`INK #292724`, `TERRACOTTA #B64A37`, `OLIVE #7B8060`, `MUTED #6D6861`.
+Polices déjà embarquées (fichiers `BodoniModa_*.ts` / `IBMPlexSans_*.ts`,
+base64) : Bodoni Moda pour titres/accroches, IBM Plex Sans pour
+corps/légendes — ne pas changer de police, seulement leur
+hiérarchie/usage.
 
 Règles de mise en page non négociables (spécifiées explicitement, à
 respecter dans toute nouvelle itération) :
 - jamais de texte ni de guillemet superposé à une photo — toujours un
   espace vertical net (≥ 15-18pt) entre une image et le texte qui suit ;
-- jamais une légende sans sa photo (garde structurelle dans
-  `composants.ts`, pas seulement une consigne visuelle) ;
+- jamais une légende sans sa photo — règle éditoriale ; le moteur actif
+  (`template.mjs`) n'a pas de garde structurelle automatique pour ça
+  (contrairement à `composants.ts`, qui appartient à l'ancien moteur
+  `pdf-lib` non appelé — ne pas confondre les deux), donc à vérifier
+  manuellement à chaque itération tant qu'elle n'est pas réimplémentée ;
 - jamais un pictogramme générique répété pour des lieux différents ;
 - page de clôture entièrement typographique/vectorielle — aucune photo,
   aucun crop arbitraire ;
@@ -272,6 +276,18 @@ Les photos sont converties en JPEG qualité 82, dimensionnées par rôle à
 environ 180 ppp et les objets FlateDecode résiduels de Chromium sont
 recompressés en DCT/JPEG. Les SVG et textes restent vectoriels. Les récits
 longs créent des pages de continuation, sans contenu inventé.
+
+**Identité visuelle PDF vs app — deux systèmes disjoints, volontairement
+non unifiés pour l'instant.** Le thème par voyage (`voyage.theme`, plus
+haut) ne s'applique qu'à l'app : le PDF garde une palette/typo codées en
+dur, uniques pour tout le produit, sans lien avec `voyage.theme`. Ce
+n'est pas un oubli mais un sujet ouvert — la convergence (PDF theme-aware
+par voyage, ou identité PDF volontairement fixe) sera tranchée avec
+Sébastien une fois son travail en cours sur le PDF (branche
+`feat/carnet-pdf-html-pagedjs`, prototype dans `prototypes/`) stabilisé.
+**Le dossier `prototypes/` est un chantier actif (autre assistant) — ne
+pas y toucher ni s'en inspirer pour une proposition de thème sans
+consigne explicite.**
 
 ## Ce qui n'est PAS à documenter ici
 
