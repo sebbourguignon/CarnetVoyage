@@ -73,7 +73,7 @@ export async function exporterCarnet(modele, signalerEtape = async () => {}) {
     // Le document est autonome (polices et photographies embarquées). Attendre
     // `networkidle0` garde inutilement Chromium dans sa phase la plus coûteuse
     // et pouvait faire interrompre le worker Netlify avant la création du PDF.
-    await phase("rendu_html",async()=>{await page.setContent(html,{waitUntil:"domcontentloaded",timeout:120000});await page.emulateMediaType("print");await page.evaluate(()=>document.fonts.ready);});
+    await phase("rendu_html",async()=>{await page.setContent(html,{waitUntil:"domcontentloaded",timeout:120000});await page.emulateMediaType("print");await page.evaluate(async()=>{await document.fonts.ready;await window.__carnetPhotosReady;});});
     await signalerEtape("creation_pdf");
     await phase("creation_pdf",()=>page.pdf({path:temporaire,format:"A4",printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false,tagged:true,timeout:120000}));
     await signalerEtape("optimisation_pdf");
