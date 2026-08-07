@@ -1,0 +1,3 @@
+-- Le projet DEV possède déjà une migration 0028 appliquée hors de ce dépôt.
+-- Ce fichier conserve la continuité de l’historique local ; il n’introduit
+-- aucune modification de schéma ni de données.
