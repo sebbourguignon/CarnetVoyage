@@ -3023,10 +3023,15 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         urlPhoto: urlSigneePhoto,
         urlMiniature: urlMiniatureCarnet,
         observationReperee: function(jour,index){ return estCoche(jour.id + "-r" + index); },
-        generer: async function(onProgress){
+        preparerVariantes: async function(photoIds){
+          var session=await supabaseClient.auth.getSession(),jeton=session.data&&session.data.session&&session.data.session.access_token;
+          if(!jeton||!photoIds.length)return;
+          await fetch("/.netlify/functions/preparer-variantes-carnet",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+jeton},body:JSON.stringify({supabase_url:supabaseUrl,voyage_id:voyageId,photo_ids:photoIds})});
+        },
+        generer: async function(onProgress,t0Utilisateur){
           var lecture=await supabaseClient.from("carnet_journees").select("*, carnet_faits_confirmes(*), carnet_photos_selectionnees(*)").eq("voyage_id",voyageId).eq("membre_id",utilisateurId);
           if(lecture.error) throw lecture.error;
-          return CarnetPDFClient.generer({supabase:supabaseClient,supabaseUrl:supabaseUrl,voyageId:voyageId,onProgress:onProgress,construireModele:function(){
+          return CarnetPDFClient.generer({supabase:supabaseClient,supabaseUrl:supabaseUrl,voyageId:voyageId,onProgress:onProgress,t0Utilisateur:t0Utilisateur,construireModele:function(){
             return CarnetPDFAdaptateur.adapter({carnet:CARNET,jours:JOURS,photosParJournee:PHOTOS_PAR_JOURNEE,preparations:lecture.data||[],utilisateurId:utilisateurId,texteJournee:texteCarnetJournee,urlPhoto:urlSigneePhotoPourExport,voyageId:voyageId,slug:slugVoyage});
           }});
         }

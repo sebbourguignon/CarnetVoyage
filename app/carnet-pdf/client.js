@@ -6,7 +6,7 @@
 
   function messageErreur(erreur){
     var code = erreur && erreur.code;
-    if(code === "AUCUN_CONTENU") return "Ajoutez du contenu au carnet avant de le générer.";
+    if(code === "AUCUN_CONTENU") return "Terminez au moins une journée avant de générer le carnet.";
     if(code === "IMAGE_ILLISIBLE") return "Une photographie ne peut pas être lue. Vérifiez-la puis réessayez.";
     if(code === "MEMOIRE_INSUFFISANTE") return "Le carnet est trop volumineux pour être généré en une fois.";
     if(code === "NAVIGATEUR_INCOMPATIBLE") return "Ce navigateur ne permet pas de télécharger le carnet.";
@@ -25,7 +25,7 @@
     var travail = null;
     try {
       verifierNavigateur();
-      var debut=Date.now(),profilClient={};
+      var debut=options.t0Utilisateur||Date.now(),profilClient={t0_clic_ms:debut};
       if(options.onProgress)options.onProgress("Chargement des données…",0);
       var debutModele=Date.now();
       var modele = await options.construireModele();
@@ -39,6 +39,7 @@
       var session = await options.supabase.auth.getSession();
       var jeton = session.data && session.data.session && session.data.session.access_token;
       if(!jeton) throw { code: "SESSION_EXPIREE" };
+      var t1=Date.now();profilClient.t1_envoi_ms=t1;profilClient.preparation_client_ms=t1-debut;
       var reponse = await fetch("/.netlify/functions/generer-carnet", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + jeton },
@@ -47,8 +48,8 @@
           supabase_url: options.supabaseUrl
         })
       });
+      var t2=Date.now();profilClient.t2_reponse_http_ms=t2;profilClient.reseau_aller_ms=t2-t1;
       if(!reponse.ok && reponse.status !== 202) throw new Error("démarrage refusé (" + reponse.status + ")");
-      profilClient.demarrage_ms=Date.now()-debut-profilClient.chargement_donnees_ms;
 
       var resultat;
       for(var tentative = 0; tentative < 450; tentative++){
@@ -76,7 +77,7 @@
       var debutTransfert=Date.now(),pdf = await fetch(signature.data.signedUrl);
       if(!pdf.ok) throw new Error("téléchargement PDF impossible");
       var blob = await pdf.blob();
-      profilClient.transfert_pdf_ms=Date.now()-debutTransfert;profilClient.temps_total_ms=Date.now()-debut;
+      profilClient.transfert_pdf_ms=Date.now()-debutTransfert;
       var url = URL.createObjectURL(blob);
       var lien = document.createElement("a");
       lien.href = url;
@@ -84,8 +85,9 @@
       document.body.appendChild(lien);
       lien.click();
       lien.remove();
+      profilClient.t3_fichier_disponible_ms=Date.now();profilClient.traitement_client_ms=profilClient.t3_fichier_disponible_ms-(debutTransfert+profilClient.transfert_pdf_ms);profilClient.temps_total_utilisateur_ms=profilClient.t3_fichier_disponible_ms-debut;
       setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-      resultat.diagnostic=resultat.diagnostic||{};resultat.diagnostic.profil_client=profilClient;return resultat.diagnostic;
+      resultat.diagnostic=resultat.diagnostic||{};resultat.diagnostic.profil_client=profilClient;global.__dernierProfilCarnet=resultat.diagnostic;if(global.console&&console.table)console.table({client:profilClient,serveur:resultat.diagnostic.profil||{},fonction:resultat.diagnostic.profil_fonction||{},variantes:resultat.diagnostic.profil_variantes||{}});return resultat.diagnostic;
     } catch(erreur){
       if(!erreur.code && /memory|heap|allocation|mémoire/i.test(String(erreur && erreur.message || erreur))) erreur.code="MEMOIRE_INSUFFISANTE";
       console.error("Échec de génération du carnet :", erreur);

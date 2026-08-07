@@ -10,14 +10,19 @@ async function charger(){
   return window.CarnetPDFAdaptateur;
 }
 
-test("une journée non préparée reste compacte sans accroche ni photos automatiques",async()=>{
+test("une journée non terminée est exclue avant toute signature photo",async()=>{
   const adaptateur=await charger();
-  const modele=await adaptateur.adapter({carnet:{titre:"Voyage"},voyageId:"v",slug:"v",utilisateurId:"m",texteJournee:()=>"Récit existant de Vérone",
-    urlPhoto:async p=>`signed:${p}`,jours:[{uuid:"j",date:"2026-08-04",titre:"Vérone",accroche:"Introduction",rail1:"60 km",rail2:"45 min",lieux:[{nom:"Arena"}]}],
-    photosParJournee:{j:[{id:"p1",membre_id:"m",storage_path:"1.jpg",legende:"Une"},{id:"p2",membre_id:"m",storage_path:"2.jpg",legende:"Deux"},{id:"autre",membre_id:"x",storage_path:"x.jpg"}]}});
-  assert.equal(modele.version,2);assert.equal(modele.journees[0].recit,"");
-  assert.equal(modele.journees[0].introduction,"");assert.equal(modele.journees[0].compacte,true);
-  assert.deepEqual(Array.from(modele.journees[0].photos,p=>p.id),[]);assert.deepEqual(Array.from(modele.journees[0].tempsForts),[]);
+  let signatures=0;
+  await assert.rejects(()=>adaptateur.adapter({carnet:{titre:"Voyage"},voyageId:"v",slug:"v",utilisateurId:"m",texteJournee:()=>"Récit existant de Vérone",
+    urlPhoto:async p=>{signatures++;return`signed:${p}`;},jours:[{uuid:"j",date:"2026-08-04",titre:"Vérone",accroche:"Introduction",rail1:"60 km",rail2:"45 min",lieux:[{nom:"Arena"}]}],
+    preparations:[{journee_id:"j",carnet_terminee:false,carnet_photos_selectionnees:[{photo_id:"p1"}]}],
+    photosParJournee:{j:[{id:"p1",membre_id:"m",storage_path:"1.jpg",legende:"Une"},{id:"p2",membre_id:"m",storage_path:"2.jpg",legende:"Deux"},{id:"autre",membre_id:"x",storage_path:"x.jpg"}]}}));
+  assert.equal(signatures,0);
+});
+
+test("une journée terminée sans photo reste incluse et les métriques invalides sont masquées",async()=>{
+  const adaptateur=await charger();const modele=await adaptateur.adapter({carnet:{titre:"Voyage"},voyageId:"v",slug:"v",utilisateurId:"m",urlPhoto:async()=>"",photosParJournee:{},jours:[{uuid:"j",titre:"Salò",rail1:"10 min",rail2:"Gardone"}],preparations:[{journee_id:"j",carnet_terminee:true}]});
+  assert.equal(modele.journees.length,1);assert.equal(modele.journees[0].distance,"");assert.equal(modele.journees[0].duree,"");
 });
 
 test("une journée enregistrée utilise uniquement sa préparation",async()=>{

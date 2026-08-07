@@ -1,11 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { execFile } from "node:child_process";
-import { createWriteStream } from "node:fs";
 import { readFile, unlink, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { Readable } from "node:stream";
-import { pipeline } from "node:stream/promises";
-import { promisify } from "node:util";
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import sharp from "sharp";
@@ -13,76 +8,16 @@ import { decodePDFRawStream, PDFDocument, PDFName, PDFRawStream } from "pdf-lib"
 import { construireHtml } from "./template.mjs";
 
 const QUALITE = 82;
-const executerFichier=promisify(execFile);
-const CACHE_VARIANTES=new Map();
 // Netlify alloue un conteneur borné : un seul worker libvips et aucun cache
 // natif évitent les arrêts brutaux lors de plusieurs déclinaisons d'une photo.
 sharp.concurrency(1);
 sharp.cache(false);
-const DIMENSIONS = {
-  couverture: [1380, 1035], principale: [706, 529], secondaire: [690, 517], petite: [548, 411],
-  galerie0: [690, 511], galerie1: [522, 411], galerie2: [487, 404], galerie3: [325, 298], galerie4: [824, 256]
-};
-
-async function telechargerVersFichier(url) {
-  const reponse = await fetch(url);
-  if(!reponse.ok) throw Object.assign(new Error(`image inaccessible (${reponse.status})`), { code: "IMAGE_ILLISIBLE" });
-  if(!reponse.body) throw Object.assign(new Error("image vide"), { code: "IMAGE_ILLISIBLE" });
-  const chemin=`/tmp/carnet-image-${randomUUID()}`;
-  try {
-    await pipeline(Readable.fromWeb(reponse.body),createWriteStream(chemin));
-    return chemin;
-  } catch(erreur) {
-    await unlink(chemin).catch(()=>{});
-    throw erreur;
-  }
-}
-
-async function jpegPourCadre(source, [largeurCadre, hauteurCadre]) {
-  const sortie=`/tmp/carnet-jpeg-${randomUUID()}.jpg`;
-  // libvips conserve des allocations natives après chaque décodage sous
-  // Linux. Un processus court par variante rend toute sa mémoire au système
-  // avant de passer à la suivante et protège le conteneur Netlify.
-  const programme=`
-    import sharp from "sharp";
-    const [source,sortie,largeurCadre,hauteurCadre,qualite]=process.argv.slice(1);
-    sharp.concurrency(1); sharp.cache(false);
-    const image=sharp(source,{failOn:"error"}).rotate();
-    const meta=await image.metadata();
-    if(!meta.width||!meta.height) throw new Error("dimensions d’image absentes");
-    const echelle=Math.min(1,Math.max(Number(largeurCadre)/meta.width,Number(hauteurCadre)/meta.height));
-    await image.resize({width:Math.max(1,Math.round(meta.width*echelle)),height:Math.max(1,Math.round(meta.height*echelle)),fit:"fill",withoutEnlargement:true})
-      .jpeg({quality:Number(qualite),chromaSubsampling:"4:2:0",progressive:false}).toFile(sortie);
-  `;
-  try {
-    await executerFichier(process.execPath,["--input-type=module","-e",programme,source,sortie,String(largeurCadre),String(hauteurCadre),String(QUALITE)],{timeout:120000});
-    return await readFile(sortie);
-  } catch(erreur) {
-    throw Object.assign(new Error(erreur?.stderr || erreur?.message || "image illisible"),{code:"IMAGE_ILLISIBLE"});
-  } finally { await unlink(sortie).catch(()=>{}); }
-}
-
-async function enConcurrence(elements,limite,traiter){const resultats=new Array(elements.length);let suivant=0;async function worker(){while(suivant<elements.length){const i=suivant++;resultats[i]=await traiter(elements[i],i);}}await Promise.all(Array.from({length:Math.min(limite,elements.length)},worker));return resultats;}
-
 async function preparerPhotos(modele, signalerEtape, mesures) {
-  let numeroVariante=0;
-  const sources=new Map(),temporaires=[];
-  async function sourcePour(photo){if(!sources.has(photo.id)){sources.set(photo.id,(async()=>{const debut=performance.now();const f=await telechargerVersFichier(photo.url);mesures.telechargement_photos_ms+=performance.now()-debut;temporaires.push(f);return f;})());}return sources.get(photo.id);}
-  async function variante(photo, role) {
-    await signalerEtape(`optimisation_image:${++numeroVariante}`);
-    const cle=`${photo.id}:${photo.version||photo.storagePath}:${role}`;
-    if(CACHE_VARIANTES.has(cle)){mesures.cache_images_hits++;return {...photo,url:undefined,storagePath:undefined,dataUrl:CACHE_VARIANTES.get(cle)};}
-    const source=await sourcePour(photo),debut=performance.now();
-    const jpeg=await jpegPourCadre(source,DIMENSIONS[role]);mesures.optimisation_images_ms+=performance.now()-debut;
-    const resultat={...photo,url:undefined,storagePath:undefined,dataUrl:`data:image/jpeg;base64,${jpeg.toString("base64")}`};
-    CACHE_VARIANTES.set(cle,resultat.dataUrl);return resultat;
-  }
   const photoCouverture=modele.journees.flatMap((journee)=>journee.photos).find(Boolean);
-  const travaux=[];
-  for(const journee of modele.journees){const originales=journee.photos||[],principales=originales.length<=4?originales:originales.slice(0,3),galerie=originales.length>=5?originales.slice(3):[];journee.photos=new Array(principales.length);journee.galeries=galerie.length?[new Array(galerie.length)]:[];principales.forEach((p,i)=>travaux.push({p,role:i===0?"principale":i===1?"secondaire":"petite",poser:v=>journee.photos[i]=v}));galerie.forEach((p,i)=>travaux.push({p,role:`galerie${Math.min(i,4)}`,poser:v=>journee.galeries[0][i]=v}));}
-  await enConcurrence(travaux,2,async t=>t.poser(await variante(t.p,t.role)));
-  if(photoCouverture)modele.couverturePhoto=await variante(photoCouverture,"couverture");
-  await Promise.all(temporaires.map(f=>unlink(f).catch(()=>{})));
+  for(const journee of modele.journees){const originales=journee.photos||[],principales=originales.length<=4?originales:originales.slice(0,3),galerie=originales.length>=5?originales.slice(3):[];journee.photos=principales;journee.galeries=galerie.length?[galerie]:[];}
+  modele.couverturePhoto=photoCouverture;
+  mesures.cache_images_hits=modele.statistiques.photos;
+  await signalerEtape("variantes_pretes");
 }
 
 function extraireBase64(texte) {

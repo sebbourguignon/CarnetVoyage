@@ -8,7 +8,7 @@ import { exporterCarnet, supprimerTemporaire } from "../../netlify/functions/car
 async function image(id,portrait=false){
   const width=portrait?900:1400, height=portrait?1400:900;
   const buffer=await sharp({create:{width,height,channels:3,background:{r:80+id*10,g:130,b:170}}}).jpeg({quality:95}).toBuffer();
-  return {id:String(id),url:`data:image/jpeg;base64,${buffer.toString("base64")}`,legende:`Légende ${id}`,storagePath:`${id}.jpg`};
+  return {id:String(id),dataUrl:`data:image/jpeg;base64,${buffer.toString("base64")}`,legende:`Légende ${id}`,storagePath:`${id}.jpg`,width,height,ratio:width/height,orientation:portrait?"portrait":"landscape"};
 }
 
 test("export Chromium léger avec portraits, paysages, journée sans photo et régénération",{skip:process.platform!=="linux"&&!process.env.PUPPETEER_EXECUTABLE_PATH,timeout:120000},async(t)=>{

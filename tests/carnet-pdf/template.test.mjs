@@ -22,10 +22,16 @@ test("une galerie unique accepte sept photographies rectangulaires", () => {
   assert.doesNotMatch(html,/points de vue|border-radius/);
 });
 
-test("les étapes compactes sont regroupées et les trajets utilisent un SVG",()=>{
-  const jours=Array.from({length:8},(_,i)=>({id:String(i),date:"2026-08-01",lieu:"Route",titre:"Lyon → Turin",recit:"",tempsForts:[],distance:"100 km",duree:"2 h",photos:[],compacte:true}));
+test("les journées fournies sont rendues sans page de roadbook et les trajets utilisent un SVG",()=>{
+  const jours=Array.from({length:2},(_,i)=>({id:String(i),date:"2026-08-01",lieu:"Route",titre:"Lyon → Turin",recit:"",tempsForts:[],distance:"100 km",duree:"2 h",photos:[]}));
   const html=construireHtml({voyage:{titre:"Voyage"},statistiques:{journeesIllustrees:0,photos:0},journees:jours});
-  assert.equal((html.match(/class="sheet compact-page"/g)||[]).length,2);assert.match(html,/route-arrow/);assert.doesNotMatch(html,/Lyon → Turin/);
+  assert.equal((html.match(/class="sheet compact-page"/g)||[]).length,0);assert.equal((html.match(/class="sheet story-page"/g)||[]).length,2);assert.match(html,/route-arrow/);assert.doesNotMatch(html,/Lyon → Turin|Carnet de route|étape par étape/);
+});
+
+test("les layouts suivent les orientations, conservent les ratios et ne croppent pas",()=>{
+  const p=(i,r,l="")=>({dataUrl:`data:image/jpeg;base64,${i}`,ratio:r,orientation:r>1.12?"landscape":r<.88?"portrait":"square",legende:l});
+  const html=construireHtml({voyage:{titre:"Voyage"},statistiques:{journeesIllustrees:1,photos:10},journees:[{id:"v",titre:"Vérone",recit:"Récit",tempsForts:[],photos:[p(1,1.6),p(2,1.5),p(3,1.7),p(4,1.4,"Deux lignes de légende")],galeries:[]},{id:"m",titre:"Modène",recit:"Récit",tempsForts:[],photos:[p(5,1.5),p(6,.7),p(7,.7)],galeries:[[p(8,1.5),p(9,.7),p(10,1),p(11,1.4),p(12,.65),p(13,1.6),p(14,.7)]]}]});
+  assert.match(html,/photos-4-landscape/);assert.match(html,/photos-3-mixed/);assert.match(html,/gallery-7-mixed/);assert.match(html,/object-fit:contain/);assert.doesNotMatch(html,/object-fit:cover[^}]*main-photos/);
 });
 
 test("un récit long crée des pages de continuation sans perdre le texte",()=>{
