@@ -10,7 +10,7 @@
 .carnet-preparation-stat span{display:block;margin-top:4px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--pietra)}
 .carnet-preparation-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0 14px;border-bottom:2px solid var(--ink)}
 .carnet-preparation-nav p{margin:0;font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;color:var(--pietra)}
-.carnet-preparation-jours{display:flex;flex-direction:column}.carnet-preparation-jour{border-bottom:1px solid var(--rule)}
+.carnet-preparation-jours{display:flex;flex-direction:column}.carnet-preparation-jour{border-bottom:0}
 .carnet-preparation-jour-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:54px;padding:10px 0;border:0;background:none;text-align:left;font-family:var(--font-body);font-size:.96rem;font-weight:600;color:var(--ink);cursor:pointer}
 .carnet-preparation-jour-head:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 .carnet-preparation-jour-head>span:last-child{flex:none;font-family:var(--font-mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--pietra)}
