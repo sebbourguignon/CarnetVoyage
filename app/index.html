@@ -2970,44 +2970,6 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     return { joursAvecPhotos: joursAvecPhotos, total: total, partageesTotal: partageesTotal, mesPhotos: mesPhotos };
   }
 
-  function construireBoutonGeneration(statut){
-    var libelleInitial = "Générer le carnet";
-    var bouton = el("button", "carnet-bouton-generer", libelleInitial);
-    bouton.type = "button";
-    bouton.disabled = !JOURS.length;
-    bouton.addEventListener("click", function(){
-      if(bouton.disabled || CarnetPDFClient.estEnCours()) return;
-      bouton.disabled = true;
-      bouton.textContent = "Génération en cours…";
-      statut.textContent = "Préparation des pages et des photographies…";
-      statut.classList.remove("erreur");
-      CarnetPDFClient.generer({
-        supabase: supabaseClient,
-        supabaseUrl: supabaseUrl,
-        voyageId: voyageId,
-        construireModele: function(){
-          return CarnetPDFAdaptateur.adapter({
-            carnet: CARNET, jours: JOURS, photosParJournee: PHOTOS_PAR_JOURNEE,
-            utilisateurId: utilisateurId, texteJournee: texteCarnetJournee,
-            urlPhoto: urlSigneePhotoPourExport, voyageId: voyageId, slug: slugVoyage
-          });
-        }
-      }).then(function(diagnostic){
-        statut.textContent = diagnostic
-          ? "Carnet téléchargé · " + diagnostic.pages + " pages · " + diagnostic.poids_mo + " Mo." +
-            (diagnostic.budget_depasse ? " Attention : le budget de " + diagnostic.budget_mo + " Mo est dépassé." : "")
-          : "Carnet téléchargé.";
-      }).catch(function(erreur){
-        statut.textContent = erreur.messageUtilisateur;
-        statut.classList.add("erreur");
-      }).then(function(){
-        bouton.textContent = libelleInitial;
-        bouton.disabled = !JOURS.length;
-      });
-    });
-    return bouton;
-  }
-
   function rendrePanelCarnet(){
     var panel = document.getElementById("panel-carnet");
     if(!CONTROLEUR_PREPARATION_CARNET){
@@ -7008,9 +6970,7 @@ function appliquerTheme(theme){
      carnet resté silencieusement périmé pendant tout le voyage. */
   if("serviceWorker" in navigator){
     window.addEventListener("load", function(){
-      navigator.serviceWorker.register("sw.js").catch(function(err){
-        console.error("Échec d'enregistrement du service worker :", err);
-      });
+      navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(registration){return registration.update();}).catch(function(err){console.error("Échec d'enregistrement du service worker :", err);});
     });
     var refreshing = false;
     navigator.serviceWorker.addEventListener("controllerchange", function(){

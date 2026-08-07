@@ -93,6 +93,7 @@
           else resultat=await options.supabase.from("carnet_journees").upsert({voyage_id:options.voyageId,journee_id:j.uuid,membre_id:options.utilisateurId,preparation_active:true,carnet_terminee:true,carnet_story_validated:false},{onConflict:"journee_id,membre_id"}).select("id,carnet_terminee").single();
           if(resultat.error)throw resultat.error;
           e.preparation.id=resultat.data.id;e.preparation.carnetTerminee=true;e.preparation.carnetStoryValidated=champs.carnet_story_validated;e.statut="Modifications enregistrées";e.erreur=null;actualiserStatut(j,e);
+          if(options.preparerVariantes&&e.photos.length){e.preparationPhotos="en_cours";options.preparerVariantes(e.photos.map(function(x){return x.photoId;})).then(function(){e.preparationPhotos="lancee";rendre(options.panel);}).catch(function(err){e.preparationPhotos="erreur";console.warn("Préparation différée des photos :",err);});}
           rendre(options.panel);var idx=options.jours.indexOf(j);if(options.jours[idx+1]){jourOuvert=options.jours[idx+1].uuid;rendre(options.panel);}
         }catch(err){
           console.error("Finalisation carnet",err);e.preparation.carnetTerminee=false;e.preparation.carnetStoryValidated=false;e.erreur=err;e.statut="Erreur d’enregistrement — Réessayer";e.reessayer=function(){return terminer(j,e);};actualiserStatut(j,e);

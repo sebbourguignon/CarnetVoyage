@@ -5,7 +5,7 @@ import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import sharp from "sharp";
 import { decodePDFRawStream, PDFDocument, PDFName, PDFRawStream } from "pdf-lib";
-import { construireHtml } from "./template.mjs";
+import { construireHtml, verifierJourneesTerminees } from "./template.mjs";
 
 const QUALITE = 82;
 // Netlify alloue un conteneur borné : un seul worker libvips et aucun cache
@@ -26,8 +26,9 @@ function extraireBase64(texte) {
   return resultat[1];
 }
 
-async function recomprimerImagesLossless(octets) {
+async function recomprimerImagesLossless(octets,generateur={}) {
   const document = await PDFDocument.load(octets);
+  document.setTitle("Carnet de voyage");document.setCreator(`Carnet PDF ${generateur.functionVersion||"locale"}`);document.setSubject(`Build ${generateur.buildSha||"local"}`);document.setKeywords(["carnet-voyage",generateur.functionVersion||"local",generateur.buildSha||"local"]);
   let converties=0;
   for(const [reference, objet] of document.context.enumerateIndirectObjects()) {
     if(!(objet instanceof PDFRawStream) || objet.dict.get(PDFName.of("Subtype")) !== PDFName.of("Image")) continue;
@@ -62,7 +63,7 @@ export async function exporterCarnet(modele, signalerEtape = async () => {}) {
       bodoni:extraireBase64(await readFile(resolve(racineFonction,"supabase/functions/generer-carnet/BodoniModa_Variable.ts"),"utf8")),
       plex:extraireBase64(await readFile(resolve(racineFonction,"supabase/functions/generer-carnet/IBMPlexSans_Variable.ts"),"utf8"))
     };});
-    const html=await phase("construction_html",async()=>construireHtml(modele));
+    const html=await phase("construction_html",async()=>{verifierJourneesTerminees(modele);return construireHtml(modele);});
     await signalerEtape("demarrage_chromium");
     const executablePath=process.env.PUPPETEER_EXECUTABLE_PATH || await chromium.executablePath();
     navigateur=await phase("lancement_chromium",()=>puppeteer.launch({args:chromium.args,executablePath,headless:true}));
@@ -76,7 +77,7 @@ export async function exporterCarnet(modele, signalerEtape = async () => {}) {
     await phase("creation_pdf",()=>page.pdf({path:temporaire,format:"A4",printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false,tagged:true,timeout:120000}));
     await signalerEtape("optimisation_pdf");
     const brut=await readFile(temporaire);
-    const optimise=await phase("optimisation_pdf",()=>recomprimerImagesLossless(brut));
+    const optimise=await phase("optimisation_pdf",()=>recomprimerImagesLossless(brut,modele.generateur));
     await writeFile(temporaire,optimise.octets);mesures.temps_total_ms=Math.round(performance.now()-departTotal);mesures.telechargement_photos_ms=Math.round(mesures.telechargement_photos_ms);mesures.optimisation_images_ms=Math.round(mesures.optimisation_images_ms);
     const poids=optimise.octets.length;
     const budgetMo=Number(process.env.PDF_BUDGET_MB || Math.max(1.5,modele.statistiques.photos*0.2));

@@ -14,8 +14,8 @@ async function image(id,portrait=false){
 test("export Chromium léger avec portraits, paysages, journée sans photo et régénération",{skip:process.platform!=="linux"&&!process.env.PUPPETEER_EXECUTABLE_PATH,timeout:120000},async(t)=>{
   const photos=await Promise.all([image(1),image(2,true),image(3),image(4,true)]);
   const modele=()=>({version:1,voyage:{titre:"Été d’Italie",dateDebut:"2026-08-01",dateFin:"2026-08-02"},statistiques:{journeesIllustrees:1,photos:4},journees:[
-    {id:"a",date:"2026-08-01",lieu:"Vérone",titre:"Vérone",introduction:"Une journée d’été.",recit:"Un récit avec des accents et l’apostrophe d’aujourd’hui.",tempsForts:["Arènes","Piazza"],distance:"60 km",duree:"45 min",photos:structuredClone(photos)},
-    {id:"b",date:"2026-08-02",lieu:"Salò",titre:"Salò",introduction:"",recit:"Une journée sans photographie.",tempsForts:[],distance:"",duree:"",photos:[]}
+    {id:"a",carnetTerminee:true,date:"2026-08-01",lieu:"Vérone",titre:"Vérone",introduction:"Une journée d’été.",recit:"Un récit avec des accents et l’apostrophe d’aujourd’hui.",tempsForts:["Arènes","Piazza"],distance:"60 km",duree:"45 min",photos:structuredClone(photos)},
+    {id:"b",carnetTerminee:true,date:"2026-08-02",lieu:"Salò",titre:"Salò",introduction:"",recit:"Une journée sans photographie.",tempsForts:[],distance:"",duree:"",photos:[]}
   ]});
   for(let passage=0;passage<2;passage++){
     const resultat=await exporterCarnet(modele());

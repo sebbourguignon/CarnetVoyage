@@ -1,6 +1,7 @@
 (function(global){
   "use strict";
   var generationEnCours = false;
+  var VERSION_CLIENT = "carnet-client-v4";
 
   function attendre(ms){ return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
 
@@ -28,7 +29,10 @@
       var debut=options.t0Utilisateur||Date.now(),profilClient={t0_clic_ms:debut};
       if(options.onProgress)options.onProgress("Chargement des données…",0);
       var debutModele=Date.now();
-      var modele = await options.construireModele();
+      var verificationVersion=fetch("/.netlify/functions/carnet-version",{cache:"no-store"}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+      var modele = await options.construireModele(),versionDistante=await verificationVersion;
+      modele.clientBuild=VERSION_CLIENT;
+      profilClient.build_verifie=versionDistante;
       profilClient.chargement_donnees_ms=Date.now()-debutModele;
       var insertion = await options.supabase.from("carnet_travaux").insert({
         voyage_id: options.voyageId, modele: modele
@@ -58,7 +62,7 @@
           .select("statut, chemin_pdf, erreur, diagnostic, maj_le").eq("id", travail.id).single();
         if(lecture.error) throw lecture.error;
         resultat = lecture.data;
-        if(options.onProgress){var etape=resultat.diagnostic&&resultat.diagnostic.etape||"préparation";options.onProgress(/optimisation_image|optimisation_images/.test(etape)?"Préparation des photos et mise en page…":"Génération du carnet…",Math.round((Date.now()-debut)/1000));}
+        if(options.onProgress){var etape=resultat.diagnostic&&resultat.diagnostic.etape||"préparation",m=etape.match(/variante_persistante:(\d+)\/(\d+)/);options.onProgress(m?"Préparation des "+(Number(m[2])-Number(m[1])+1)+" dernières photos…":/variantes_pretes|demarrage_chromium|rendu_html/.test(etape)?"Mise en page du carnet…":"Génération du carnet…",Math.round((Date.now()-debut)/1000));}
         if(resultat.statut === "termine" || resultat.statut === "erreur") break;
         if(resultat.statut === "en_cours" && resultat.maj_le && Date.now() - new Date(resultat.maj_le).getTime() > 180000){
           var interruption = new Error("la fonction de génération s’est interrompue");
@@ -87,7 +91,7 @@
       lien.remove();
       profilClient.t3_fichier_disponible_ms=Date.now();profilClient.traitement_client_ms=profilClient.t3_fichier_disponible_ms-(debutTransfert+profilClient.transfert_pdf_ms);profilClient.temps_total_utilisateur_ms=profilClient.t3_fichier_disponible_ms-debut;
       setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-      resultat.diagnostic=resultat.diagnostic||{};resultat.diagnostic.profil_client=profilClient;global.__dernierProfilCarnet=resultat.diagnostic;if(global.console&&console.table)console.table({client:profilClient,serveur:resultat.diagnostic.profil||{},fonction:resultat.diagnostic.profil_fonction||{},variantes:resultat.diagnostic.profil_variantes||{}});return resultat.diagnostic;
+      resultat.diagnostic=resultat.diagnostic||{};resultat.diagnostic.profil_client=profilClient;resultat.diagnostic.clientBundleVersion=VERSION_CLIENT;global.__dernierProfilCarnet=resultat.diagnostic;if(global.console&&console.table)console.table({version:{client:VERSION_CLIENT,fonction:resultat.diagnostic.functionVersion,sha:resultat.diagnostic.buildSha},filtrage:{includedDayIds:resultat.diagnostic.includedDayIds,excludedDayIds:resultat.diagnostic.excludedDayIds},client:profilClient,serveur:resultat.diagnostic.profil||{},fonction:resultat.diagnostic.profil_fonction||{},variantes:resultat.diagnostic.profil_variantes||{}});return resultat.diagnostic;
     } catch(erreur){
       if(!erreur.code && /memory|heap|allocation|mémoire/i.test(String(erreur && erreur.message || erreur))) erreur.code="MEMOIRE_INSUFFISANTE";
       console.error("Échec de génération du carnet :", erreur);

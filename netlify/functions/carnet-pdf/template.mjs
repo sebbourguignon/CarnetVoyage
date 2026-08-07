@@ -1,4 +1,5 @@
 import {cachetValide as stamp,carteItalieValidee as carte} from "./assets-valides.mjs";
+export function verifierJourneesTerminees(modele){const brouillons=(modele.journees||[]).filter(j=>j.carnetTerminee!==true);if(brouillons.length)throw Object.assign(new Error(`Journée brouillon transmise au template: ${brouillons.map(j=>j.id).join(",")}`),{code:"BROUILLON_DANS_TEMPLATE"});}
 const echapper=(v="")=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
 const pluriel=(n,a,b)=>`${n} ${n>1?b:a}`;
 const paragraphs=v=>String(v||"").split(/\n\s*\n/).filter(Boolean).map(p=>`<p>${echapper(p)}</p>`).join("");
@@ -29,9 +30,11 @@ const PAGINATION=`.sheet{break-before:page;break-inside:avoid;page-break-before:
 .cover-hero img,.main-photos img,.gallery-grid img{object-fit:contain;background:transparent}
 .page-heading h2,.gallery-heading h2{max-height:none;overflow:visible}
 .main-photos figure,.gallery-grid figure{align-items:stretch}.main-photos figure img,.gallery-grid figure img{min-height:0}
+.main-photos figcaption,.gallery-grid figcaption{width:100%;text-align:center;padding-top:1.2mm;line-height:1.25}
 .photos-2-landscape{grid-template:1fr 1fr/1fr}.photos-2-portrait{grid-template:1fr/1fr 1fr}.photos-2-mixed{grid-template:1fr/1.25fr .75fr}
-.photos-3-landscape{grid-template:2fr 1fr/1fr 1fr}.photos-3-landscape figure:first-child{grid-column:1/3}.photos-3-portrait{grid-template:1fr/1fr 1fr 1fr}.photos-3-portrait figure:first-child{grid-column:auto}.photos-3-mixed{grid-template:1fr 1fr/1.25fr .75fr}.photos-3-mixed figure:first-child{grid-column:auto;grid-row:1/3}
-.photos-4-landscape{grid-template:repeat(4,1fr)/1fr}.photos-4-portrait{grid-template:1fr 1fr/1fr 1fr}.photos-4-mixed{grid-template:1fr 1fr/1.2fr .8fr}
+.photos-3-landscape{align-self:start;align-content:start;grid-template:auto auto/1fr 1fr;gap:5mm}.photos-3-landscape figure{grid-template-rows:auto auto}.photos-3-landscape img{height:auto;aspect-ratio:auto}.photos-3-landscape figure:first-child{grid-column:1/3}.photos-3-portrait{grid-template:1fr/1fr 1fr 1fr}.photos-3-portrait figure:first-child{grid-column:auto}.photos-3-mixed{grid-template:1fr 1fr/1.25fr .75fr}.photos-3-mixed figure:first-child{grid-column:auto;grid-row:1/3}
+.photos-4-landscape{grid-template:1fr 1fr/1fr 1fr}.photos-4-portrait{grid-template:1fr 1fr/1fr 1fr}.photos-4-mixed{grid-template:1fr 1fr/1.2fr .8fr}
+.story-content.with-photos:has(.photos-4-landscape){display:flex;flex-direction:column;gap:5mm}.story-content.with-photos:has(.photos-4-landscape) .story-copy{columns:2;column-gap:8mm;max-height:54mm;overflow:hidden}.story-content.with-photos:has(.photos-4-landscape) .photos-4-landscape{flex:1;min-height:0}
 .gallery-grid{height:202mm;grid-auto-flow:row}.gallery-2-landscape,.gallery-3-landscape,.gallery-4-landscape{grid-template-columns:1fr}.gallery-2-portrait,.gallery-3-portrait{grid-template-columns:repeat(var(--gallery-cols,2),1fr)}
 .gallery-5,.gallery-6,.gallery-7{grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr}.gallery-5-landscape,.gallery-6-landscape{grid-template-columns:1fr 1fr}.gallery-7-landscape{grid-template-columns:repeat(6,1fr);grid-template-rows:1.35fr .9fr 1.35fr}.gallery-7-landscape figure{grid-column:span 2;grid-row:auto}.gallery-7-landscape figure:nth-child(1),.gallery-7-landscape figure:nth-child(2),.gallery-7-landscape figure:nth-child(6),.gallery-7-landscape figure:nth-child(7){grid-column:span 3}.gallery-7-mixed figure:first-child{grid-column:span 2}.gallery-7-mixed figure:nth-child(2){grid-row:span 2}
 .closing-stamp-zone{position:absolute;left:50%;top:20mm;transform:translateX(-50%);width:92mm;height:92mm}.closing-stamp-zone .stamp{position:static;width:100%;height:100%}.closing-copy{top:137mm;left:31mm;width:148mm;text-align:center}.closing-copy .accent-rule{margin-left:auto;margin-right:auto}.closing-copy h2{font-size:15mm}.closing-copy p{margin:5mm 0}.end-map{display:none}`;

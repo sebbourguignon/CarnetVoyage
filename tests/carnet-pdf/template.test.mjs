@@ -34,6 +34,8 @@ test("les layouts suivent les orientations, conservent les ratios et ne croppent
   assert.match(html,/photos-4-landscape/);assert.match(html,/photos-3-mixed/);assert.match(html,/gallery-7-mixed/);assert.match(html,/object-fit:contain/);assert.doesNotMatch(html,/object-fit:cover[^}]*main-photos/);
 });
 
+test("le scénario Vérone prête + Modène prête produit exactement cinq pages",()=>{const p=(i)=>({dataUrl:`data:image/jpeg;base64,${i}`,ratio:1.33,orientation:"landscape",legende:""}),verone=Array.from({length:4},(_,i)=>p(i)),modene=Array.from({length:10},(_,i)=>p(i+4));const html=construireHtml({voyage:{titre:"Voyage"},statistiques:{journeesIllustrees:2,photos:14},journees:[{id:"verone",titre:"Vérone",recit:"Récit",tempsForts:[],photos:verone,galeries:[]},{id:"modene",titre:"Modène",recit:"Récit",tempsForts:["Ferrari"],photos:modene.slice(0,3),galeries:[modene.slice(3)]}]});assert.equal((html.match(/class="sheet/g)||[]).length,5);assert.match(html,/photos-4-landscape/);assert.match(html,/text-align:center/);});
+
 test("un récit long crée des pages de continuation sans perdre le texte",()=>{
   const recit=Array.from({length:900},(_,i)=>`mot${i}`).join(" ");
   const html=construireHtml({voyage:{titre:"Long voyage"},statistiques:{journeesIllustrees:0,photos:0},journees:[{id:"1",date:"",lieu:"Paris",titre:"Paris",introduction:"Intro",recit,tempsForts:[],distance:"",duree:"",photos:[],galeries:[]}]});
