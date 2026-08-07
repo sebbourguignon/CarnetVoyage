@@ -145,7 +145,10 @@ export async function exporterCarnet(modele, signalerEtape = async () => {}) {
     navigateur=await puppeteer.launch({args:chromium.args,executablePath,headless:true});
     await signalerEtape("rendu_html");
     const page=await navigateur.newPage();
-    await page.setContent(construireHtml(modele),{waitUntil:"networkidle0",timeout:120000});
+    // Le document est autonome (polices et photographies embarquées). Attendre
+    // `networkidle0` garde inutilement Chromium dans sa phase la plus coûteuse
+    // et pouvait faire interrompre le worker Netlify avant la création du PDF.
+    await page.setContent(construireHtml(modele),{waitUntil:"domcontentloaded",timeout:120000});
     await page.emulateMediaType("print");
     await page.evaluate(()=>document.fonts.ready);
     await signalerEtape("creation_pdf");
