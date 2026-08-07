@@ -25,6 +25,7 @@
       {uuid:"jour-2",id:"d-2",dow:"Mer",num:"5",mois:"Août",titre:"Journée au bord du lac",rail1:"Sur place",rail2:"",regarder:[],lieux:[]},
       {uuid:"jour-3",id:"d-3",dow:"Jeu",num:"6",mois:"Août",titre:"Route vers les Dolomites",rail1:"185 km",rail2:"3 h",regarder:[],lieux:[]}
     ];
+    for(var numero=4;numero<=24;numero++)jours.push({uuid:"jour-"+numero,id:"d-"+numero,dow:"Ven",num:String(numero+3),mois:"Août",titre:"Étape du voyage "+numero,rail1:"",rail2:"",regarder:[],lieux:[]});
     var preparations=[
       {id:"prep-1",journee_id:"jour-1",maj_le:"2026-08-06T18:00:00Z",carnet_story:"Une ancienne proposition à relire avant de devenir notre souvenir.",carnet_story_source:"legacy",carnet_story_validated:false,carnet_terminee:false,afficher_programme_prevu:false,carnet_faits_confirmes:[],carnet_photos_selectionnees:[{photo_id:"photo-1",ordre:0,principale:true,focal_x:.5,focal_y:.5,legende_carnet:"Premier panorama"}]},
       {id:"prep-2",journee_id:"jour-2",maj_le:"2026-08-05T18:00:00Z",carnet_story:"Une journée paisible au bord du lac.",carnet_story_source:"manual",carnet_story_validated:true,carnet_terminee:true,afficher_programme_prevu:false,carnet_faits_confirmes:[],carnet_photos_selectionnees:[]}

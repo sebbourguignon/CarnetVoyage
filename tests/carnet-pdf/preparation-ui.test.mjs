@@ -16,14 +16,14 @@ test("dashboard et parcours dédié de préparation avec 77 photos",{skip:proces
     await page.goto(pathToFileURL(resolve("tests/fixtures/carnet-preparation.html")).href,{waitUntil:"networkidle0"});
 
     assert.equal(await page.$$(".carnet-preparation-intro").then(x=>x.length),0);
-    assert.match(await page.$eval(".carnet-dashboard-progression",n=>n.textContent),/1 prête · 1 en cours · 1 à préparer/);
-    assert.equal(await page.$$eval(".carnet-dashboard-jour",ns=>ns.length),3);
+    assert.match(await page.$eval(".carnet-dashboard-progression",n=>n.textContent),/1 prête · 1 en cours · 22 à préparer/);
+    assert.equal(await page.$$eval(".carnet-dashboard-jour",ns=>ns.length),24);
     assert.match(await page.$eval(".carnet-dashboard-continuer",n=>n.textContent),/Modène & la Motor Valley/);
     assert.match(await page.$eval(".carnet-dashboard-generation .carnet-bouton-generer",n=>n.textContent),/1 journée/);
     await capture(page,"dashboard-desktop.png");
 
     await page.click('.carnet-dashboard-filtres button:nth-child(1)');
-    assert.equal(await page.$$eval(".carnet-dashboard-jour",ns=>ns.length),1);
+    assert.equal(await page.$$eval(".carnet-dashboard-jour",ns=>ns.length),22);
     await page.click('.carnet-dashboard-filtres button:nth-child(4)');
     await page.click(".carnet-dashboard-continuer button");
     await page.waitForSelector(".carnet-vue-journee");
