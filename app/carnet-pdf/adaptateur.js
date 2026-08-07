@@ -42,8 +42,9 @@
         .sort(function(a,b){return (a.ordre||0)-(b.ordre||0);}).slice(0,5).map(function(f){return texte(f.libelle);}).filter(Boolean)
         : [];
       var enrichie=!!(recit || photos.length || (activer && (preparation.carnet_faits_confirmes || []).length));
+      var afficherProgramme=!!(preparation&&preparation.afficher_programme_prevu);
       return {id:jour.uuid,date:jour.date || "",lieu:texte(jour.titre),titre:texte(jour.titre),introduction:"",
-        recit:recit,tempsForts:moments,distance:texte(jour.rail1),duree:texte(jour.rail2),temperature:preparation&&preparation.temperature_reelle!=null?texte(preparation.temperature_reelle)+" °C":"",photos:photos,preparationActive:activer,compacte:!enrichie,afficherProgrammePrevu:!!(preparation&&preparation.afficher_programme_prevu)};
+        recit:recit,tempsForts:moments,distance:texte(jour.rail1),duree:texte(jour.rail2),temperature:preparation&&preparation.temperature_reelle!=null?texte(preparation.temperature_reelle)+" °C":"",photos:photos,preparationActive:activer,compacte:!enrichie,afficherProgrammePrevu:afficherProgramme,programmePrevu:afficherProgramme?(jour.lieux||[]).map(function(l){return texte(l.nom);}).filter(Boolean):[]};
     }).filter(Boolean);
     if(!journees.length)return Promise.reject({code:"AUCUN_CONTENU",message:"Aucun contenu exploitable pour générer le carnet."});
     return Promise.all(photosSources.map(function(photo){return options.urlPhoto(photo.storagePath).then(function(url){
