@@ -31,6 +31,9 @@ test("dashboard et parcours dédié de préparation avec 77 photos",{skip:proces
     assert.equal(await page.$$eval(".carnet-dashboard-jour",ns=>ns.length),0);
     assert.match(await page.$eval(".carnet-journee-titre",n=>n.textContent),/Modène & la Motor Valley/);
     assert.deepEqual(await page.$$eval(".carnet-etape-numero",ns=>ns.map(n=>n.textContent)),["01 —","02 —","03 —","04 —","05 —"]);
+    const sectionHeadings=await page.$$eval(".section-heading",ns=>ns.map(n=>({display:getComputedStyle(n).display,align:getComputedStyle(n).alignItems,numero:n.querySelector(".carnet-etape-numero")?.textContent,titre:n.querySelector("h4")?.textContent})));
+    assert.equal(sectionHeadings.length,5);
+    assert.ok(sectionHeadings.every(x=>x.display==="flex"&&x.align==="baseline"),JSON.stringify(sectionHeadings));
     assert.equal(await page.$$(".carnet-options-journee").then(x=>x.length),0);
     assert.equal(await page.$eval(".carnet-preparation-bloc:nth-of-type(4) h4",n=>n.textContent),"Notes & souvenirs");
     assert.match(await page.$eval(".carnet-photos-compteur",n=>n.textContent),/^77 photos dans la journée · 1 \/ 10/);
@@ -64,6 +67,7 @@ test("dashboard et parcours dédié de préparation avec 77 photos",{skip:proces
     await page.setViewport({width:390,height:844});
     const barre=await page.$eval(".carnet-action-bar",n=>{const r=n.getBoundingClientRect();return{left:r.left,right:r.right,bottom:r.bottom};});
     assert.ok(barre.left>=0&&barre.right<=390&&barre.bottom<=844);
+    assert.equal(await page.$eval(".carnet-action-bar",n=>getComputedStyle(n).borderBottomWidth),"0px");
     assert.equal(await page.$$eval(".carnet-action-bar button",ns=>ns.length),1);
     for(const selector of [".carnet-action-bar .carnet-action-primaire",".carnet-journee-navigation button"]){const tailles=await page.$$eval(selector,ns=>ns.map(n=>{const r=n.getBoundingClientRect();return{w:r.width,h:r.height};}));assert.ok(tailles.every(x=>x.h>=44));}
     await capture(page,"journee-mobile.png");
