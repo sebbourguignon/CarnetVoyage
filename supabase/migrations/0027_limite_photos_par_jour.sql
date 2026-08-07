@@ -1,4 +1,4 @@
--- Limite métier des photos uploadées par journée.
+-- Limite métier des photos uploadées par journée (DEV/PROD via CI).
 -- La vérification est faite en base afin de protéger aussi les insertions
 -- directes et les courses entre plusieurs appareils.
 create or replace function verifier_limite_photos_journee() returns trigger
