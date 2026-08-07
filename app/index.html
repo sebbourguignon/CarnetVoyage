@@ -1775,7 +1775,8 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
    colophon-ci vit dans le flux normal de .detail-inner, qui réserve déjà
    sa propre marge basse (tabbar + nav séquentielle, voir --tabbar-clear
    ci-dessus) — pas besoin de la redemander en double ici. */
-.colophon-detail{padding-bottom:8px;margin-top:22px;border-top:0}
+body:has(.detail.open) > .colophon{border-top:0}
+.colophon-detail{padding-bottom:8px;margin-top:22px;border-top:1px solid var(--rule)}
 .colophon-pt{margin:0 6px}
 .colophon-saut{display:none}
 @media(max-width:480px){
