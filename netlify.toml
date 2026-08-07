@@ -9,6 +9,7 @@
 # par nom d'hote (HOTE_PRODUCTION), rien a configurer ici pour ca.
 
 [build]
+  command = "node scripts/netlify-build.mjs"
   publish = "app"
 
 [functions]

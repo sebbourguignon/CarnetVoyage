@@ -1775,7 +1775,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
    colophon-ci vit dans le flux normal de .detail-inner, qui réserve déjà
    sa propre marge basse (tabbar + nav séquentielle, voir --tabbar-clear
    ci-dessus) — pas besoin de la redemander en double ici. */
-.colophon-detail{padding-bottom:8px;border-top:1px solid var(--rule);margin-top:22px}
+.colophon-detail{padding-bottom:8px;margin-top:22px}
 .colophon-pt{margin:0 6px}
 .colophon-saut{display:none}
 @media(max-width:480px){
@@ -1927,7 +1927,7 @@ body.est-admin .tabbar a[data-tab="admin"]{display:flex}
   /* Diagnostic de version visible depuis la console du navigateur. La
      valeur de référence est le commit qui contient la correction UI ; les
      builds suivants restent explicitement des descendants de cette base. */
-  window.__carnetBuild = {sha:"af943be",branch:"feat/carnet-pdf-html-pagedjs",buildTime:"2026-08-07T00:00:00Z"};
+  window.__carnetBuild = {sha:"__CARNET_COMMIT_REF__",branch:"__CARNET_BRANCH__",buildTime:"__CARNET_BUILD_TIME__"};
 /* ==========================================================================
    MOTEUR DE RENDU — généricisé depuis Italie2026/index.html.
    Le contenu (JOURS/BADGES/CARNET) ne vient plus d'un fichier donnees.js
