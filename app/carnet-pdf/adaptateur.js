@@ -24,6 +24,12 @@
     var v=texte(value);
     return /\b\d+(?:[.,]\d+)?\s*(?:h(?:eures?)?|min(?:utes?)?)\b/i.test(v)?v:"";
   }
+  function metadataFait(jour,f){
+    var sourceType=f.source_type||f.sourceType||"manual",sourceId=f.source_id||f.sourceId||null;
+    var source=sourceType==="lieu"?(jour.lieux||[]).find(function(x){return x.id===sourceId;}):sourceType==="observation"?(jour.regarder||[]).find(function(x){return x.id===sourceId;}):null;
+    return {highlightCategory:f.highlight_category||f.highlightCategory,sourceType:sourceType,dayCategory:jour.cat||jour.categorie,
+      type:source&&source.type,tags:source&&source.tags,label:f.libelle,name:source&&(source.nom||source.ou),description:source&&source.quoi};
+  }
 
   function adapter(options){
     var preparations={};
@@ -47,8 +53,9 @@
       photos.forEach(function(p){photosSources.push(p);});
 
       var recit=texte(preparation.carnet_story);
+      var registre=window.CarnetHighlightRegistry;
       var moments=(preparation.carnet_faits_confirmes || []).filter(function(f){return f.moment_fort;})
-        .sort(function(a,b){return (a.ordre||0)-(b.ordre||0);}).slice(0,5).map(function(f){return texte(f.libelle);}).filter(Boolean)
+        .sort(function(a,b){return (a.ordre||0)-(b.ordre||0);}).slice(0,5).map(function(f){var libelle=texte(f.libelle);return libelle?{libelle:libelle,category:registre?registre.categoriser(metadataFait(jour,f)):"other"}:null;}).filter(Boolean)
         ;
       return {id:jour.uuid,date:jour.date || "",lieu:texte(jour.titre),titre:texte(jour.titre),introduction:"",
         recit:recit,tempsForts:moments,distance:distanceValide(jour.rail1),duree:dureeValide(jour.rail2),temperature:preparation.temperature_reelle!=null?texte(preparation.temperature_reelle)+" °C":"",photos:photos,preparationActive:true,carnetTerminee:true};

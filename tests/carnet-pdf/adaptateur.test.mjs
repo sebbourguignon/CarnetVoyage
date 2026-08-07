@@ -4,9 +4,11 @@ import vm from "node:vm";
 import {readFile} from "node:fs/promises";
 
 async function charger(){
+  const registre=await readFile(new URL("../../app/carnet-pdf/highlight-registry.js",import.meta.url),"utf8");
   const source=await readFile(new URL("../../app/carnet-pdf/adaptateur.js",import.meta.url),"utf8");
   const window={};
-  vm.runInNewContext(source,{window,document:{createElement(){return{_html:"",set innerHTML(v){this._html=String(v);},get textContent(){return this._html.replace(/<[^>]+>/g,"");}};}}});
+  const contexte={window,document:{createElement(){return{_html:"",set innerHTML(v){this._html=String(v);},get textContent(){return this._html.replace(/<[^>]+>/g,"");}};}}};
+  vm.runInNewContext(registre,contexte);vm.runInNewContext(source,contexte);
   return window.CarnetPDFAdaptateur;
 }
 
@@ -34,7 +36,7 @@ test("une journée enregistrée utilise uniquement sa préparation",async()=>{
       carnet_faits_confirmes:[{libelle:"Arena vécue",moment_fort:true,ordre:0},{libelle:"Simple fait",moment_fort:false,ordre:1}],
       carnet_photos_selectionnees:[{photo_id:"p2",ordre:1,principale:true,legende_carnet:"Photo choisie",focal_x:.2,focal_y:.8}]}]});
   const jour=modele.journees[0];assert.equal(jour.recit,"Nouveau récit validé");assert.equal(jour.introduction,"");
-  assert.deepEqual(Array.from(jour.photos,p=>p.id),["p2"]);assert.deepEqual(Array.from(jour.tempsForts),["Arena vécue"]);
+  assert.deepEqual(Array.from(jour.photos,p=>p.id),["p2"]);assert.deepEqual(JSON.parse(JSON.stringify(jour.tempsForts)),[{libelle:"Arena vécue",category:"heritage"}]);
   assert.equal(jour.photos[0].legende,"Photo choisie");assert.equal(jour.photos[0].focalX,.2);
   assert.doesNotMatch(JSON.stringify(jour),/Ancien récit|Ancienne accroche|Lieu prévu|p1/);
 });
