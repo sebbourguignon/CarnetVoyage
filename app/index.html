@@ -3008,6 +3008,14 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     CONTROLEUR_PREPARATION_CARNET.rendre(panel);
   }
 
+  function ouvrirCarnetDashboard(){
+    fermerDetail();
+    if(!CONTROLEUR_PREPARATION_CARNET){rendrePanelCarnet();}
+    else CONTROLEUR_PREPARATION_CARNET.ouvrir(document.getElementById("panel-carnet"));
+    afficherPanel("carnet");
+    titrerOnglet("carnet");
+  }
+
   /* une section par journee du voyage (pas seulement celles qui ont deja
      des photos, voir conversation de conception) : texte de carnet,
      ajout de photo et galerie complete (commenter/partager/supprimer) --
@@ -6312,6 +6320,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   /* --- routage par ancre --------------------------------------------------- */
   var PANELS = ["aujourdhui", "jours", "chasse", "carnet", "reserver", "urgences", "admin"];
   var tabbar = document.getElementById("tabbar");
+  var lienCarnetGlobal = tabbar && tabbar.querySelector('[data-tab="carnet"]');
+  if(lienCarnetGlobal)lienCarnetGlobal.addEventListener("click",function(ev){ev.preventDefault();history.replaceState(null,"","#carnet");ouvrirCarnetDashboard();});
 
   function afficherPanel(nom, scrollY){
     PANELS.forEach(function(p){ document.getElementById("panel-" + p).hidden = (p !== nom); });
@@ -6381,7 +6391,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(h === "aujourdhui"){ rendreAujourdhui(); afficherPanel("aujourdhui"); document.title = titreCarnet(); }
     else if(h === "urgences"){ afficherPanel("urgences"); titrerOnglet("urgences"); }
     else if(h === "chasse"){ afficherPanel("chasse"); titrerOnglet("chasse"); }
-    else if(h === "carnet"){ afficherPanel("carnet"); titrerOnglet("carnet"); }
+    else if(h === "carnet"){ ouvrirCarnetDashboard(); }
     else if(h === "reserver"){ afficherPanel("reserver", detailEtaitOuvert ? scrollPositions.reserver : 0); titrerOnglet("reserver"); }
     else if(h === "admin"){ afficherPanel("admin"); titrerOnglet("admin"); }
     else if(h === "jours"){
