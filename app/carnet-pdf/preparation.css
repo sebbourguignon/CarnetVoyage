@@ -102,3 +102,34 @@
   .carnet-vue-journee{margin:0}.carnet-journee-titre{padding-top:18px}.carnet-vue-journee .carnet-preparation-jour-corps{padding-bottom:8px}.carnet-journee-navigation button{padding:8px 10px;font-size:.7rem}
   .carnet-action-bar{min-height:62px}.carnet-action-bar button{min-height:44px}.carnet-etoile,.carnet-fait-ordre button,.carnet-photo-ordre button{min-width:44px;min-height:44px}
 }
+
+/* Passe de finition UX/UI — hiérarchie éditoriale, sans incidence métier. */
+.carnet-dashboard-entete{padding-bottom:14px;border-bottom:0}
+.carnet-dashboard-generation{position:relative;top:auto;bottom:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 24px;margin:0 0 18px;padding:18px 20px;border:1px solid var(--rule);border-radius:5px;background:var(--paper-deep);box-shadow:none}
+.carnet-dashboard-generation-texte{display:grid;gap:7px;min-width:0}.carnet-dashboard-generation-texte strong{font-family:var(--font-display);font-size:1.35rem;line-height:1.1}
+.carnet-dashboard-kicker{margin:0;font-family:var(--font-mono);font-size:.61rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--rosso)}
+.carnet-dashboard-barre{width:min(440px,100%);height:5px;overflow:hidden;border-radius:999px;background:rgba(103,121,79,.16)}.carnet-dashboard-barre span{display:block;height:100%;min-width:0;border-radius:inherit;background:var(--oliva);transition:width .2s ease}
+.carnet-dashboard-photos{margin:0;color:var(--ink-soft);font-size:.76rem}.carnet-dashboard-generation .carnet-bouton-generer{grid-column:2;grid-row:1;align-self:center;min-height:46px}.carnet-dashboard-generation .carnet-generation-suivi{grid-column:1/3;margin:0}.carnet-dashboard-generation-aide{grid-column:1/3;margin:0;color:var(--ink-soft);font-size:.75rem}
+.carnet-dashboard-filtres{margin-bottom:4px;padding-bottom:10px}.carnet-dashboard-filtres button{border-color:rgba(26,26,24,.18);background:rgba(255,255,255,.18);transition:background-color .16s ease,border-color .16s ease,color .16s ease,transform .12s ease}.carnet-dashboard-filtres button:active{transform:scale(.98)}
+.carnet-dashboard-continuer{margin:6px 0 18px;border:1px solid var(--rule);border-left:4px solid var(--rosso);border-radius:3px}
+.carnet-dashboard-liste{border-top:0;gap:7px}.carnet-dashboard-jour{min-height:88px;padding:13px 14px;border:1px solid transparent;border-bottom-color:var(--rule);border-radius:3px;transition:background-color .16s ease,border-color .16s ease,transform .12s ease,box-shadow .16s ease}.carnet-dashboard-jour:hover{border-color:var(--rule);background:var(--paper-deep);box-shadow:0 3px 10px rgba(26,26,24,.045)}.carnet-dashboard-jour:active{transform:scale(.995);background:var(--card)}
+.carnet-dashboard-jour-meta{display:flex;align-items:center;gap:9px}.carnet-dashboard-chevron{font-family:var(--font-body);font-size:1.65rem;line-height:1;color:var(--pietra);transform:translateY(-1px);transition:transform .16s ease,color .16s ease}.carnet-dashboard-jour:hover .carnet-dashboard-chevron{color:var(--rosso);transform:translate(2px,-1px)}
+.carnet-dashboard-statut{background:rgba(142,138,124,.06)}.statut-en-cours .carnet-dashboard-statut{background:rgba(156,122,46,.07)}.statut-prete .carnet-dashboard-statut{background:rgba(103,121,79,.08)}
+
+.carnet-journee-entete{min-height:54px}.carnet-journee-entete .carnet-action-texte{min-height:44px;padding:8px 2px;text-decoration:none}
+.carnet-journee-titre{padding:20px 0 16px;border-bottom:1px solid var(--rule)}.carnet-journee-titre .carnet-preparation-details{margin:14px 0 9px}.carnet-journee-titre>.carnet-autosave-statut{display:inline-flex;align-items:center;min-height:28px;padding:3px 0;text-align:left}.carnet-journee-titre>.carnet-autosave-statut.succes{opacity:.82}
+.carnet-journee-navigation{padding:11px 0 13px}.carnet-preparation-jour-corps>.carnet-preparation-bloc{position:relative;padding-top:28px}.carnet-etape-numero{display:block;margin-bottom:5px;font-family:var(--font-mono);font-size:.62rem;font-weight:800;letter-spacing:.1em;color:var(--rosso)}
+.carnet-preparation-bloc>.carnet-etape-numero+h4,.carnet-preparation-bloc>.carnet-etape-numero+.carnet-bloc-titre h4{margin-top:0}.carnet-preparation-bloc>.carnet-etape-numero+.carnet-bloc-titre{align-items:flex-end}
+.carnet-options-journee{margin:24px 0 8px;border:1px solid var(--rule);border-radius:3px;background:var(--paper-deep)}.carnet-options-journee summary{min-height:44px;padding:13px 15px;font-size:.8rem;font-weight:700;cursor:pointer}.carnet-options-journee .carnet-programme-option{margin:0;border:0;border-top:1px solid var(--rule);background:transparent}
+.carnet-action-bar{bottom:calc(62px + env(safe-area-inset-bottom));display:flex;justify-content:flex-end;margin:22px 0 0;padding:9px 0;background:rgba(243,241,234,.96);border-top:1px solid var(--rule);box-shadow:0 -5px 14px rgba(26,26,24,.05);backdrop-filter:blur(8px)}.carnet-action-bar .carnet-action-primaire{min-width:190px;min-height:44px}.carnet-action-bar .carnet-action-primaire.prete{border-color:var(--oliva);background:transparent;color:var(--oliva);opacity:1}
+
+@media(max-width:700px){
+  .carnet-dashboard-entete{padding:22px 0 12px}.carnet-dashboard-generation{grid-template-columns:1fr;margin-bottom:14px;padding:16px}.carnet-dashboard-generation .carnet-bouton-generer{grid-column:1;grid-row:auto;width:100%;margin-top:5px}.carnet-dashboard-generation .carnet-generation-suivi,.carnet-dashboard-generation-aide{grid-column:1}.carnet-dashboard-generation-texte strong{font-size:1.2rem}
+  .carnet-dashboard-filtres{margin-right:-22px;padding-right:22px}.carnet-dashboard-continuer{margin-top:2px}.carnet-dashboard-jour{grid-template-columns:minmax(0,1fr) auto;min-height:94px;padding:13px 8px}.carnet-dashboard-jour-meta{gap:5px}.carnet-dashboard-chevron{font-size:1.45rem}.carnet-dashboard-statut{max-width:86px;text-align:center}
+  .carnet-journee-titre{padding-top:16px}.carnet-journee-titre h2{font-size:clamp(2rem,10vw,2.75rem)}.carnet-journee-navigation{gap:8px}.carnet-journee-navigation button{flex:1;white-space:normal}
+  .carnet-preparation-jour-corps>.carnet-preparation-bloc{padding-top:25px}.carnet-etape-numero{margin-bottom:4px}
+  .carnet-action-bar{bottom:calc(58px + env(safe-area-inset-bottom));margin-left:-4px;margin-right:-4px;padding:9px 4px 10px;border-top:1px solid var(--rule);box-shadow:0 -5px 13px rgba(26,26,24,.07)}.carnet-action-bar .carnet-action-primaire{width:100%;min-height:48px;font-size:.8rem}
+  .carnet-vue-journee:has(textarea:focus) .carnet-action-bar,.carnet-vue-journee:has(input[type="text"]:focus) .carnet-action-bar{position:static}
+}
+
+@media(prefers-reduced-motion:reduce){.carnet-dashboard-barre span,.carnet-dashboard-filtres button,.carnet-dashboard-jour,.carnet-dashboard-chevron{transition:none}}
