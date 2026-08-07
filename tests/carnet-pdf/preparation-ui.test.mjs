@@ -31,7 +31,7 @@ test("dashboard et parcours dédié de préparation avec 77 photos",{skip:proces
     assert.equal(await page.$$eval(".carnet-dashboard-jour",ns=>ns.length),0);
     assert.match(await page.$eval(".carnet-journee-titre",n=>n.textContent),/Modène & la Motor Valley/);
     assert.deepEqual(await page.$$eval(".carnet-etape-numero",ns=>ns.map(n=>n.textContent)),["01 —","02 —","03 —","04 —","05 —"]);
-    assert.equal(await page.$eval(".carnet-options-journee",n=>n.open),false);
+    assert.equal(await page.$$(".carnet-options-journee").then(x=>x.length),0);
     assert.equal(await page.$eval(".carnet-preparation-bloc:nth-of-type(4) h4",n=>n.textContent),"Notes & souvenirs");
     assert.match(await page.$eval(".carnet-photos-compteur",n=>n.textContent),/^77 photos dans la journée · 1 \/ 10/);
     assert.equal(await page.$$eval(".carnet-selection-photo",ns=>ns.length),1);
@@ -89,5 +89,12 @@ test("dashboard et parcours dédié de préparation avec 77 photos",{skip:proces
     assert.equal(await sansPrete.$eval(".carnet-dashboard-generation .carnet-bouton-generer",n=>n.disabled),true);
     assert.match(await sansPrete.$eval(".carnet-dashboard-generation",n=>n.textContent),/Terminez au moins une journée/);
     await sansPrete.close();
+
+    const rehydrate=await browser.newPage();await rehydrate.setViewport({width:390,height:844});
+    await rehydrate.goto(pathToFileURL(resolve("tests/fixtures/carnet-preparation.html")).href+"?rehydrate",{waitUntil:"networkidle0"});
+    await rehydrate.click(".carnet-dashboard-continuer button");await rehydrate.waitForSelector(".carnet-vue-journee");
+    assert.equal(await rehydrate.$$eval(".carnet-fait-confirmation input:checked",ns=>ns.length),2);
+    assert.equal(await rehydrate.$$eval(".carnet-options-journee",ns=>ns.length),0);
+    await rehydrate.close();
   }finally{await browser.close();}
 });

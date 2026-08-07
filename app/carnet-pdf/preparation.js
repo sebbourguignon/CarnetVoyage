@@ -14,7 +14,7 @@
       if(j._preparationCarnet)return j._preparationCarnet;
       var l=preparations[j.uuid]||null,p=modele.normaliserPreparation(l,legacy(j));
       p.carnetTerminee=!!(l&&l.carnet_terminee);p.recitSourceHash=l&&l.recit_source_hash||null;
-      return j._preparationCarnet={preparation:p,faits:modele.normaliserFaits(l&&l.carnet_faits_confirmes),photos:modele.normaliserPhotos(l&&l.carnet_photos_selectionnees),revision:0,revisionSauvee:0,statut:"Modifications enregistrées",erreur:null,timer:null,chaine:Promise.resolve(),avantIA:null,consolide:false,finalisation:null,reessayer:null};
+      return j._preparationCarnet={isHydrating:true,preparation:p,faits:modele.normaliserFaits(l&&l.carnet_faits_confirmes),photos:modele.normaliserPhotos(l&&l.carnet_photos_selectionnees),revision:0,revisionSauvee:0,statut:"Modifications enregistrées",erreur:null,timer:null,chaine:Promise.resolve(),avantIA:null,consolide:false,finalisation:null,reessayer:null};
     }
     function photosJour(j){return(options.photosParJournee[j.uuid]||[]).filter(function(p){return p.membre_id===options.utilisateurId;}).slice().sort(function(a,b){return String(a.cree_le||"").localeCompare(String(b.cree_le||""));});}
     function faitCle(f){return f.sourceType+":"+(f.sourceId||normaliser(f.libelle));}
@@ -40,11 +40,18 @@
       groupes.forEach(function(g){var vus={};g.sous=g.sous.filter(function(x){var n=normaliser(x);if(!n||vus[n])return false;vus[n]=1;return true;});});
       return groupes;
     }
+    function faitCorrespondAuGroupe(f,g){
+      if(g.ids.indexOf(f.sourceId)>=0)return true;
+      /* Les anciennes préparations peuvent référencer un lieu recréé depuis.
+         Le repli reste volontairement strict : même type métier et libellé
+         normalisé identique, jamais une similarité floue. */
+      return f.sourceType===g.sourceType&&normaliser(f.libelle)===normaliser(g.libelle);
+    }
     function consoliderEtat(j,e){
-      if(e.consolide)return;var groupes=groupesActivites(j),utilises={};
+      if(e.consolide)return;var groupes=groupesActivites(j),utilises=[];
       var resultat=[];
-      groupes.forEach(function(g){var correspond=e.faits.filter(function(f){return g.ids.indexOf(f.sourceId)>=0;});if(correspond.length){resultat.push({sourceType:g.sourceType,sourceId:g.sourceId,libelle:g.libelle,momentFort:correspond.some(function(f){return f.momentFort;}),ordre:resultat.length});correspond.forEach(function(f){utilises[faitCle(f)]=1;});}});
-      e.faits.forEach(function(f){if(f.sourceType==="manual"||!utilises[faitCle(f)]){f.ordre=resultat.length;resultat.push(f);}});e.faits=resultat;e.consolide=true;
+      groupes.forEach(function(g){var correspond=e.faits.filter(function(f){return faitCorrespondAuGroupe(f,g);});if(correspond.length){resultat.push({sourceType:g.sourceType,sourceId:g.sourceId,libelle:g.libelle,momentFort:correspond.some(function(f){return f.momentFort;}),ordre:resultat.length});correspond.forEach(function(f){utilises.push(f);});}});
+      e.faits.forEach(function(f){if(f.sourceType==="manual"||utilises.indexOf(f)<0){f.ordre=resultat.length;resultat.push(f);}});e.faits=resultat;e.consolide=true;e.isHydrating=false;
     }
     function sourcesRecit(e){return{faits:e.faits.map(function(f){return[f.libelle,!!f.momentFort];}),photos:e.photos.map(function(p){return[p.photoId,p.legendeCarnet];}),notes:e.preparation.notesManuelles};}
     function libelleSauvegarde(e){if(e.erreur)return"Erreur d’enregistrement · Réessayer";if(e.statut==="Modifications enregistrées")return"✓ Enregistré";return e.statut;}
@@ -137,7 +144,7 @@
       var titre=el("div","carnet-journee-titre"),save=el("button","carnet-autosave-statut",libelleSauvegarde(e));save.type="button";save.dataset.saveDay=j.uuid;save.setAttribute("aria-live","polite");save.onclick=function(){if(e.erreur){var action=e.reessayer;e.erreur=null;e.statut=action?"Finalisation…":"Enregistrement…";actualiserStatut(j,e);if(action)action();else sauvegarder(j,e,e.revision);}};titre.append(el("p","carnet-dashboard-date",dateJour(j)),el("h2",null,decoder(j.titre)));var details=el("div","carnet-preparation-details");[j.rail1,j.rail2].filter(Boolean).forEach(function(v){details.appendChild(el("span",null,decoder(v)));});titre.append(details,save);item.appendChild(titre);
       var index=options.jours.indexOf(j),nav=el("nav","carnet-journee-navigation");nav.setAttribute("aria-label","Navigation entre les journées");[["← Journée précédente",options.jours[index-1]],["Journée suivante →",options.jours[index+1]]].forEach(function(x){var b=el("button","carnet-action-secondaire",x[0]);b.type="button";b.disabled=!x[1];b.onclick=function(){if(x[1]){jourOuvert=x[1].uuid;rendre(options.panel);window.scrollTo(0,0);}};nav.appendChild(b);});item.appendChild(nav);
       var corps=el("div","carnet-preparation-jour-corps"),sections=[rendreFaits(j,e),rendreMoments(j,e),rendrePhotos(j,e),rendreNotes(j,e),rendreRecit(j,e)];sections.forEach(function(section,indexEtape){var numero=el("span","carnet-etape-numero",String(indexEtape+1).padStart(2,"0")+" —");section.insertBefore(numero,section.firstChild);});var titreNotes=sections[3].querySelector("h4");if(titreNotes)titreNotes.textContent="Notes & souvenirs";corps.append.apply(corps,sections);
-      var optionsJour=el("details","carnet-options-journee"),resumeOptions=el("summary",null,"Options de cette journée"),prog=el("label","carnet-programme-option"),pc=document.createElement("input");pc.type="checkbox";pc.checked=e.preparation.afficherProgrammePrevu;pc.onchange=function(){e.preparation.afficherProgrammePrevu=pc.checked;marquer(j,e,true,50);};prog.append(pc,el("span",null,"Inclure le programme prévu dans le carnet"));optionsJour.append(resumeOptions,prog);corps.appendChild(optionsJour);item.appendChild(corps);
+      item.appendChild(corps);
       var bar=el("div","carnet-action-bar"),fin=el("button","carnet-action-primaire",e.preparation.carnetTerminee?"Journée prête ✓":"Terminer la journée");fin.type="button";fin.dataset.finishDay=j.uuid;fin.disabled=!!e.finalisation||!!e.preparation.carnetTerminee;fin.onclick=function(){terminer(j,e);};bar.appendChild(fin);item.appendChild(bar);setTimeout(function(){actualiserStatut(j,e);actualiserFinalisation(j,!!e.finalisation);});return item;
     }
     function rendre(panel){options.panel=panel;panel.innerHTML="";if(vue==="journee"){var j=options.jours.find(function(x){return x.uuid===jourOuvert;});if(j)panel.appendChild(rendreJour(j));else{vue="dashboard";rendreDashboard(panel);}}else rendreDashboard(panel);}

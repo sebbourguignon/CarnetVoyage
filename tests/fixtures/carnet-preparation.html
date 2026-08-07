@@ -31,6 +31,12 @@
       {id:"prep-2",journee_id:"jour-2",maj_le:"2026-08-05T18:00:00Z",carnet_story:"Une journée paisible au bord du lac.",carnet_story_source:"manual",carnet_story_validated:true,carnet_terminee:true,afficher_programme_prevu:false,carnet_faits_confirmes:[],carnet_photos_selectionnees:[]}
     ];
     if(new URLSearchParams(location.search).has("sans-prete"))preparations[1].carnet_terminee=false;
+    if(new URLSearchParams(location.search).has("rehydrate"))preparations[0].carnet_faits_confirmes=[
+      {source_type:"lieu",source_id:"ancien-duomo",libelle:"Duomo di Modena",ordre:0},
+      {source_type:"lieu",source_id:"ancien-wiligelmo",libelle:"Les panneaux de Wiligelmo",ordre:1},
+      {source_type:"lieu",source_id:"ancien-pescheria",libelle:"Porta della Pescheria",ordre:2},
+      {source_type:"lieu",source_id:"ancien-ghirlandina",libelle:"Ghirlandina",ordre:3}
+    ];
     window.APPELS_BDD=[];window.ECHEC_FINALISATION=false;window.LATENCE_BDD=0;
     function requete(table){var action="select",payload=null;
       function executer(){return new Promise(function(resolve){setTimeout(function(){window.APPELS_BDD.push({table:table,action:action,payload:payload});if(table==="carnet_journees"&&(action==="update"||action==="upsert")&&payload&&payload.carnet_terminee&&window.ECHEC_FINALISATION){window.ECHEC_FINALISATION=false;resolve({data:null,error:{message:"Réseau temporairement indisponible"}});return;}resolve({data:{id:"prep-1",carnet_terminee:!!(payload&&payload.carnet_terminee)},error:null});},window.LATENCE_BDD);});}
