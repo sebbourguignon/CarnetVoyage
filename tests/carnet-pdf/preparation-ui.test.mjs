@@ -20,6 +20,7 @@ test("parcours ergonomique de préparation avec 77 photos",{skip:process.env.CAR
     assert.equal(await page.$$eval(".carnet-selection-photo",ns=>ns.length),1);
     assert.equal(await page.$$(".carnet-sauvegarde").then(x=>x.length),0);
     assert.equal(await page.$$(".carnet-valide").then(x=>x.length),0);
+    assert.equal(await page.$eval(".carnet-preparation-notes",n=>getComputedStyle(n).resize),"none");
 
     await page.click(".carnet-fait-confirmation input");
     await page.waitForSelector(".carnet-moment-ligne");
@@ -47,11 +48,25 @@ test("parcours ergonomique de préparation avec 77 photos",{skip:process.env.CAR
     assert.equal(await page.$$eval(".carnet-selection-photo",ns=>ns.length),10);
     assert.ok(await page.$(".carnet-action-bar"));
     await page.waitForFunction(()=>document.querySelector(".carnet-autosave-statut")?.textContent==="Modifications enregistrées");
-    await page.click(".carnet-action-bar .carnet-action-primaire");
+    await page.evaluate(()=>{window.LATENCE_BDD=80;const b=document.querySelector(".carnet-action-bar .carnet-action-primaire");b.click();b.click();});
     await page.waitForFunction(()=>document.querySelector(".carnet-preparation-jour-head>span:last-child")?.textContent==="Prête");
+    assert.equal(await page.evaluate(()=>window.APPELS_BDD.filter(x=>x.table==="carnet_journees"&&x.action==="upsert"&&x.payload.carnet_terminee===true).length),1);
+    assert.equal(await page.evaluate(()=>window.APPELS_BDD.some(x=>x.table==="carnet_textes")),false);
     await page.click(".carnet-preparation-jour-head");
     await page.$eval(".carnet-preparation-bloc textarea:not(.carnet-preparation-recit)",n=>{n.value+=" modifiée";n.dispatchEvent(new Event("input",{bubbles:true}));});
     assert.equal(await page.$eval(".carnet-preparation-jour.ouvert .carnet-preparation-jour-head>span:last-child",n=>n.textContent),"Brouillon");
+    await page.evaluate(()=>{window.ECHEC_FINALISATION=true;window.LATENCE_BDD=0;document.querySelector(".carnet-action-bar .carnet-action-primaire").click();});
+    await page.waitForFunction(()=>document.querySelector(".carnet-autosave-statut")?.textContent.includes("Réessayer"));
+    assert.match(await page.$eval(".carnet-preparation-recit",n=>n.value),/ancienne proposition/);
+    await page.click(".carnet-autosave-statut");
+    await page.waitForFunction(()=>document.querySelector(".carnet-preparation-jour-head>span:last-child")?.textContent==="Prête");
+    await page.waitForSelector(".carnet-preparation-jour.ouvert .carnet-action-bar");
+    await page.click(".carnet-preparation-jour.ouvert .carnet-action-bar .carnet-action-primaire");
+    await page.waitForFunction(()=>document.querySelectorAll(".carnet-preparation-jour-head>span:last-child")[1]?.textContent==="Prête");
+    await page.setViewport({width:390,height:844});
+    await page.waitForSelector(".carnet-preparation-jour.ouvert .carnet-action-bar");
+    const barre=await page.$eval(".carnet-preparation-jour.ouvert .carnet-action-bar",n=>{const r=n.getBoundingClientRect();return{left:r.left,right:r.right,bottom:r.bottom};});
+    assert.ok(barre.left>=0&&barre.right<=390&&barre.bottom<=844);
     if(process.env.CARNET_PREPARATION_CAPTURE)await page.screenshot({path:process.env.CARNET_PREPARATION_CAPTURE,fullPage:true});
   }finally{await browser.close();}
 });
