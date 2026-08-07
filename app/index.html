@@ -3015,6 +3015,9 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     afficherPanel("carnet");
     titrerOnglet("carnet");
   }
+  function fermerVueCarnet(){
+    if(CONTROLEUR_PREPARATION_CARNET && CONTROLEUR_PREPARATION_CARNET.fermer)CONTROLEUR_PREPARATION_CARNET.fermer();
+  }
 
   /* une section par journee du voyage (pas seulement celles qui ont deja
      des photos, voir conversation de conception) : texte de carnet,
@@ -6322,6 +6325,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   var tabbar = document.getElementById("tabbar");
   var lienCarnetGlobal = tabbar && tabbar.querySelector('[data-tab="carnet"]');
   if(lienCarnetGlobal)lienCarnetGlobal.addEventListener("click",function(ev){ev.preventDefault();history.replaceState(null,"","#carnet");ouvrirCarnetDashboard();});
+  if(tabbar)Array.prototype.forEach.call(tabbar.querySelectorAll('a:not([data-tab="carnet"])'),function(lien){lien.addEventListener("click",function(){fermerVueCarnet();});});
 
   function afficherPanel(nom, scrollY){
     PANELS.forEach(function(p){ document.getElementById("panel-" + p).hidden = (p !== nom); });
@@ -6367,6 +6371,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     var panelAvant = panelVisible();
     var detailEtaitOuvert = detailEl.classList.contains("open");
     var h = (location.hash || "#aujourdhui").slice(1);
+    if(h !== "carnet")fermerVueCarnet();
     var m = /^jour-(\d{4})$/.exec(h);
     if(m){
       if(!detailEtaitOuvert && (panelAvant === "jours" || panelAvant === "reserver")){
