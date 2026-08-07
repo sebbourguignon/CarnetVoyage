@@ -17,7 +17,7 @@
   <script src="../../app/carnet-pdf/preparation.js"></script>
   <script>
     var utilisateur="membre-test";
-    var photos=Array.from({length:77},function(_,i){
+    var photos=Array.from({length:30},function(_,i){
       var couleur=["b64a37","7b8060","557a8a","c28c45"][i%4];
       return {id:"photo-"+(i+1),journee_id:"jour-1",membre_id:utilisateur,storage_path:"photo-"+(i+1),legende:"Souvenir "+(i+1),url:"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 300%27%3E%3Crect width=%27400%27 height=%27300%27 fill=%27%23"+couleur+"%27/%3E%3Ctext x=%27200%27 y=%27160%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2748%27%3E"+(i+1)+"%3C/text%3E%3C/svg%3E"};
     });

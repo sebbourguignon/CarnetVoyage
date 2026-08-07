@@ -4,6 +4,7 @@
   var SOURCES_RECIT = ["manual", "ai", "empty", "legacy"];
   var PHOTOS_CONSEILLEES_PAR_JOUR = 10;
   var PHOTOS_MAX_PAR_JOUR = 10;
+  var PHOTOS_UPLOAD_MAX_PAR_JOUR = 30;
   var MOMENTS_FORTS_MAX = 5;
 
   function texte(value){ return String(value == null ? "" : value).replace(/\s+/g, " ").trim(); }
@@ -74,6 +75,7 @@
     SOURCES_RECIT: SOURCES_RECIT,
     PHOTOS_CONSEILLEES_PAR_JOUR: PHOTOS_CONSEILLEES_PAR_JOUR,
     PHOTOS_MAX_PAR_JOUR: PHOTOS_MAX_PAR_JOUR,
+    PHOTOS_UPLOAD_MAX_PAR_JOUR: PHOTOS_UPLOAD_MAX_PAR_JOUR,
     MOMENTS_FORTS_MAX: MOMENTS_FORTS_MAX,
     normaliserPreparation: normaliserPreparation,
     normaliserFaits: normaliserFaits,

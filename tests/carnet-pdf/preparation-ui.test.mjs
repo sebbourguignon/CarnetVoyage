@@ -8,7 +8,7 @@ import puppeteer from "puppeteer-core";
 const captureDir=process.env.CARNET_PREPARATION_CAPTURE_DIR;
 async function capture(page,name){if(captureDir){await mkdir(captureDir,{recursive:true});await page.screenshot({path:resolve(captureDir,name),fullPage:true});}}
 
-test("dashboard et parcours dédié de préparation avec 77 photos",{skip:process.env.CARNET_PREPARATION_UI_TEST!=="1",timeout:120000},async()=>{
+test("dashboard et parcours dédié de préparation avec 30 photos",{skip:process.env.CARNET_PREPARATION_UI_TEST!=="1",timeout:120000},async()=>{
   const browser=await puppeteer.launch({executablePath:process.env.PUPPETEER_EXECUTABLE_PATH,headless:true,args:["--no-sandbox"]});
   try{
     const page=await browser.newPage();await page.setViewport({width:1100,height:900});
@@ -40,7 +40,7 @@ test("dashboard et parcours dédié de préparation avec 77 photos",{skip:proces
     assert.ok(sectionHeadings.every(x=>x.display==="flex"&&x.align==="baseline"),JSON.stringify(sectionHeadings));
     assert.equal(await page.$$(".carnet-options-journee").then(x=>x.length),0);
     assert.equal(await page.$eval(".carnet-preparation-bloc:nth-of-type(4) h4",n=>n.textContent),"Notes & souvenirs");
-    assert.match(await page.$eval(".carnet-photos-compteur",n=>n.textContent),/^77 photos dans la journée · 1 \/ 10/);
+    assert.match(await page.$eval(".carnet-photos-compteur",n=>n.textContent),/^30 \/ 30 photos dans la journée · 1 \/ 10/);
     assert.equal(await page.$$eval(".carnet-selection-photo",ns=>ns.length),1);
     assert.equal(await page.$$(".carnet-sauvegarde").then(x=>x.length),0);
     assert.equal(await page.$eval(".carnet-preparation-notes",n=>getComputedStyle(n).resize),"none");
@@ -58,7 +58,7 @@ test("dashboard et parcours dédié de préparation avec 77 photos",{skip:proces
 
     const buttons=await page.$$("button");for(const b of buttons){if(await b.evaluate(n=>n.textContent)==="Modifier la sélection"){await b.click();break;}}
     await page.waitForSelector(".carnet-photo-modal");
-    assert.equal(await page.$$eval(".carnet-photo-pick",ns=>ns.length),77);
+    assert.equal(await page.$$eval(".carnet-photo-pick",ns=>ns.length),30);
     for(let i=0;i<9;i++)await page.evaluate(()=>document.querySelector(".carnet-photo-pick:not(.active)").click());
     assert.equal(await page.$eval(".carnet-photo-dialog header strong",n=>n.textContent),"10 / 10");
     await page.click(".carnet-photo-pick:not(.active)");

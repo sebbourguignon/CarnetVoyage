@@ -17,6 +17,16 @@ test("les limites sont quotidiennes et ne créent aucun quota voyage",()=>{
   assert.equal(modele.analyserJournee(preparation,[],Array.from({length:10},(_,i)=>({photoId:String(i)}))).erreurs.length,0);
   assert.match(modele.analyserJournee(preparation,[],Array.from({length:11},(_,i)=>({photoId:String(i)}))).erreurs[0],/10 photos/);
   assert.equal("PHOTOS_MAX_VOYAGE" in modele,false);
+  assert.equal(modele.PHOTOS_UPLOAD_MAX_PAR_JOUR,30);
+});
+
+test("la limite d’upload de 30 photos est protégée côté base",async()=>{
+  const sql=await readFile(new URL("../../supabase/migrations/0027_limite_photos_par_jour.sql",import.meta.url),"utf8");
+  assert.match(sql,/create or replace function verifier_limite_photos_journee/i);
+  assert.match(sql,/where journee_id = new\.journee_id/i);
+  assert.match(sql,/maximum de 30 photos par journée/i);
+  assert.match(sql,/pg_advisory_xact_lock/i);
+  assert.match(sql,/create trigger photos_limite_journee/i);
 });
 
 test("une journée vide reste compacte et le programme prévu est désactivé",()=>{

@@ -1293,6 +1293,7 @@ a.urg-tel:focus-visible{outline:2px solid var(--rosso);outline-offset:2px}
 }
 .photos-bouton-ajouter:disabled{opacity:.5;cursor:default}
 .photos-vide{font-size:.85rem;color:var(--ink-soft);margin:0}
+.photos-compteur{font-family:var(--font-mono);font-size:.72rem;color:var(--ink-soft);margin:-6px 0 10px}
 .photos-grille{
   display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;padding:0;
 }
@@ -2518,6 +2519,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      famille : RLS (migration 0018) refuserait de toute facon l'ecriture
      a un visiteur non connecte. -------------------------------------- */
   var PHOTOS_PAR_JOURNEE = {};
+  var MAX_PHOTOS_PER_DAY = (window.CarnetPreparationModele && window.CarnetPreparationModele.PHOTOS_UPLOAD_MAX_PAR_JOUR) || 30;
   (photosInitiales || []).forEach(function(p){
     (PHOTOS_PAR_JOURNEE[p.journee_id] = PHOTOS_PAR_JOURNEE[p.journee_id] || []).push(p);
   });
@@ -2636,6 +2638,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
 
   function televerserPhoto(j, fichier, majBouton){
     if(!modeFamille || !utilisateurId || !voyageId) return Promise.resolve();
+    var photosJournee = PHOTOS_PAR_JOURNEE[j.uuid] || [];
+    if(photosJournee.length >= MAX_PHOTOS_PER_DAY){
+      if(majBouton) majBouton(null);
+      window.alert("Vous avez atteint la limite de 30 photos pour cette journée.");
+      return Promise.resolve();
+    }
     if(majBouton) majBouton("Compression…");
     return compresserPhoto(fichier).then(function(blob){
       var chemin = voyageId + "/" + utilisateurId + "/" + idRandom() + ".jpg";
@@ -2651,13 +2659,16 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
           }).select().single();
         })
         .then(function(resInsert){
-          if(resInsert.error) throw resInsert.error;
+          if(resInsert.error){
+            return supabaseClient.storage.from("photos").remove([chemin]).catch(function(){}).then(function(){throw resInsert.error;});
+          }
           (PHOTOS_PAR_JOURNEE[j.uuid] = PHOTOS_PAR_JOURNEE[j.uuid] || []).push(resInsert.data);
           rafraichirPhotos(j.id);
         });
     }).catch(function(err){
       console.error("Échec de l'ajout de la photo :", err);
-      window.alert("La photo n'a pas pu être envoyée — réessayez quand le réseau sera meilleur.");
+      var message=String(err&&err.message||"");
+      window.alert(/limite de 30|maximum de 30/i.test(message) ? "Vous avez atteint la limite de 30 photos pour cette journée." : "La photo n'a pas pu être envoyée — réessayez quand le réseau sera meilleur.");
     }).then(function(){
       if(majBouton) majBouton(null);
     });
@@ -2777,6 +2788,12 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
   function rafraichirPhotos(jourId){
     var j = trouverJour(jourId);
     if(!j) return;
+    var total=(PHOTOS_PAR_JOURNEE[j.uuid]||[]).length, atteint=total>=MAX_PHOTOS_PER_DAY;
+    Array.prototype.forEach.call(document.querySelectorAll('.photos-bouton-ajouter[data-upload-day="'+jourId+'"]'),function(bouton){
+      bouton.disabled=atteint;
+      bouton.title=atteint ? "Vous avez atteint la limite de 30 photos pour cette journée." : "";
+      bouton.setAttribute("aria-label",atteint ? "Limite de 30 photos atteinte" : "Ajouter une photo");
+    });
     Array.prototype.forEach.call(document.querySelectorAll(".photos[data-jour-photos='" + jourId + "'] .photos-grille-conteneur"), function(conteneur){
       contenuGaleriePhotos(conteneur, j, false);
     });
@@ -2798,11 +2815,26 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     input.style.display = "none";
     var boutonAjouter = el("button", "photos-bouton-ajouter", "Ajouter une photo");
     boutonAjouter.type = "button";
-    boutonAjouter.addEventListener("click", function(){ input.click(); });
+    boutonAjouter.dataset.uploadDay = j.id;
+    function actualiserLimite(){
+      var total=(PHOTOS_PAR_JOURNEE[j.uuid]||[]).length, atteint=total>=MAX_PHOTOS_PER_DAY;
+      boutonAjouter.disabled=atteint;
+      boutonAjouter.title=atteint ? "Vous avez atteint la limite de 30 photos pour cette journée." : "";
+      boutonAjouter.setAttribute("aria-label",atteint ? "Limite de 30 photos atteinte" : "Ajouter une photo");
+    }
+    actualiserLimite();
+    boutonAjouter.addEventListener("click", function(){ if(!boutonAjouter.disabled) input.click(); });
     input.addEventListener("change", function(){
       if(!input.files || !input.files.length) return;
       var fichiers = Array.prototype.slice.call(input.files);
       input.value = "";
+      var deja=(PHOTOS_PAR_JOURNEE[j.uuid]||[]).length, places=Math.max(0,MAX_PHOTOS_PER_DAY-deja);
+      if(!places){ actualiserLimite(); window.alert("Vous avez atteint la limite de 30 photos pour cette journée."); return; }
+      if(fichiers.length>places){
+        var acceptes=fichiers.slice(0,places);
+        window.alert(acceptes.length+" photo"+(acceptes.length>1?"s":"")+" ajoutée"+(acceptes.length>1?"s":"")+". La limite de 30 photos pour cette journée est atteinte.");
+        fichiers=acceptes;
+      }
       var texteInitial = boutonAjouter.textContent;
       /* une a la fois : la compression + l'upload sont deja asynchrones
          par photo (voir televerserPhoto), les lancer toutes en parallele
@@ -2814,6 +2846,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         if(index >= total){
           boutonAjouter.textContent = texteInitial;
           boutonAjouter.disabled = false;
+          actualiserLimite();
           return;
         }
         var suffixe = total > 1 ? " (" + (index + 1) + "/" + total + ")" : "";
@@ -2837,7 +2870,9 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     if(!modeFamille || !utilisateurId) return null;
     var bloc = el("div", "block photos");
     bloc.setAttribute("data-jour-photos", j.id);
+    var total=(PHOTOS_PAR_JOURNEE[j.uuid]||[]).length;
     bloc.appendChild(el("h3", null, "Photos du jour"));
+    bloc.appendChild(el("p", "photos-compteur", total+" / "+MAX_PHOTOS_PER_DAY+" photos"));
     bloc.appendChild(construireControleUpload(j));
 
     var conteneur = el("div", "photos-grille-conteneur");
