@@ -6960,6 +6960,27 @@ function appliquerTheme(theme){
     });
   });
 
+  /* Diagnostic temporaire du bas de la vue détail. Il n'est jamais actif
+     par défaut : il sert à identifier les vrais éléments peints dans la
+     session authentifiée, sans modifier le CSS de production. */
+  (function(){
+    var debugState={elements:[],labels:[],masks:[]};
+    function rectObjet(r){return{top:r.top,bottom:r.bottom,left:r.left,right:r.right,width:r.width,height:r.height};}
+    function pseudoObjet(n,p){var s=getComputedStyle(n,p);return{content:s.content,display:s.display,position:s.position,top:s.top,bottom:s.bottom,height:s.height,borderTop:s.borderTop,borderBottom:s.borderBottom,background:s.background,boxShadow:s.boxShadow};}
+    function nom(n){return n.tagName.toLowerCase()+(n.id?"#"+n.id:"")+(typeof n.className==="string"&&n.className?"."+n.className.trim().replace(/\s+/g,"."):"");}
+    function inspect(){
+      var tab=document.querySelector(".tabbar"),tr=tab?tab.getBoundingClientRect():{top:window.innerHeight};
+      var haut=Math.max(0,tr.top-250),bas=tr.top,sortie=[],nodes=document.querySelectorAll("body *");
+      nodes.forEach(function(n){var r=n.getBoundingClientRect(),s=getComputedStyle(n);if(r.bottom<=haut||r.top>=bas||r.width===0||r.height===0||s.display==="none"||s.visibility==="hidden")return;sortie.push({index:sortie.length,tagName:n.tagName,id:n.id,className:typeof n.className==="string"?n.className:"",selector:nom(n),boundingClientRect:rectObjet(r),borderTopWidth:s.borderTopWidth,borderTopStyle:s.borderTopStyle,borderTopColor:s.borderTopColor,borderBottomWidth:s.borderBottomWidth,borderBottomStyle:s.borderBottomStyle,borderBottomColor:s.borderBottomColor,boxShadow:s.boxShadow,backgroundColor:s.backgroundColor,position:s.position,zIndex:s.zIndex,overflow:s.overflow,before:pseudoObjet(n,"::before"),after:pseudoObjet(n,"::after"),element:n});});
+      debugState.elements=sortie;return sortie.map(function(x){var y={};Object.keys(x).forEach(function(k){if(k!=="element")y[k]=x[k];});return y;});
+    }
+    function clear(){debugState.elements.forEach(function(x){if(x.element)x.element.style.removeProperty("outline");});debugState.labels.forEach(function(x){x.remove();});debugState.labels=[];debugState.masks.forEach(function(x){x.node.style.cssText=x.css;});debugState.masks=[];}
+    function debug(on){if(!on){clear();return inspect();}clear();var list=inspect(),colors=["#d12f2f","#1c65d8","#27864a","#9b5de5","#d17b18","#008c95"];list.forEach(function(x){var n=debugState.elements[x.index].element,c=colors[x.index%colors.length],label=document.createElement("span");n.style.outline="2px solid "+c;n.style.outlineOffset="-2px";label.textContent=x.index+" "+x.selector;label.style.cssText="position:fixed;z-index:2147483647;left:4px;top:"+Math.max(0,x.boundingClientRect.top)+"px;padding:1px 3px;background:"+c+";color:#fff;font:10px monospace;pointer-events:none";document.body.appendChild(label);debugState.labels.push(label);});return list;}
+    debug.mask=function(index,part){var x=debugState.elements[index];if(!x||!x.element)return null;if(!debugState.masks.some(function(m){return m.node===x.element;}))debugState.masks.push({node:x.element,css:x.element.style.cssText});if(part==="borderTop")x.element.style.borderTopColor="transparent";else if(part==="borderBottom")x.element.style.borderBottomColor="transparent";else if(part==="shadow")x.element.style.boxShadow="none";else x.element.style.visibility="hidden";return inspect();};
+    debug.clearMasks=function(){debugState.masks.forEach(function(x){x.node.style.cssText=x.css;});debugState.masks=[];return inspect();};
+    window.__debugCarnetBottomLines=debug;
+  })();
+
   /* Service worker : cache l'app shell, les polices et les dernières
      données Supabase chargées, pour que le carnet reste consultable sans
      réseau sur le terrain (voir sw.js pour le détail des stratégies).
