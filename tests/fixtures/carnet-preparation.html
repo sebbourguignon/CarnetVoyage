@@ -6,12 +6,13 @@
   <title>Préparation du carnet — scénario de test</title>
   <style>
     :root{--font-display:Georgia,serif;--font-body:Arial,sans-serif;--font-mono:monospace;--paper:#f3f1ea;--paper-deep:#e9e6dd;--card:#ddd7c7;--ink:#1a1a18;--ink-soft:#595650;--pietra:#8e8a7c;--lago:#0f4a4e;--lago-mid:#2a7d80;--rosso:#b23a2e;--sole:#9c7a2e;--oliva:#67794f;--rule:rgba(26,26,24,.14);--rule-soft:rgba(26,26,24,.07)}
-    *{box-sizing:border-box}body{margin:0;background:#ece8e0;color:var(--ink);font-family:Arial,sans-serif}.shell{max-width:980px;margin:auto;padding:28px}.eyebrow{text-transform:uppercase;color:var(--rosso);font-size:.72rem;font-weight:800;letter-spacing:.08em}.carnet-bouton-generer{padding:12px 18px;border:0;border-radius:10px;background:var(--rosso);color:#fff;font-weight:800}
+    *{box-sizing:border-box}body{margin:0;background:#ece8e0;color:var(--ink);font-family:Arial,sans-serif}.shell{max-width:980px;margin:auto;padding:28px}.eyebrow{text-transform:uppercase;color:var(--rosso);font-size:.72rem;font-weight:800;letter-spacing:.08em}.carnet-bouton-generer{padding:12px 18px;border:0;border-radius:10px;background:var(--rosso);color:#fff;font-weight:800}.footer-stack{position:fixed;left:0;right:0;bottom:0;z-index:40}.day-nav-sticky{display:flex;height:46px;background:var(--paper-deep);border-top:2px solid var(--ink)}.day-nav-sticky-link{flex:1;display:flex;align-items:center;min-height:44px;padding:0 16px;color:var(--ink);font:12px monospace}.day-nav-sticky-next{text-align:right;justify-content:flex-end}.tabbar{height:58px;background:var(--paper);border-top:2px solid var(--ink)}
   </style>
   <link rel="stylesheet" href="../../app/carnet-pdf/preparation.css">
 </head>
 <body>
   <main class="shell"><div id="panel"></div></main>
+  <div class="footer-stack"><nav class="day-nav-sticky" id="day-nav-sticky" aria-label="Navigation entre les journées" hidden></nav><nav class="tabbar" aria-label="Navigation principale"></nav></div>
   <script src="../../app/carnet-pdf/modele.js"></script>
   <script src="../../app/carnet-pdf/preparation.js"></script>
   <script>
