@@ -88,8 +88,9 @@
         try{
           e.statut="Finalisation…";e.erreur=null;e.reessayer=null;actualiserStatut(j,e);actualiserFinalisation(j,true);
           await forcerSauvegarde(j,e);
-          var champs={voyage_id:options.voyageId,journee_id:j.uuid,membre_id:options.utilisateurId,preparation_active:true,carnet_terminee:true,carnet_story_validated:!!decoder(e.preparation.carnetStory),maj_le:new Date().toISOString()};
-          var resultat=await options.supabase.from("carnet_journees").upsert(champs,{onConflict:"journee_id,membre_id"}).select("id,carnet_terminee").single();
+          var champs={carnet_terminee:true,carnet_story_validated:!!decoder(e.preparation.carnetStory),maj_le:new Date().toISOString()},resultat;
+          if(e.preparation.id)resultat=await options.supabase.from("carnet_journees").update(champs).eq("id",e.preparation.id).eq("membre_id",options.utilisateurId).select("id,carnet_terminee").single();
+          else resultat=await options.supabase.from("carnet_journees").upsert({voyage_id:options.voyageId,journee_id:j.uuid,membre_id:options.utilisateurId,preparation_active:true,carnet_terminee:true,carnet_story_validated:false},{onConflict:"journee_id,membre_id"}).select("id,carnet_terminee").single();
           if(resultat.error)throw resultat.error;
           e.preparation.id=resultat.data.id;e.preparation.carnetTerminee=true;e.preparation.carnetStoryValidated=champs.carnet_story_validated;e.statut="Modifications enregistrées";e.erreur=null;actualiserStatut(j,e);
           rendre(options.panel);var idx=options.jours.indexOf(j);if(options.jours[idx+1]){jourOuvert=options.jours[idx+1].uuid;rendre(options.panel);}

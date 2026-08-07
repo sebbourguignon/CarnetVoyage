@@ -50,7 +50,7 @@ test("parcours ergonomique de préparation avec 77 photos",{skip:process.env.CAR
     await page.waitForFunction(()=>document.querySelector(".carnet-autosave-statut")?.textContent==="Modifications enregistrées");
     await page.evaluate(()=>{window.LATENCE_BDD=80;const b=document.querySelector(".carnet-action-bar .carnet-action-primaire");b.click();b.click();});
     await page.waitForFunction(()=>document.querySelector(".carnet-preparation-jour-head>span:last-child")?.textContent==="Prête");
-    assert.equal(await page.evaluate(()=>window.APPELS_BDD.filter(x=>x.table==="carnet_journees"&&x.action==="upsert"&&x.payload.carnet_terminee===true).length),1);
+    assert.equal(await page.evaluate(()=>window.APPELS_BDD.filter(x=>x.table==="carnet_journees"&&x.action==="update"&&x.payload.carnet_terminee===true).length),1);
     assert.equal(await page.evaluate(()=>window.APPELS_BDD.some(x=>x.table==="carnet_textes")),false);
     await page.click(".carnet-preparation-jour-head");
     await page.$eval(".carnet-preparation-bloc textarea:not(.carnet-preparation-recit)",n=>{n.value+=" modifiée";n.dispatchEvent(new Event("input",{bubbles:true}));});
