@@ -14,6 +14,7 @@ import { construireHtml } from "./template.mjs";
 
 const QUALITE = 82;
 const executerFichier=promisify(execFile);
+const CACHE_VARIANTES=new Map();
 // Netlify alloue un conteneur borné : un seul worker libvips et aucun cache
 // natif évitent les arrêts brutaux lors de plusieurs déclinaisons d'une photo.
 sharp.concurrency(1);
@@ -61,42 +62,27 @@ async function jpegPourCadre(source, [largeurCadre, hauteurCadre]) {
   } finally { await unlink(sortie).catch(()=>{}); }
 }
 
-async function preparerPhotos(modele, signalerEtape) {
+async function enConcurrence(elements,limite,traiter){const resultats=new Array(elements.length);let suivant=0;async function worker(){while(suivant<elements.length){const i=suivant++;resultats[i]=await traiter(elements[i],i);}}await Promise.all(Array.from({length:Math.min(limite,elements.length)},worker));return resultats;}
+
+async function preparerPhotos(modele, signalerEtape, mesures) {
   let numeroVariante=0;
+  const sources=new Map(),temporaires=[];
+  async function sourcePour(photo){if(!sources.has(photo.id)){sources.set(photo.id,(async()=>{const debut=performance.now();const f=await telechargerVersFichier(photo.url);mesures.telechargement_photos_ms+=performance.now()-debut;temporaires.push(f);return f;})());}return sources.get(photo.id);}
   async function variante(photo, role) {
     await signalerEtape(`optimisation_image:${++numeroVariante}`);
-    // Les originaux de téléphone restent sur /tmp pendant leur conversion :
-    // leur ArrayBuffer ne vient ainsi jamais gonfler le tas Node de Netlify.
-    const source=await telechargerVersFichier(photo.url);
-    try {
-      const jpeg=await jpegPourCadre(source,DIMENSIONS[role]);
-      return { ...photo, url: undefined, storagePath: undefined, dataUrl: `data:image/jpeg;base64,${jpeg.toString("base64")}` };
-    } finally { await unlink(source).catch(()=>{}); }
+    const cle=`${photo.id}:${photo.version||photo.storagePath}:${role}`;
+    if(CACHE_VARIANTES.has(cle)){mesures.cache_images_hits++;return {...photo,url:undefined,storagePath:undefined,dataUrl:CACHE_VARIANTES.get(cle)};}
+    const source=await sourcePour(photo),debut=performance.now();
+    const jpeg=await jpegPourCadre(source,DIMENSIONS[role]);mesures.optimisation_images_ms+=performance.now()-debut;
+    const resultat={...photo,url:undefined,storagePath:undefined,dataUrl:`data:image/jpeg;base64,${jpeg.toString("base64")}`};
+    CACHE_VARIANTES.set(cle,resultat.dataUrl);return resultat;
   }
   const photoCouverture=modele.journees.flatMap((journee)=>journee.photos).find(Boolean);
-  for(const journee of modele.journees) {
-    const originales=journee.photos;
-    const preparees=[];
-    for(let i=0;i<Math.min(3,originales.length);i++) {
-      const role = i === 0 ? "principale" : i === 1 ? "secondaire" : i === 2 ? "petite" : `galerie${(i-3)%5}`;
-      preparees.push(await variante(originales[i], role));
-    }
-    journee.photos=preparees;
-    const photosGalerie=originales.slice(3);
-    journee.galeries=[];
-    for(let debut=0;debut<photosGalerie.length;debut+=5) {
-      const groupe=[];
-      for(const [index,photo] of photosGalerie.slice(debut,debut+5).entries()) groupe.push(await variante(photo,`galerie${index}`));
-      journee.galeries.push(groupe);
-    }
-  }
-  if(photoCouverture) {
-    const source=await telechargerVersFichier(photoCouverture.url);
-    try {
-      const jpeg=await jpegPourCadre(source,DIMENSIONS.couverture);
-      modele.couverturePhoto={...photoCouverture,url:undefined,storagePath:undefined,dataUrl:`data:image/jpeg;base64,${jpeg.toString("base64")}`};
-    } finally { await unlink(source).catch(()=>{}); }
-  }
+  const travaux=[];
+  for(const journee of modele.journees){const originales=journee.photos||[],principales=originales.length<=4?originales:originales.slice(0,3),galerie=originales.length>=5?originales.slice(3):[];journee.photos=new Array(principales.length);journee.galeries=galerie.length?[new Array(galerie.length)]:[];principales.forEach((p,i)=>travaux.push({p,role:i===0?"principale":i===1?"secondaire":"petite",poser:v=>journee.photos[i]=v}));galerie.forEach((p,i)=>travaux.push({p,role:`galerie${Math.min(i,4)}`,poser:v=>journee.galeries[0][i]=v}));}
+  await enConcurrence(travaux,2,async t=>t.poser(await variante(t.p,t.role)));
+  if(photoCouverture)modele.couverturePhoto=await variante(photoCouverture,"couverture");
+  await Promise.all(temporaires.map(f=>unlink(f).catch(()=>{})));
 }
 
 function extraireBase64(texte) {
@@ -129,39 +115,39 @@ async function recomprimerImagesLossless(octets) {
 
 export async function exporterCarnet(modele, signalerEtape = async () => {}) {
   const temporaire=`/tmp/carnet-${randomUUID()}.pdf`;
-  let navigateur;
+  let navigateur;const departTotal=performance.now(),mesures={telechargement_photos_ms:0,optimisation_images_ms:0,cache_images_hits:0};
+  async function phase(nom,fn){const d=performance.now();const r=await fn();mesures[`${nom}_ms`]=Math.round(performance.now()-d);return r;}
   try {
     await signalerEtape("optimisation_images");
-    await preparerPhotos(modele,signalerEtape);
+    await phase("preparation_images",()=>preparerPhotos(modele,signalerEtape,mesures));
     // `import.meta.url` change de répertoire après le bundling Netlify : les
     // fichiers inclus restent, eux, sous la racine de la fonction (/var/task).
     const racineFonction=process.env.LAMBDA_TASK_ROOT || process.cwd();
-    modele.polices={
+    await phase("chargement_polices",async()=>{modele.polices={
       bodoni:extraireBase64(await readFile(resolve(racineFonction,"supabase/functions/generer-carnet/BodoniModa_Variable.ts"),"utf8")),
       plex:extraireBase64(await readFile(resolve(racineFonction,"supabase/functions/generer-carnet/IBMPlexSans_Variable.ts"),"utf8"))
-    };
+    };});
+    const html=await phase("construction_html",async()=>construireHtml(modele));
     await signalerEtape("demarrage_chromium");
     const executablePath=process.env.PUPPETEER_EXECUTABLE_PATH || await chromium.executablePath();
-    navigateur=await puppeteer.launch({args:chromium.args,executablePath,headless:true});
+    navigateur=await phase("lancement_chromium",()=>puppeteer.launch({args:chromium.args,executablePath,headless:true}));
     await signalerEtape("rendu_html");
     const page=await navigateur.newPage();
     // Le document est autonome (polices et photographies embarquées). Attendre
     // `networkidle0` garde inutilement Chromium dans sa phase la plus coûteuse
     // et pouvait faire interrompre le worker Netlify avant la création du PDF.
-    await page.setContent(construireHtml(modele),{waitUntil:"domcontentloaded",timeout:120000});
-    await page.emulateMediaType("print");
-    await page.evaluate(()=>document.fonts.ready);
+    await phase("rendu_html",async()=>{await page.setContent(html,{waitUntil:"domcontentloaded",timeout:120000});await page.emulateMediaType("print");await page.evaluate(()=>document.fonts.ready);});
     await signalerEtape("creation_pdf");
-    await page.pdf({path:temporaire,format:"A4",printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false,tagged:true,timeout:120000});
+    await phase("creation_pdf",()=>page.pdf({path:temporaire,format:"A4",printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false,tagged:true,timeout:120000}));
     await signalerEtape("optimisation_pdf");
     const brut=await readFile(temporaire);
-    const optimise=await recomprimerImagesLossless(brut);
-    await writeFile(temporaire,optimise.octets);
+    const optimise=await phase("optimisation_pdf",()=>recomprimerImagesLossless(brut));
+    await writeFile(temporaire,optimise.octets);mesures.temps_total_ms=Math.round(performance.now()-departTotal);mesures.telechargement_photos_ms=Math.round(mesures.telechargement_photos_ms);mesures.optimisation_images_ms=Math.round(mesures.optimisation_images_ms);
     const poids=optimise.octets.length;
     const budgetMo=Number(process.env.PDF_BUDGET_MB || Math.max(1.5,modele.statistiques.photos*0.2));
     return {
       chemin:temporaire,
-      diagnostic:{pages:optimise.pages,images:optimise.images,photos:modele.statistiques.photos,poids_octets:poids,poids_mo:Number((poids/1024/1024).toFixed(2)),poids_moyen_photo_ko:modele.statistiques.photos?Math.round(poids/1024/modele.statistiques.photos):0,images_lossless_converties:optimise.converties,budget_mo:budgetMo,budget_depasse:poids/1024/1024>budgetMo}
+      diagnostic:{pages:optimise.pages,images:optimise.images,photos:modele.statistiques.photos,poids_octets:poids,poids_mo:Number((poids/1024/1024).toFixed(2)),poids_moyen_photo_ko:modele.statistiques.photos?Math.round(poids/1024/modele.statistiques.photos):0,images_lossless_converties:optimise.converties,budget_mo:budgetMo,budget_depasse:poids/1024/1024>budgetMo,profil:mesures}
     };
   } catch(erreur) {
     if(/heap|memory|allocation/i.test(String(erreur?.message))) erreur.code="MEMOIRE_INSUFFISANTE";

@@ -10,13 +10,14 @@ async function charger(){
   return window.CarnetPDFAdaptateur;
 }
 
-test("la compatibilité PDF reprend le texte existant et toutes les photos du membre",async()=>{
+test("une journée non préparée reste compacte sans accroche ni photos automatiques",async()=>{
   const adaptateur=await charger();
   const modele=await adaptateur.adapter({carnet:{titre:"Voyage"},voyageId:"v",slug:"v",utilisateurId:"m",texteJournee:()=>"Récit existant de Vérone",
     urlPhoto:async p=>`signed:${p}`,jours:[{uuid:"j",date:"2026-08-04",titre:"Vérone",accroche:"Introduction",rail1:"60 km",rail2:"45 min",lieux:[{nom:"Arena"}]}],
     photosParJournee:{j:[{id:"p1",membre_id:"m",storage_path:"1.jpg",legende:"Une"},{id:"p2",membre_id:"m",storage_path:"2.jpg",legende:"Deux"},{id:"autre",membre_id:"x",storage_path:"x.jpg"}]}});
-  assert.equal(modele.version,2);assert.equal(modele.journees[0].recit,"Récit existant de Vérone");
-  assert.deepEqual(Array.from(modele.journees[0].photos,p=>p.id),["p1","p2"]);assert.deepEqual(Array.from(modele.journees[0].tempsForts),["Arena"]);
+  assert.equal(modele.version,2);assert.equal(modele.journees[0].recit,"");
+  assert.equal(modele.journees[0].introduction,"");assert.equal(modele.journees[0].compacte,true);
+  assert.deepEqual(Array.from(modele.journees[0].photos,p=>p.id),[]);assert.deepEqual(Array.from(modele.journees[0].tempsForts),[]);
 });
 
 test("une journée enregistrée utilise uniquement sa préparation",async()=>{

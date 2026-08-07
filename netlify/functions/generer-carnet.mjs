@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { exporterCarnet, supprimerTemporaire } from "./carnet-pdf/exporter.mjs";
 
 export default async (requete) => {
-  let client, travailId, cheminTemporaire;
+  let client, travailId, cheminTemporaire;const debutTotal=performance.now(),profilFonction={};
   try {
     const autorisation=requete.headers.get("authorization") || "";
     const corps=await requete.json();
@@ -15,7 +15,7 @@ export default async (requete) => {
     const clePublique=projets[corps.supabase_url];
     if(!/^Bearer\s+\S+$/i.test(autorisation) || !travailId || !clePublique) return new Response(null,{status:400});
     client=createClient(corps.supabase_url,clePublique,{global:{headers:{Authorization:autorisation}},auth:{persistSession:false}});
-    const lecture=await client.from("carnet_travaux").select("*, voyages(slug)").eq("id",travailId).single();
+    const debutLecture=performance.now(),lecture=await client.from("carnet_travaux").select("*, voyages(slug)").eq("id",travailId).single();profilFonction.chargement_donnees_ms=Math.round(performance.now()-debutLecture);
     if(lecture.error || !lecture.data) return new Response(null,{status:404});
     const modele=lecture.data.modele;
     const signalerEtape=async (etape)=>{
@@ -28,8 +28,9 @@ export default async (requete) => {
     const resultat=await exporterCarnet(modele,signalerEtape);
     cheminTemporaire=resultat.chemin;
     const chemin=`${lecture.data.voyage_id}/${lecture.data.membre_id}/${travailId}.pdf`;
-    const depot=await client.storage.from("carnets").upload(chemin,await readFile(cheminTemporaire),{contentType:"application/pdf",upsert:true});
+    const debutTransfert=performance.now(),depot=await client.storage.from("carnets").upload(chemin,await readFile(cheminTemporaire),{contentType:"application/pdf",upsert:true});profilFonction.transfert_pdf_ms=Math.round(performance.now()-debutTransfert);
     if(depot.error) throw depot.error;
+    resultat.diagnostic.profil_fonction=profilFonction;profilFonction.temps_total_ms=Math.round(performance.now()-debutTotal);
     await client.from("carnet_travaux").update({statut:"termine",chemin_pdf:chemin,diagnostic:resultat.diagnostic,modele:{},maj_le:new Date().toISOString()}).eq("id",travailId);
     return new Response(null,{status:204});
   } catch(erreur) {

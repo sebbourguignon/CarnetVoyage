@@ -12,6 +12,7 @@
   }
   function photoModele(source,selection){
     return {id:source.id,legende:texte(selection && selection.legende_carnet || source.legende),storagePath:source.storage_path,url:null,
+      version:source.maj_le || source.cree_le || source.storage_path,
       focalX:Number(!selection || selection.focal_x == null ? .5 : selection.focal_x),
       focalY:Number(!selection || selection.focal_y == null ? .5 : selection.focal_y)};
   }
@@ -22,7 +23,7 @@
     var photosSources=[];
     var journees=(options.jours || []).map(function(jour){
       var preparation=preparations[jour.uuid];
-      var activer=!!(preparation && preparation.preparation_active);
+      var activer=!!(preparation && (preparation.preparation_active || preparation.carnet_story || (preparation.carnet_faits_confirmes||[]).length || (preparation.carnet_photos_selectionnees||[]).length));
       var disponibles=(options.photosParJournee[jour.uuid] || []).filter(function(p){return p.membre_id===options.utilisateurId;});
       var photos;
       if(activer){
@@ -33,17 +34,16 @@
           return (a.ordre||0)-(b.ordre||0);
         }).filter(function(s){if(!parId[s.photo_id]||deja[s.photo_id])return false;deja[s.photo_id]=true;return true;})
           .slice(0,10).map(function(s){return photoModele(parId[s.photo_id],s);});
-      }else photos=disponibles.map(function(p){return photoModele(p,null);});
+      }else photos=[];
       photos.forEach(function(p){photosSources.push(p);});
 
-      var recit=activer ? (preparation.carnet_terminee ? texte(preparation.carnet_story) : "") : texte(options.texteJournee(jour));
+      var recit=activer ? texte(preparation.carnet_story) : "";
       var moments=activer ? (preparation.carnet_faits_confirmes || []).filter(function(f){return f.moment_fort;})
         .sort(function(a,b){return (a.ordre||0)-(b.ordre||0);}).slice(0,5).map(function(f){return texte(f.libelle);}).filter(Boolean)
-        : (jour.lieux || []).map(function(l){return texte(l.nom);}).filter(Boolean).slice(0,5);
-      var introduction=activer ? "" : texte(jour.accroche);
-      if(!activer && !recit && !introduction && !photos.length)return null;
-      return {id:jour.uuid,date:jour.date || "",lieu:texte(jour.titre),titre:texte(jour.titre),introduction:introduction,
-        recit:recit,tempsForts:moments,distance:texte(jour.rail1),duree:texte(jour.rail2),temperature:preparation&&preparation.temperature_reelle!=null?texte(preparation.temperature_reelle)+" °C":"",photos:photos,preparationActive:activer};
+        : [];
+      var enrichie=!!(recit || photos.length || (activer && (preparation.carnet_faits_confirmes || []).length));
+      return {id:jour.uuid,date:jour.date || "",lieu:texte(jour.titre),titre:texte(jour.titre),introduction:"",
+        recit:recit,tempsForts:moments,distance:texte(jour.rail1),duree:texte(jour.rail2),temperature:preparation&&preparation.temperature_reelle!=null?texte(preparation.temperature_reelle)+" °C":"",photos:photos,preparationActive:activer,compacte:!enrichie,afficherProgrammePrevu:!!(preparation&&preparation.afficher_programme_prevu)};
     }).filter(Boolean);
     if(!journees.length)return Promise.reject({code:"AUCUN_CONTENU",message:"Aucun contenu exploitable pour générer le carnet."});
     return Promise.all(photosSources.map(function(photo){return options.urlPhoto(photo.storagePath).then(function(url){

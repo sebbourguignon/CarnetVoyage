@@ -12,12 +12,20 @@ test("le template échappe les textes, garde les accents et omet les blocs absen
   assert.match(html,/Nîmes &amp; Arles/);
   assert.doesNotMatch(html,/undefined|null/);
   assert.equal((html.match(/class="sheet/g)||[]).length,3);
+  assert.doesNotMatch(html,/standfirst|introduction/);
 });
 
-test("une galerie de cinq photographies conserve les cinq emplacements asymétriques", () => {
-  const photos=Array.from({length:5},(_,i)=>({dataUrl:`data:image/jpeg;base64,${i}`,legende:`Photo ${i+1}`}));
-  const html=construireHtml({voyage:{titre:"Voyage"},statistiques:{journeesIllustrees:1,photos:5},journees:[{id:"1",date:"",lieu:"Rome",titre:"Rome",introduction:"",recit:"Récit",tempsForts:[],distance:"",duree:"",photos:photos.slice(0,3),galeries:[photos]}]});
-  for(const classe of ["gallery-a","gallery-b","gallery-c","gallery-d","gallery-e"]) assert.match(html,new RegExp(classe));
+test("une galerie unique accepte sept photographies rectangulaires", () => {
+  const photos=Array.from({length:7},(_,i)=>({dataUrl:`data:image/jpeg;base64,${i}`,legende:`Photo ${i+1}`}));
+  const html=construireHtml({voyage:{titre:"Voyage"},statistiques:{journeesIllustrees:1,photos:10},journees:[{id:"1",date:"",lieu:"Rome",titre:"Rome",recit:"Récit",tempsForts:[],distance:"",duree:"",photos:photos.slice(0,3),galeries:[photos]}]});
+  assert.match(html,/La journée en images/i);assert.match(html,/gallery-7/);
+  assert.doesNotMatch(html,/points de vue|border-radius/);
+});
+
+test("les étapes compactes sont regroupées et les trajets utilisent un SVG",()=>{
+  const jours=Array.from({length:8},(_,i)=>({id:String(i),date:"2026-08-01",lieu:"Route",titre:"Lyon → Turin",recit:"",tempsForts:[],distance:"100 km",duree:"2 h",photos:[],compacte:true}));
+  const html=construireHtml({voyage:{titre:"Voyage"},statistiques:{journeesIllustrees:0,photos:0},journees:jours});
+  assert.equal((html.match(/class="sheet compact-page"/g)||[]).length,2);assert.match(html,/route-arrow/);assert.doesNotMatch(html,/Lyon → Turin/);
 });
 
 test("un récit long crée des pages de continuation sans perdre le texte",()=>{

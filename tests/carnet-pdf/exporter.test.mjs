@@ -23,7 +23,7 @@ test("export Chromium léger avec portraits, paysages, journée sans photo et r�
       const octets=await readFile(resultat.chemin);
       assert.ok(octets.length<1.5*1024*1024,`PDF trop lourd: ${octets.length}`);
       const pdf=await PDFDocument.load(octets);
-      assert.equal(pdf.getPageCount(),5);
+      assert.equal(pdf.getPageCount(),4);
       const images=[...pdf.context.enumerateIndirectObjects()].filter(([,o])=>o instanceof PDFRawStream&&o.dict.get(PDFName.of("Subtype"))===PDFName.of("Image"));
       assert.ok(images.length>=4);
       assert.ok(images.every(([,o])=>o.dict.get(PDFName.of("Filter"))===PDFName.of("DCTDecode")));

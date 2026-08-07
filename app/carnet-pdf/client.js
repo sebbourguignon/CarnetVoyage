@@ -25,7 +25,11 @@
     var travail = null;
     try {
       verifierNavigateur();
+      var debut=Date.now(),profilClient={};
+      if(options.onProgress)options.onProgress("Chargement des données…",0);
+      var debutModele=Date.now();
       var modele = await options.construireModele();
+      profilClient.chargement_donnees_ms=Date.now()-debutModele;
       var insertion = await options.supabase.from("carnet_travaux").insert({
         voyage_id: options.voyageId, modele: modele
       }).select("id").single();
@@ -44,6 +48,7 @@
         })
       });
       if(!reponse.ok && reponse.status !== 202) throw new Error("démarrage refusé (" + reponse.status + ")");
+      profilClient.demarrage_ms=Date.now()-debut-profilClient.chargement_donnees_ms;
 
       var resultat;
       for(var tentative = 0; tentative < 450; tentative++){
@@ -52,6 +57,7 @@
           .select("statut, chemin_pdf, erreur, diagnostic, maj_le").eq("id", travail.id).single();
         if(lecture.error) throw lecture.error;
         resultat = lecture.data;
+        if(options.onProgress){var etape=resultat.diagnostic&&resultat.diagnostic.etape||"préparation";options.onProgress(/optimisation_image|optimisation_images/.test(etape)?"Préparation des photos et mise en page…":"Génération du carnet…",Math.round((Date.now()-debut)/1000));}
         if(resultat.statut === "termine" || resultat.statut === "erreur") break;
         if(resultat.statut === "en_cours" && resultat.maj_le && Date.now() - new Date(resultat.maj_le).getTime() > 180000){
           var interruption = new Error("la fonction de génération s’est interrompue");
@@ -67,9 +73,10 @@
 
       var signature = await options.supabase.storage.from("carnets").createSignedUrl(resultat.chemin_pdf, 300);
       if(signature.error || !signature.data) throw signature.error || new Error("URL PDF absente");
-      var pdf = await fetch(signature.data.signedUrl);
+      var debutTransfert=Date.now(),pdf = await fetch(signature.data.signedUrl);
       if(!pdf.ok) throw new Error("téléchargement PDF impossible");
       var blob = await pdf.blob();
+      profilClient.transfert_pdf_ms=Date.now()-debutTransfert;profilClient.temps_total_ms=Date.now()-debut;
       var url = URL.createObjectURL(blob);
       var lien = document.createElement("a");
       lien.href = url;
@@ -78,7 +85,7 @@
       lien.click();
       lien.remove();
       setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-      return resultat.diagnostic || null;
+      resultat.diagnostic=resultat.diagnostic||{};resultat.diagnostic.profil_client=profilClient;return resultat.diagnostic;
     } catch(erreur){
       if(!erreur.code && /memory|heap|allocation|mémoire/i.test(String(erreur && erreur.message || erreur))) erreur.code="MEMOIRE_INSUFFISANTE";
       console.error("Échec de génération du carnet :", erreur);
