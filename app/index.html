@@ -2575,6 +2575,15 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     }
     return URLS_SIGNEES_PHOTOS[storagePath];
   }
+  var URLS_MINIATURES_CARNET = {};
+  function urlMiniatureCarnet(storagePath){
+    if(!URLS_MINIATURES_CARNET[storagePath]){
+      URLS_MINIATURES_CARNET[storagePath] = supabaseClient.storage.from("photos")
+        .createSignedUrl(storagePath, 3600, { transform: { width: 320, height: 240, resize: "cover", quality: 60 } })
+        .then(function(res){ return (res.data && res.data.signedUrl) || null; });
+    }
+    return URLS_MINIATURES_CARNET[storagePath];
+  }
   function urlSigneePhotoPourExport(storagePath){
     return supabaseClient.storage.from("photos").createSignedUrl(storagePath, 1800)
       .then(function(res){
@@ -3012,6 +3021,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         textesLegacy: textesCarnetInitiaux || [],
         preparations: preparationsCarnetInitiales || [],
         urlPhoto: urlSigneePhoto,
+        urlMiniature: urlMiniatureCarnet,
         observationReperee: function(jour,index){ return estCoche(jour.id + "-r" + index); },
         generer: async function(){
           var lecture=await supabaseClient.from("carnet_journees").select("*, carnet_faits_confirmes(*), carnet_photos_selectionnees(*)").eq("voyage_id",voyageId).eq("membre_id",utilisateurId);
@@ -6727,6 +6737,12 @@ function appliquerTheme(theme){
   var NOMS_MOIS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
     "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
+  function decoderEntitesTexte(value){
+    var noeud=document.createElement("textarea");
+    noeud.innerHTML=String(value == null ? "" : value);
+    return noeud.value;
+  }
+
   function mapperJournee(ligne){
     /* new Date("YYYY-MM-DD") est interprété en UTC par le moteur JS ;
        on ajoute l'heure locale midi pour éviter tout décalage de jour
@@ -6753,7 +6769,7 @@ function appliquerTheme(theme){
       star: !!ligne.star,
       eclipse: !!ligne.eclipse,
       anniversaire: !!ligne.anniversaire,
-      titre: ligne.titre,
+      titre: decoderEntitesTexte(ligne.titre),
       accroche: ligne.accroche,
       fil: ligne.fil || [],
       pratique: ligne.pratique || null,

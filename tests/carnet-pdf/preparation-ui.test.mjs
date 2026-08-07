@@ -1,36 +1,57 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { pathToFileURL } from "node:url";
-import { resolve } from "node:path";
+import {pathToFileURL} from "node:url";
+import {resolve} from "node:path";
 import puppeteer from "puppeteer-core";
 
-test("parcours de préparation du carnet",{skip:process.env.CARNET_PREPARATION_UI_TEST!=="1",timeout:120000},async()=>{
-  const navigateur=await puppeteer.launch({executablePath:process.env.PUPPETEER_EXECUTABLE_PATH,headless:true,args:["--no-sandbox"]});
+test("parcours ergonomique de préparation avec 77 photos",{skip:process.env.CARNET_PREPARATION_UI_TEST!=="1",timeout:120000},async()=>{
+  const browser=await puppeteer.launch({executablePath:process.env.PUPPETEER_EXECUTABLE_PATH,headless:true,args:["--no-sandbox"]});
   try{
-    const page=await navigateur.newPage();
-    await page.setViewport({width:1100,height:900,deviceScaleFactor:1});
+    const page=await browser.newPage();await page.setViewport({width:1100,height:900});
+    page.on("dialog",d=>d.accept());
     await page.goto(pathToFileURL(resolve("tests/fixtures/carnet-preparation.html")).href,{waitUntil:"networkidle0"});
-    assert.equal(await page.$eval(".carnet-preparation-stat:last-child span",el=>el.textContent),"photos sélectionnées");
-    assert.ok(!(await page.$eval(".carnet-preparation-stats",el=>el.textContent)).includes("/ 20"));
     await page.click(".carnet-bouton-generer");
-    assert.equal(await page.$eval(".carnet-source",el=>el.textContent),"Ancien texte à relire");
-    assert.equal(await page.$eval(".carnet-brouillon",el=>el.textContent),"Brouillon");
-    assert.equal(await page.$eval(".carnet-programme-option input",el=>el.checked),false);
-    const suggestion=await page.$$eval(".carnet-fait-confirmation input",els=>els.map(el=>el.checked));
-    assert.deepEqual(suggestion,[false,false,false]);
-    await page.click(".carnet-preparation-actions .carnet-action-secondaire");
-    await page.waitForFunction(()=>document.querySelector(".carnet-source")?.textContent==="Brouillon IA");
-    assert.equal(await page.$eval(".carnet-brouillon",el=>el.textContent),"Brouillon");
-    assert.ok(await page.$(".carnet-action-texte"));
-    await page.click(".carnet-action-texte");
-    assert.equal(await page.$eval(".carnet-source",el=>el.textContent),"Ancien texte à relire");
-    for(let i=1;i<13;i++){
-      const selecteur=`.carnet-selection-photo:nth-child(${i+1}) .carnet-photo-choisir input`;
-      await page.click(selecteur);
-    }
-    assert.match(await page.$eval(".carnet-photos-compteur",el=>el.textContent),/^13 sélectionnées/);
-    assert.ok(await page.$eval(".carnet-photos-compteur",el=>el.classList.contains("avertissement")));
-    await page.screenshot({path:process.env.CARNET_PREPARATION_CAPTURE||"/tmp/carnet-preparation-lot2.png",fullPage:true});
-  } finally { await navigateur.close(); }
-});
+    await page.waitForSelector(".carnet-preparation-jour-head");
+    assert.match(await page.$eval(".carnet-preparation-jour-head",n=>n.textContent),/Modène & la Motor Valley/);
+    const activites=await page.$$eval(".carnet-activite .carnet-fait-confirmation span",ns=>ns.map(n=>n.textContent));
+    assert.equal(activites.filter(x=>/Ghirlandina/.test(x)).length,1);
+    assert.ok(await page.$eval(".carnet-activite-details",n=>/Wiligelmo/.test(n.textContent)&&/Pescheria/.test(n.textContent)));
+    assert.match(await page.$eval(".carnet-photos-compteur",n=>n.textContent),/^77 photos dans la journée · 1 \/ 10/);
+    assert.equal(await page.$$eval(".carnet-selection-photo",ns=>ns.length),1);
+    assert.equal(await page.$$(".carnet-sauvegarde").then(x=>x.length),0);
+    assert.equal(await page.$$(".carnet-valide").then(x=>x.length),0);
 
+    await page.click(".carnet-fait-confirmation input");
+    await page.waitForSelector(".carnet-moment-ligne");
+    await page.click(".carnet-preparation-actions .carnet-action-primaire");
+    await page.waitForFunction(()=>document.querySelector(".carnet-preparation-recit")?.value.length>100);
+    const payload=await page.evaluate(()=>window.DERNIER_PAYLOAD_IA);
+    assert.equal(payload.faits_confirmes.length,1);
+    assert.ok(!JSON.stringify(payload).includes("Si vous avez plus de temps"));
+    await page.$eval(".carnet-preparation-bloc textarea:not(.carnet-preparation-recit)",n=>{n.value="Une nouvelle anecdote";n.dispatchEvent(new Event("input",{bubbles:true}));});
+    await page.waitForSelector(".carnet-recit-obsolete");
+    await page.click(".carnet-preparation-actions .carnet-action-secondaire");
+    assert.equal(await page.$eval(".carnet-preparation-recit",n=>n.value),"Une ancienne proposition à relire avant de devenir notre souvenir.");
+
+    await page.click(".carnet-preparation-bloc:nth-of-type(3) > .carnet-action-secondaire").catch(async()=>{
+      const buttons=await page.$$("button");for(const b of buttons){if(await b.evaluate(n=>n.textContent)==="Modifier la sélection"){await b.click();break;}}
+    });
+    await page.waitForSelector(".carnet-photo-modal");
+    assert.equal(await page.$$eval(".carnet-photo-pick",ns=>ns.length),77);
+    for(let i=0;i<9;i++)await page.evaluate(()=>document.querySelector(".carnet-photo-pick:not(.active)").click());
+    assert.equal(await page.$eval(".carnet-photo-dialog header strong",n=>n.textContent),"10 / 10");
+    await page.click(".carnet-photo-pick:not(.active)");
+    assert.equal(await page.$eval(".carnet-photo-dialog header strong",n=>n.textContent),"10 / 10");
+    await page.click(".carnet-photo-filtre input");assert.equal(await page.$$eval(".carnet-photo-pick",ns=>ns.length),10);
+    await page.click(".carnet-photo-dialog footer .carnet-action-primaire");
+    assert.equal(await page.$$eval(".carnet-selection-photo",ns=>ns.length),10);
+    assert.ok(await page.$(".carnet-action-bar"));
+    await page.waitForFunction(()=>document.querySelector(".carnet-autosave-statut")?.textContent==="Modifications enregistrées");
+    await page.click(".carnet-action-bar .carnet-action-primaire");
+    await page.waitForFunction(()=>document.querySelector(".carnet-preparation-jour-head>span:last-child")?.textContent==="Prête");
+    await page.click(".carnet-preparation-jour-head");
+    await page.$eval(".carnet-preparation-bloc textarea:not(.carnet-preparation-recit)",n=>{n.value+=" modifiée";n.dispatchEvent(new Event("input",{bubbles:true}));});
+    assert.equal(await page.$eval(".carnet-preparation-jour.ouvert .carnet-preparation-jour-head>span:last-child",n=>n.textContent),"Brouillon");
+    if(process.env.CARNET_PREPARATION_CAPTURE)await page.screenshot({path:process.env.CARNET_PREPARATION_CAPTURE,fullPage:true});
+  }finally{await browser.close();}
+});

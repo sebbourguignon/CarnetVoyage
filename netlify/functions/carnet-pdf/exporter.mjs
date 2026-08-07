@@ -82,9 +82,7 @@ async function preparerPhotos(modele, signalerEtape) {
       preparees.push(await variante(originales[i], role));
     }
     journee.photos=preparees;
-    let photosGalerie=[];
-    if(originales.length === 4) photosGalerie=[...originales, originales[0]];
-    else if(originales.length >= 5) photosGalerie=originales;
+    const photosGalerie=originales.slice(3);
     journee.galeries=[];
     for(let debut=0;debut<photosGalerie.length;debut+=5) {
       const groupe=[];

@@ -24,7 +24,7 @@ test("une journée enregistrée utilise uniquement sa préparation",async()=>{
   const modele=await adaptateur.adapter({carnet:{titre:"Voyage"},voyageId:"v",slug:"v",utilisateurId:"m",texteJournee:()=>"Ancien récit",urlPhoto:async p=>`signed:${p}`,
     jours:[{uuid:"j",date:"2026-08-04",titre:"Vérone",accroche:"Ancienne accroche",rail1:"60 km",rail2:"45 min",lieux:[{nom:"Lieu prévu"}]}],
     photosParJournee:{j:[{id:"p1",membre_id:"m",storage_path:"1.jpg",legende:"Une"},{id:"p2",membre_id:"m",storage_path:"2.jpg",legende:"Deux"}]},
-    preparations:[{journee_id:"j",preparation_active:true,carnet_story:"Nouveau récit validé",carnet_story_validated:true,
+    preparations:[{journee_id:"j",preparation_active:true,carnet_story:"Nouveau récit validé",carnet_story_validated:true,carnet_terminee:true,
       carnet_faits_confirmes:[{libelle:"Arena vécue",moment_fort:true,ordre:0},{libelle:"Simple fait",moment_fort:false,ordre:1}],
       carnet_photos_selectionnees:[{photo_id:"p2",ordre:1,principale:true,legende_carnet:"Photo choisie",focal_x:.2,focal_y:.8}]}]});
   const jour=modele.journees[0];assert.equal(jour.recit,"Nouveau récit validé");assert.equal(jour.introduction,"");

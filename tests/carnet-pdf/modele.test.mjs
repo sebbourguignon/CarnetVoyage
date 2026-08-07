@@ -14,10 +14,8 @@ test("un ancien carnet_textes devient un brouillon legacy non validé",()=>{
 
 test("les limites sont quotidiennes et ne créent aucun quota voyage",()=>{
   const preparation=modele.normaliserPreparation(null,null);
-  const photos=Array.from({length:13},(_,i)=>({photoId:String(i),ordre:i}));
-  assert.deepEqual(modele.analyserJournee(preparation,[],photos).avertissements,["Plus de 12 photos sélectionnées pour cette journée."]);
-  assert.equal(modele.analyserJournee(preparation,[],Array.from({length:20},(_,i)=>({photoId:String(i)}))).erreurs.length,0);
-  assert.equal(modele.analyserJournee(preparation,[],Array.from({length:21},(_,i)=>({photoId:String(i)}))).erreurs.length,1);
+  assert.equal(modele.analyserJournee(preparation,[],Array.from({length:10},(_,i)=>({photoId:String(i)}))).erreurs.length,0);
+  assert.match(modele.analyserJournee(preparation,[],Array.from({length:11},(_,i)=>({photoId:String(i)}))).erreurs[0],/10 photos/);
   assert.equal("PHOTOS_MAX_VOYAGE" in modele,false);
 });
 
@@ -51,4 +49,12 @@ test("l’activation de la préparation est explicite et rétrocompatible",async
   const sql=await readFile(new URL("../../supabase/migrations/0024_activation_preparation_carnet.sql",import.meta.url),"utf8");
   assert.match(sql,/preparation_active boolean not null default false/i);
   assert.doesNotMatch(sql,/update\s+carnet_journees/i);
+});
+
+test("la passe ergonomique ajoute une validation finale et limite à dix photos",async()=>{
+  const sql=await readFile(new URL("../../supabase/migrations/0025_ergonomie_preparation_carnet.sql",import.meta.url),"utf8");
+  assert.match(sql,/carnet_terminee boolean not null default false/i);
+  assert.match(sql,/recit_source_hash text/i);
+  assert.match(sql,/maximum de 10 photos par journée/i);
+  assert.doesNotMatch(sql,/delete from carnet_/i);
 });

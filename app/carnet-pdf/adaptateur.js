@@ -32,18 +32,18 @@
           if(!!a.principale!==!!b.principale)return a.principale?-1:1;
           return (a.ordre||0)-(b.ordre||0);
         }).filter(function(s){if(!parId[s.photo_id]||deja[s.photo_id])return false;deja[s.photo_id]=true;return true;})
-          .slice(0,20).map(function(s){return photoModele(parId[s.photo_id],s);});
+          .slice(0,10).map(function(s){return photoModele(parId[s.photo_id],s);});
       }else photos=disponibles.map(function(p){return photoModele(p,null);});
       photos.forEach(function(p){photosSources.push(p);});
 
-      var recit=activer ? (preparation.carnet_story_validated ? texte(preparation.carnet_story) : "") : texte(options.texteJournee(jour));
+      var recit=activer ? (preparation.carnet_terminee ? texte(preparation.carnet_story) : "") : texte(options.texteJournee(jour));
       var moments=activer ? (preparation.carnet_faits_confirmes || []).filter(function(f){return f.moment_fort;})
         .sort(function(a,b){return (a.ordre||0)-(b.ordre||0);}).slice(0,5).map(function(f){return texte(f.libelle);}).filter(Boolean)
         : (jour.lieux || []).map(function(l){return texte(l.nom);}).filter(Boolean).slice(0,5);
       var introduction=activer ? "" : texte(jour.accroche);
       if(!activer && !recit && !introduction && !photos.length)return null;
       return {id:jour.uuid,date:jour.date || "",lieu:texte(jour.titre),titre:texte(jour.titre),introduction:introduction,
-        recit:recit,tempsForts:moments,distance:texte(jour.rail1),duree:texte(jour.rail2),photos:photos,preparationActive:activer};
+        recit:recit,tempsForts:moments,distance:texte(jour.rail1),duree:texte(jour.rail2),temperature:preparation&&preparation.temperature_reelle!=null?texte(preparation.temperature_reelle)+" °C":"",photos:photos,preparationActive:activer};
     }).filter(Boolean);
     if(!journees.length)return Promise.reject({code:"AUCUN_CONTENU",message:"Aucun contenu exploitable pour générer le carnet."});
     return Promise.all(photosSources.map(function(photo){return options.urlPhoto(photo.storagePath).then(function(url){

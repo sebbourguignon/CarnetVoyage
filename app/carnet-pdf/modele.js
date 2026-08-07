@@ -2,8 +2,8 @@
   "use strict";
 
   var SOURCES_RECIT = ["manual", "ai", "empty", "legacy"];
-  var PHOTOS_CONSEILLEES_PAR_JOUR = 12;
-  var PHOTOS_MAX_PAR_JOUR = 20;
+  var PHOTOS_CONSEILLEES_PAR_JOUR = 10;
+  var PHOTOS_MAX_PAR_JOUR = 10;
   var MOMENTS_FORTS_MAX = 5;
 
   function texte(value){ return String(value == null ? "" : value).replace(/\s+/g, " ").trim(); }
@@ -22,7 +22,9 @@
       notesManuelles: texte(ligne && ligne.notes_manuelles),
       temperatureReelle: ligne && ligne.temperature_reelle != null ? nombre(ligne.temperature_reelle, null) : null,
       temperatureReleveeLe: ligne && ligne.temperature_relevee_le || null,
-      afficherProgrammePrevu: !!(ligne && ligne.afficher_programme_prevu)
+      afficherProgrammePrevu: !!(ligne && ligne.afficher_programme_prevu),
+      carnetTerminee: !!(ligne && ligne.carnet_terminee),
+      recitSourceHash: ligne && ligne.recit_source_hash || null
     };
   }
 
@@ -50,23 +52,21 @@
         focalY: nombre(selection.focal_y != null ? selection.focal_y : selection.focalY, 0.5),
         legendeCarnet: texte(selection.legende_carnet != null ? selection.legende_carnet : selection.legendeCarnet)
       };
-    }).filter(function(selection){ return !!selection.photoId; }).sort(function(a,b){ return a.ordre-b.ordre; });
+    }).filter(function(selection){ return !!selection.photoId; }).sort(function(a,b){ return a.ordre-b.ordre; }).slice(0, PHOTOS_MAX_PAR_JOUR);
   }
 
   function analyserJournee(preparation, faits, photos){
     var erreurs = [], avertissements = [];
     var moments = (faits || []).filter(function(f){ return f.momentFort; });
     var principales = (photos || []).filter(function(p){ return p.principale; });
-    if((photos || []).length > PHOTOS_MAX_PAR_JOUR) erreurs.push("Maximum de 20 photos sélectionnées par journée.");
-    else if((photos || []).length > PHOTOS_CONSEILLEES_PAR_JOUR) avertissements.push("Plus de 12 photos sélectionnées pour cette journée.");
+    if((photos || []).length > PHOTOS_MAX_PAR_JOUR) erreurs.push("Maximum de 10 photos sélectionnées par journée.");
     if(principales.length > 1) erreurs.push("Une seule photo principale est autorisée par journée.");
     if(moments.length > MOMENTS_FORTS_MAX) erreurs.push("Maximum de 5 moments forts par journée.");
-    if(preparation.carnetStoryValidated && !preparation.carnetStory) erreurs.push("Un récit validé ne peut pas être vide.");
     return {
       erreurs: erreurs,
       avertissements: avertissements,
-      enrichie: !!(preparation.carnetStoryValidated || (faits || []).length || (photos || []).length),
-      compacte: !(preparation.carnetStoryValidated || (faits || []).length || (photos || []).length)
+      enrichie: !!(preparation.carnetStory || (faits || []).length || (photos || []).length),
+      compacte: !(preparation.carnetStory || (faits || []).length || (photos || []).length)
     };
   }
 
@@ -81,4 +81,3 @@
     analyserJournee: analyserJournee
   };
 })(typeof window !== "undefined" ? window : globalThis);
-
