@@ -9,7 +9,6 @@
 # par nom d'hote (HOTE_PRODUCTION), rien a configurer ici pour ca.
 
 [build]
-  command = "node scripts/inject-carnet-build.mjs"
   publish = "app"
 
 [functions]

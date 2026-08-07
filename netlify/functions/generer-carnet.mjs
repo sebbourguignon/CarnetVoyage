@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { createClient } from "@supabase/supabase-js";
 import { exporterCarnet, supprimerTemporaire } from "./carnet-pdf/exporter.mjs";
 import { preparerVariantesPersistantes } from "./carnet-pdf/variantes.mjs";
-import {CARNET_BUILD_SHA} from "./carnet-build.generated.mjs";
+import {CARNET_BUILD_SHA} from "./carnet-pdf/build.generated.mjs";
 
 const VERSION_FONCTION="carnet-pdf-v4";
 const BUILD_SHA=CARNET_BUILD_SHA;
