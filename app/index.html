@@ -1986,30 +1986,51 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      oblige — on ne complexifie pas pour ce cas rare. Consultée depuis
      l'onglet Admin, voir construireBlocFrequentation. */
   var enregistrerOngletVisite = function(){};
+  var enregistrerVue = function(){};
+  var enregistrerEvenement = function(){};
   if(utilisateurId){
     (function(){
       var idVisite = null;
       var debut = Date.now();
       var onglets = [{ onglet: "aujourdhui", le: new Date().toISOString() }];
+      var evenements = [];
+      var derniereVue = "aujourdhui";
+      var ecriture = Promise.resolve();
       supabaseClient.from("visites")
-        .insert({ voyage_id: voyageId, utilisateur_id: utilisateurId, onglets_vus: onglets })
+        .insert({ voyage_id: voyageId, utilisateur_id: utilisateurId, onglets_vus: onglets, evenements: evenements })
         .select("id").single()
-        .then(function(res){ if(!res.error && res.data) idVisite = res.data.id; });
+        .then(function(res){ if(!res.error && res.data){ idVisite = res.data.id; coeur(); } });
 
       function coeur(){
         if(!idVisite) return;
-        supabaseClient.from("visites").update({
-          derniere_activite_le: new Date().toISOString(),
-          duree_secondes: Math.round((Date.now() - debut) / 1000),
-          onglets_vus: onglets
-        }).eq("id", idVisite).then(function(){});
+        ecriture=ecriture.catch(function(){}).then(function(){
+          return supabaseClient.from("visites").update({
+            derniere_activite_le: new Date().toISOString(),
+            duree_secondes: Math.round((Date.now() - debut) / 1000),
+            onglets_vus: onglets,
+            evenements: evenements
+          }).eq("id", idVisite).then(function(){});
+        });
       }
       setInterval(function(){ if(document.visibilityState === "visible") coeur(); }, 25000);
       document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "hidden") coeur(); });
       window.addEventListener("pagehide", coeur);
 
       enregistrerOngletVisite = function(nom){
+        derniereVue=nom;
         onglets.push({ onglet: nom, le: new Date().toISOString() });
+        coeur();
+      };
+      enregistrerVue = function(nom, proprietes, optionsVue){
+        var cle=(nom||"")+":"+String(proprietes&&proprietes.dayId||"");
+        if(!(optionsVue&&optionsVue.force) && cle===derniereVue)return;
+        derniereVue=cle;
+        onglets.push(Object.assign({onglet:nom, vue:nom, le:new Date().toISOString()}, proprietes||{}));
+        coeur();
+      };
+      enregistrerEvenement = function(nom, proprietes){
+        evenements.push(Object.assign({nom:nom, le:new Date().toISOString()}, proprietes||{}));
+        coeur();
       };
     })();
   }
@@ -2805,7 +2826,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      vue journee ne garde qu'ajouter/supprimer, l'onglet Carnet est
      desormais l'endroit pour tout le reste (texte, commentaires,
      partage). */
-  function construireControleUpload(j){
+  function construireControleUpload(j, contexte){
     var wrap = document.createElement("div");
     var input = document.createElement("input");
     input.type = "file";
@@ -2841,19 +2862,21 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
          saturerait inutilement une connexion mobile sur le terrain --
          mieux vaut une file d'attente visible ("2/5") qu'un blocage
          silencieux. */
-      var total = fichiers.length;
+      var total = fichiers.length, ajoutes = 0;
       function suivante(index){
         if(index >= total){
           boutonAjouter.textContent = texteInitial;
           boutonAjouter.disabled = false;
           actualiserLimite();
+          if(ajoutes && contexte === "carnet") enregistrerEvenement("carnet_photo_upload", {dayId:j.uuid, nombre:ajoutes, total: (PHOTOS_PAR_JOURNEE[j.uuid]||[]).length});
           return;
         }
         var suffixe = total > 1 ? " (" + (index + 1) + "/" + total + ")" : "";
+        var nombreAvant = (PHOTOS_PAR_JOURNEE[j.uuid]||[]).length;
         televerserPhoto(j, fichiers[index], function(etat){
           boutonAjouter.textContent = (etat || "Envoi…") + suffixe;
           boutonAjouter.disabled = true;
-        }).then(function(){ suivante(index + 1); });
+        }).then(function(){ if((PHOTOS_PAR_JOURNEE[j.uuid]||[]).length>nombreAvant) ajoutes++; suivante(index + 1); });
       }
       suivante(0);
     });
@@ -3026,12 +3049,14 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         urlPhoto: urlSigneePhoto,
         urlMiniature: urlMiniatureCarnet,
         observationReperee: function(jour,index){ return estCoche(jour.id + "-r" + index); },
+        trackView: function(nom, proprietes, optionsVue){ enregistrerVue(nom, proprietes, optionsVue); },
+        trackEvent: function(nom, proprietes){ enregistrerEvenement(nom, proprietes); },
         preparerVariantes: async function(photoIds){
           var session=await supabaseClient.auth.getSession(),jeton=session.data&&session.data.session&&session.data.session.access_token;
           if(!jeton||!photoIds.length)return;
           await fetch("/.netlify/functions/preparer-variantes-carnet",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+jeton},body:JSON.stringify({supabase_url:supabaseUrl,voyage_id:voyageId,photo_ids:photoIds})});
         },
-        creerControleUpload: function(j){ return construireControleUpload(j); },
+        creerControleUpload: function(j){ return construireControleUpload(j, "carnet"); },
         generer: async function(onProgress,t0Utilisateur){
           var lecture=await supabaseClient.from("carnet_journees").select("*, carnet_faits_confirmes(*), carnet_photos_selectionnees(*)").eq("voyage_id",voyageId).eq("membre_id",utilisateurId);
           if(lecture.error) throw lecture.error;
@@ -4637,7 +4662,22 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
      icônes de la barre d'onglets, elles aussi du SVG écrit à la main). */
   var NOMS_ONGLETS_FREQUENTATION = {
     aujourdhui: "Accueil", jours: "Agenda", chasse: "Chasse", carnet: "Carnet",
+    carnet_dashboard: "Carnet — Accueil",
+    carnet_day_detail: "Carnet — Préparation d’une journée",
+    carnet_photo_selector: "Carnet — Sélection des photos",
     reserver: "Réserver", urgences: "Urgences", admin: "Admin"
+  };
+  var NOMS_EVENEMENTS_CARNET = {
+    carnet_day_complete: "Journées terminées",
+    carnet_photo_selector_open: "Sélecteurs photo ouverts",
+    carnet_photo_selection_validate: "Sélections photo validées",
+    carnet_photo_upload: "Uploads photo depuis Carnet",
+    carnet_ai_compose: "Compositions IA",
+    carnet_ai_recompose: "Recompositions IA",
+    carnet_generate_start: "Générations lancées",
+    carnet_generate_success: "Générations réussies",
+    carnet_generate_error: "Générations en erreur",
+    carnet_day_open: "Ouvertures de journées"
   };
   function formaterDureeFrequentation(secondes){
     var min = Math.round(secondes / 60);
@@ -4744,7 +4784,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     container.appendChild(bloc);
 
     supabaseClient.from("visites")
-      .select("utilisateur_id, debutee_le, duree_secondes, onglets_vus")
+      .select("utilisateur_id, debutee_le, duree_secondes, onglets_vus, evenements")
       .eq("voyage_id", voyageId)
       .then(function(res){
         if(res.error){ zone.textContent = "Chargement de la fréquentation impossible : " + res.error.message; return; }
@@ -4756,12 +4796,16 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
         });
         var parJour = {};
         var parOnglet = {};
+        var parEvenement = {};
         var derniereGlobale = null;
         (res.data || []).forEach(function(v){
           var jour = (v.debutee_le || "").slice(0, 10);
           if(jour) parJour[jour] = (parJour[jour] || 0) + 1;
           (v.onglets_vus || []).forEach(function(o){
             parOnglet[o.onglet] = (parOnglet[o.onglet] || 0) + 1;
+          });
+          (v.evenements || []).forEach(function(e){
+            if(e && e.nom) parEvenement[e.nom] = (parEvenement[e.nom] || 0) + 1;
           });
           if(!derniereGlobale || v.debutee_le > derniereGlobale) derniereGlobale = v.debutee_le;
 
@@ -4835,7 +4879,41 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
             "--oliva"
           ));
         }
+        var evenementsTries = Object.keys(parEvenement)
+          .map(function(nom){ return { nom: nom, valeur: parEvenement[nom] }; })
+          .sort(function(a, b){ return b.valeur - a.valeur; });
+        if(evenementsTries.length){
+          bloc.appendChild(el("h4", "admin-freq-soustitre", "Usage du Carnet"));
+          bloc.appendChild(construireBarresFrequentation(evenementsTries.map(function(e){
+            return { label: NOMS_EVENEMENTS_CARNET[e.nom] || e.nom, valeur: e.valeur, sousLabel: String(e.valeur) };
+          }), "--rosso"));
+        }
       });
+  }
+
+  function construireBlocKpiCarnet(container){
+    var lignes=preparationsCarnetInitiaux||[], parJour={};
+    lignes.forEach(function(l){parJour[l.journee_id]=l;});
+    var pretes=0,enCours=0,totalPhotos=0,photosSelectionnees=0;
+    JOURS.forEach(function(j){
+      var l=parJour[j.uuid]||{}, faits=l.carnet_faits_confirmes||[], selection=l.carnet_photos_selectionnees||[];
+      if(l.carnet_terminee===true)pretes++;
+      else if(faits.length||selection.length||l.notes_manuelles||l.carnet_story)enCours++;
+      photosSelectionnees+=selection.length;
+    });
+    Object.keys(PHOTOS_PAR_JOURNEE).forEach(function(id){totalPhotos+=(PHOTOS_PAR_JOURNEE[id]||[]).length;});
+    var bloc=el("section","admin-frequentation");
+    bloc.appendChild(el("h3","admin-souszone-titre","État actuel du Carnet"));
+    var kpis=el("div","admin-freq-kpis");
+    [
+      {valeur:pretes,label:"journées Prêtes"},
+      {valeur:enCours,label:"journées En cours"},
+      {valeur:JOURS.length-pretes-enCours,label:"journées À préparer"},
+      {valeur:totalPhotos,label:"photos uploadées"},
+      {valeur:photosSelectionnees,label:"photos sélectionnées pour le carnet"}
+    ].forEach(function(k){var carte=el("div","admin-freq-kpi");carte.append(el("span","admin-freq-kpi-valeur",String(k.valeur)),el("span","admin-freq-kpi-label",k.label));kpis.appendChild(carte);});
+    bloc.appendChild(kpis);
+    container.appendChild(bloc);
   }
 
   /* --- console d'administration : fréquentation ----------------------------
@@ -4851,7 +4929,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     supabaseClient.from("membres_famille").select("utilisateur_id, prenom").eq("voyage_id", voyageId)
       .then(function(res){
         if(res.error){ zone.innerHTML = ""; zone.appendChild(el("p", "admin-info admin-erreur", "Chargement des membres impossible : " + res.error.message)); return; }
-        zone.remove();
+    zone.remove();
+        construireBlocKpiCarnet(container);
         construireBlocFrequentation(container, voyageId, res.data || []);
       });
   }
@@ -6368,7 +6447,8 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     Array.prototype.forEach.call(tabbar.querySelectorAll("a"), function(a){
       a.setAttribute("aria-current", a.getAttribute("data-tab") === nom ? "page" : "false");
     });
-    enregistrerOngletVisite(nom);
+    if(nom === "carnet") enregistrerVue("carnet_dashboard");
+    else enregistrerOngletVisite(nom);
     window.scrollTo(0, scrollY || 0);
   }
 
