@@ -41,6 +41,7 @@ test("dashboard et parcours dédié de préparation avec 30 photos",{skip:proces
     assert.equal(await page.$$(".carnet-options-journee").then(x=>x.length),0);
     assert.equal(await page.$eval(".carnet-preparation-bloc:nth-of-type(4) h4",n=>n.textContent),"Notes & souvenirs");
     assert.match(await page.$eval(".carnet-photos-compteur",n=>n.textContent),/^30 \/ 30 photos dans la journée · 1 \/ 10/);
+    assert.equal(await page.$eval(".carnet-photos-actions .photos-bouton-ajouter",n=>n.textContent),"Ajouter des photos");
     assert.equal(await page.$$eval(".carnet-selection-photo",ns=>ns.length),1);
     assert.equal(await page.$$(".carnet-sauvegarde").then(x=>x.length),0);
     assert.equal(await page.$eval(".carnet-preparation-notes",n=>getComputedStyle(n).resize),"none");
@@ -59,6 +60,9 @@ test("dashboard et parcours dédié de préparation avec 30 photos",{skip:proces
     const buttons=await page.$$("button");for(const b of buttons){if(await b.evaluate(n=>n.textContent)==="Modifier la sélection"){await b.click();break;}}
     await page.waitForSelector(".carnet-photo-modal");
     assert.equal(await page.$$eval(".carnet-photo-pick",ns=>ns.length),30);
+    const geometries=await page.$$eval(".carnet-photo-pick",ns=>ns.map(n=>{const r=n.getBoundingClientRect();return{w:r.width,h:r.height,ratio:r.width/r.height};}));
+    assert.ok(geometries.every(x=>Math.abs(x.ratio-4/3)<.03),JSON.stringify(geometries.slice(0,2)));
+    assert.ok(Math.max(...geometries.map(x=>x.h))-Math.min(...geometries.map(x=>x.h))<1,"miniatures non uniformes");
     for(let i=0;i<9;i++)await page.evaluate(()=>document.querySelector(".carnet-photo-pick:not(.active)").click());
     assert.equal(await page.$eval(".carnet-photo-dialog header strong",n=>n.textContent),"10 / 10");
     await page.click(".carnet-photo-pick:not(.active)");

@@ -2813,7 +2813,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
     input.multiple = true;
     input.className = "photos-input-cache";
     input.style.display = "none";
-    var boutonAjouter = el("button", "photos-bouton-ajouter", "Ajouter une photo");
+    var boutonAjouter = el("button", "photos-bouton-ajouter", "Ajouter des photos");
     boutonAjouter.type = "button";
     boutonAjouter.dataset.uploadDay = j.id;
     function actualiserLimite(){
@@ -3031,6 +3031,7 @@ function demarrerCarnet(JOURS, BADGES, CARNET, slugVoyage, supabaseClient, sessi
           if(!jeton||!photoIds.length)return;
           await fetch("/.netlify/functions/preparer-variantes-carnet",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+jeton},body:JSON.stringify({supabase_url:supabaseUrl,voyage_id:voyageId,photo_ids:photoIds})});
         },
+        creerControleUpload: function(j){ return construireControleUpload(j); },
         generer: async function(onProgress,t0Utilisateur){
           var lecture=await supabaseClient.from("carnet_journees").select("*, carnet_faits_confirmes(*), carnet_photos_selectionnees(*)").eq("voyage_id",voyageId).eq("membre_id",utilisateurId);
           if(lecture.error) throw lecture.error;
