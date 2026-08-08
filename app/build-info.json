@@ -1,1 +1,1 @@
-{"buildSha":"98ef8715c365c8c48e3ff99e1b5f0602dd81b56c","clientVersion":"carnet-client-v4"}
+{"sha":"__CARNET_COMMIT_REF__","buildSha":"__CARNET_COMMIT_REF__","branch":"__CARNET_BRANCH__","context":"__CARNET_CONTEXT__","buildTime":"__CARNET_BUILD_TIME__","clientVersion":"carnet-client-v4"}

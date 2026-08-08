@@ -6,7 +6,7 @@
     "node": ">=22.17 <23"
   },
   "scripts": {
-    "test:carnet-pdf": "node --test tests/carnet-pdf/*.test.mjs"
+    "test:carnet-pdf": "node --test tests/carnet-pdf/*.test.mjs tests/*.test.mjs"
   },
   "dependencies": {
     "@netlify/functions": "^5.3.0",

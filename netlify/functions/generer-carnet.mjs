@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { exporterCarnet, supprimerTemporaire } from "./carnet-pdf/exporter.mjs";
 import { preparerVariantesPersistantes } from "./carnet-pdf/variantes.mjs";
 import {CARNET_BUILD_SHA} from "./carnet-pdf/build.generated.mjs";
+import {DEV_URL,PROD_URL,environmentMismatchResponse} from "./carnet-environment.mjs";
 
 const VERSION_FONCTION="carnet-pdf-v4";
 const BUILD_SHA=CARNET_BUILD_SHA;
@@ -15,11 +16,12 @@ export default async (requete) => {
     const corps=await requete.json();
     travailId=corps.travail_id;
     const projets={
-      "https://cgxnrgkalhfyfkpesshq.supabase.co":"sb_publishable_fbZPyz9G6UIBWwU00phJig_fQegJUl9",
-      "https://ozjbkpgoatagqyrlxdry.supabase.co":"sb_publishable_Jz82ewEk0V8Qdq-6jRSXQg_WMxjVo5h"
+      [PROD_URL]:"sb_publishable_fbZPyz9G6UIBWwU00phJig_fQegJUl9",
+      [DEV_URL]:"sb_publishable_Jz82ewEk0V8Qdq-6jRSXQg_WMxjVo5h"
     };
     const clePublique=projets[corps.supabase_url];
     if(!/^Bearer\s+\S+$/i.test(autorisation) || !travailId || !clePublique) return new Response(null,{status:400});
+    const environnement=environmentMismatchResponse(corps.supabase_url);if(environnement)return environnement;
     client=createClient(corps.supabase_url,clePublique,{global:{headers:{Authorization:autorisation}},auth:{persistSession:false}});
     const debutLecture=performance.now(),lecture=await client.from("carnet_travaux").select("*, voyages(slug)").eq("id",travailId).single();profilFonction.chargement_donnees_ms=Math.round(performance.now()-debutLecture);
     if(lecture.error || !lecture.data) return new Response(null,{status:404});

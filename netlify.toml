@@ -9,7 +9,7 @@
 # par nom d'hote (HOTE_PRODUCTION), rien a configurer ici pour ca.
 
 [build]
-  command = "node scripts/netlify-build.mjs"
+  command = "CARNET_BUILD_WRITE=1 node scripts/netlify-build.mjs"
   publish = "app"
 
 [functions]
