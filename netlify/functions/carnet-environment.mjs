@@ -3,7 +3,7 @@ export const PROD_URL="https://cgxnrgkalhfyfkpesshq.supabase.co";
 export const DEV_REF="ozjbkpgoatagqyrlxdry";
 export const PROD_REF="cgxnrgkalhfyfkpesshq";
 
-export function netlifyContext(){return process.env.CONTEXT||"unknown";}
+export function netlifyContext(fallback="unknown"){return process.env.CONTEXT||fallback||"unknown";}
 export function expectedProjectUrl(context=netlifyContext()){
   return context==="production"?PROD_URL:DEV_URL;
 }
@@ -17,10 +17,10 @@ export function expectedProjectRef(context=netlifyContext()){
 }
 export function branchName(){return process.env.BRANCH||process.env.HEAD||"unknown";}
 
-export function environmentMismatchResponse(requestedUrl){
-  const expected=expectedProjectUrl();
+export function environmentMismatchResponse(requestedUrl,buildContext="unknown"){
+  const context=netlifyContext(buildContext),expected=expectedProjectUrl(context);
   if(requestedUrl===expected)return null;
-  const code=requestedUrl===PROD_URL&&netlifyContext()!=="production"
+  const code=requestedUrl===PROD_URL&&context!=="production"
     ?"PREVIEW_PROD_WRITE_BLOCKED"
     :"SUPABASE_ENVIRONMENT_MISMATCH";
   return new Response(JSON.stringify({code,expectedProjectRef:projectRefFromUrl(expected)}),{

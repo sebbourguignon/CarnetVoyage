@@ -1,5 +1,6 @@
 import {createClient} from "@supabase/supabase-js";
 import {preparerVariantesPersistantes} from "./carnet-pdf/variantes.mjs";
+import {CARNET_BUILD_CONTEXT} from "./carnet-pdf/build.generated.mjs";
 import {DEV_URL,PROD_URL,environmentMismatchResponse} from "./carnet-environment.mjs";
 
 export default async requete=>{
@@ -7,7 +8,7 @@ export default async requete=>{
     const auth=requete.headers.get("authorization")||"",corps=await requete.json();
     const projets={[PROD_URL]:"sb_publishable_fbZPyz9G6UIBWwU00phJig_fQegJUl9",[DEV_URL]:"sb_publishable_Jz82ewEk0V8Qdq-6jRSXQg_WMxjVo5h"},cle=projets[corps.supabase_url];
     if(!cle||!/^Bearer\s+\S+$/i.test(auth)||!corps.voyage_id||!Array.isArray(corps.photo_ids))return new Response(null,{status:400});
-    const environnement=environmentMismatchResponse(corps.supabase_url);if(environnement)return environnement;
+    const environnement=environmentMismatchResponse(corps.supabase_url,CARNET_BUILD_CONTEXT);if(environnement)return environnement;
     const client=createClient(corps.supabase_url,cle,{global:{headers:{Authorization:auth}},auth:{persistSession:false}}),utilisateur=await client.auth.getUser();
     if(utilisateur.error||!utilisateur.data.user)return new Response(null,{status:401});
     const lecture=await client.from("photos").select("id,storage_path,cree_le").in("id",corps.photo_ids.slice(0,10));
