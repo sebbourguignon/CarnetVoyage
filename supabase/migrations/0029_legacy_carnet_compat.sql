@@ -1,0 +1,2 @@
+-- Compatibilité d'historique DEV : la version 0029 est déjà appliquée.
+-- La protection canonique est conservée dans 0038_limite_photos_par_jour_effective.sql.

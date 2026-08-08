@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 test("le tracking Carnet réutilise visites et son journal d’événements", async () => {
-  const migration = await readFile(new URL("../../supabase/migrations/0030_tracking_carnet.sql", import.meta.url), "utf8");
+  const migration = await readFile(new URL("../../supabase/migrations/0039_tracking_carnet.sql", import.meta.url), "utf8");
   const index = await readFile(new URL("../../app/index.html", import.meta.url), "utf8");
   assert.match(migration, /alter table visites/i);
   assert.match(migration, /evenements jsonb/i);

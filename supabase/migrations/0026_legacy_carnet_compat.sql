@@ -1,0 +1,2 @@
+-- Compatibilité d'historique DEV : la version 0026 est déjà appliquée.
+-- Le correctif canonique est conservé dans 0035_repare_statut_finalisation_carnet.sql.

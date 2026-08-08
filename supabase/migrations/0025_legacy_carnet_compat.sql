@@ -1,0 +1,5 @@
+-- Compatibilité d'historique DEV.
+-- La version 0025 a déjà été exécutée dans DEV par l'ancien chantier Carnet.
+-- Le contenu fonctionnel canonique est désormais dans 0034_ergonomie_preparation_carnet.sql.
+-- Cette migration volontairement vide permet à Supabase de conserver la
+-- continuité des versions sans rejouer une opération sur des données existantes.

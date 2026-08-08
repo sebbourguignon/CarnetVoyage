@@ -32,7 +32,7 @@ test("les métriques du header sont normalisées selon leur sémantique",()=>{
 });
 
 test("la limite d’upload de 30 photos est protégée côté base",async()=>{
-  const sql=await readFile(new URL("../../supabase/migrations/0027_limite_photos_par_jour.sql",import.meta.url),"utf8");
+  const sql=await readFile(new URL("../../supabase/migrations/0036_limite_photos_par_jour.sql",import.meta.url),"utf8");
   assert.match(sql,/create or replace function verifier_limite_photos_journee/i);
   assert.match(sql,/where journee_id = new\.journee_id/i);
   assert.match(sql,/maximum de 30 photos par journée/i);
@@ -57,7 +57,7 @@ test("un à cinq moments forts sont acceptés sans minimum artificiel",()=>{
 });
 
 test("la migration est additive et migre les textes en legacy",async()=>{
-  const sql=await readFile(new URL("../../supabase/migrations/0023_preparation_carnet.sql",import.meta.url),"utf8");
+  const sql=await readFile(new URL("../../supabase/migrations/0032_preparation_carnet.sql",import.meta.url),"utf8");
   assert.match(sql,/create table carnet_journees/i);
   assert.match(sql,/create table carnet_faits_confirmes/i);
   assert.match(sql,/create table carnet_photos_selectionnees/i);
@@ -67,13 +67,13 @@ test("la migration est additive et migre les textes en legacy",async()=>{
 });
 
 test("l’activation de la préparation est explicite et rétrocompatible",async()=>{
-  const sql=await readFile(new URL("../../supabase/migrations/0024_activation_preparation_carnet.sql",import.meta.url),"utf8");
+  const sql=await readFile(new URL("../../supabase/migrations/0033_activation_preparation_carnet.sql",import.meta.url),"utf8");
   assert.match(sql,/preparation_active boolean not null default false/i);
   assert.doesNotMatch(sql,/update\s+carnet_journees/i);
 });
 
 test("la passe ergonomique ajoute une validation finale et limite à dix photos",async()=>{
-  const sql=await readFile(new URL("../../supabase/migrations/0025_ergonomie_preparation_carnet.sql",import.meta.url),"utf8");
+  const sql=await readFile(new URL("../../supabase/migrations/0034_ergonomie_preparation_carnet.sql",import.meta.url),"utf8");
   assert.match(sql,/carnet_terminee boolean not null default false/i);
   assert.match(sql,/recit_source_hash text/i);
   assert.match(sql,/maximum de 10 photos par journée/i);
@@ -81,7 +81,7 @@ test("la passe ergonomique ajoute une validation finale et limite à dix photos"
 });
 
 test("la migration corrective recrée idempotemment le statut de finalisation",async()=>{
-  const sql=await readFile(new URL("../../supabase/migrations/0026_repare_statut_finalisation_carnet.sql",import.meta.url),"utf8");
+  const sql=await readFile(new URL("../../supabase/migrations/0035_repare_statut_finalisation_carnet.sql",import.meta.url),"utf8");
   assert.match(sql,/add column if not exists carnet_terminee/i);
   assert.match(sql,/add column if not exists recit_source_hash/i);
   assert.match(sql,/maximum de 10 photos par journée/i);

@@ -7051,7 +7051,7 @@ function appliquerTheme(theme){
                 ? supabase.from("carnet_textes").select("*").eq("voyage_id", voyage.id)
                 : Promise.resolve({ data: null });
 
-              /* Préparation additive du carnet (migration 0023). Le modèle
+              /* Préparation additive du carnet (migration 0032). Le modèle
                  historique reste chargé en parallèle pour la compatibilité
                  et pour présenter ses textes comme brouillons `legacy`. */
               var chargerPreparationsCarnet = utilisateurId

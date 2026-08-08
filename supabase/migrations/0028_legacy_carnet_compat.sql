@@ -1,0 +1,2 @@
+-- Compatibilité d'historique DEV : la version 0028 est déjà appliquée.
+-- La réconciliation canonique est conservée dans 0037_reconcile_remote_history.sql.
