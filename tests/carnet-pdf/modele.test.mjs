@@ -20,6 +20,17 @@ test("les limites sont quotidiennes et ne créent aucun quota voyage",()=>{
   assert.equal(modele.PHOTOS_UPLOAD_MAX_PAR_JOUR,30);
 });
 
+test("les métriques du header sont normalisées selon leur sémantique",()=>{
+  assert.deepEqual(modele.normaliserMetriques("195 km","≈ 2 h 15"),[
+    {type:"distance",value:"195 km"},{type:"duration",value:"≈ 2 h 15"}
+  ]);
+  assert.deepEqual(modele.normaliserMetriques("Sur place","& bateau"),[
+    {type:"local",value:"Sur place"},{type:"transport",value:"Bateau"}
+  ]);
+  assert.deepEqual(modele.normaliserMetriques("Sur place",""),[{type:"local",value:"Sur place"}]);
+  assert.deepEqual(modele.normaliserMetriques("10 min","Gardone"),[]);
+});
+
 test("la limite d’upload de 30 photos est protégée côté base",async()=>{
   const sql=await readFile(new URL("../../supabase/migrations/0027_limite_photos_par_jour.sql",import.meta.url),"utf8");
   assert.match(sql,/create or replace function verifier_limite_photos_journee/i);

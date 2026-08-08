@@ -9,6 +9,21 @@
 
   function texte(value){ return String(value == null ? "" : value).replace(/\s+/g, " ").trim(); }
   function nombre(value, repli){ var n = Number(value); return Number.isFinite(n) ? n : repli; }
+  function valeurMetrique(value){ return texte(value).replace(/&amp;/gi,"&"); }
+  function libelleTransport(value){
+    var v=valeurMetrique(value).replace(/^[&·,;:\-]+\s*/,"").trim();
+    return /^(?:bateau|barca|bus|tram|train|metro|métro|vélo|velo|navette|téléphérique|telepherique|à pied|a pied)$/i.test(v)
+      ? v.charAt(0).toUpperCase()+v.slice(1) : "";
+  }
+  function normaliserMetriques(rail1,rail2){
+    var chips=[],a=valeurMetrique(rail1),b=valeurMetrique(rail2);
+    if(/^\s*(?:≈\s*)?\d+(?:[.,]\d+)?\s*(?:km|m)\s*$/i.test(a))chips.push({type:"distance",value:a});
+    else if(/^\s*(?:sur place|à pied|a pied)\s*$/i.test(a))chips.push({type:"local",value:a.replace(/^a pied$/i,"À pied")});
+    else { var transportA=libelleTransport(a);if(transportA)chips.push({type:"transport",value:transportA}); }
+    if(/^\s*≈?\s*\d+\s*(?:h(?:\s*\d+(?:\s*(?:min|m))?)?|heures?|min(?:utes?)?)\s*$/i.test(b))chips.push({type:"duration",value:b});
+    else { var transportB=libelleTransport(b);if(transportB)chips.push({type:"transport",value:transportB}); }
+    return chips;
+  }
 
   function normaliserPreparation(ligne, texteLegacy){
     var source = ligne && SOURCES_RECIT.indexOf(ligne.carnet_story_source) !== -1
@@ -80,6 +95,7 @@
     normaliserPreparation: normaliserPreparation,
     normaliserFaits: normaliserFaits,
     normaliserPhotos: normaliserPhotos,
+    normaliserMetriques: normaliserMetriques,
     analyserJournee: analyserJournee
   };
 })(typeof window !== "undefined" ? window : globalThis);
